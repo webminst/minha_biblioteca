@@ -1,5 +1,4 @@
 {
-  "homepage": "https://webminst.github.io/minha_biblioteca",
   "name": "pastor-portfolio",
   "version": "0.1.0",
   "private": true,
@@ -27,9 +26,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:content": "node build-content.js",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "build:content": "node build-content.js"
   },
   "eslintConfig": {
     "extends": [
@@ -60,5 +57,4 @@
     "webpack-dev-server": "^5.2.1",
     "webpack-merge": "^6.0.1"
   }
-  
 }

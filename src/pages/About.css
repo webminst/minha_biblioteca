@@ -3,7 +3,7 @@
 .about-container {
     max-width: 900px; /* Limita a largura para melhor leitura */
     margin: 0 auto; /* Centraliza o container */
-    padding: 1rem;
+    padding: 0.4rem;
   }
   
   .about-container h1 {
@@ -19,7 +19,7 @@
     gap: 2rem; /* Espaço entre foto e texto */
     margin-bottom: 3rem;
     background-color: var(--color-gray-light); /* Fundo levemente destacado */
-    padding: 2rem;
+    padding: 1rem;
     border-radius: 8px;
   }
   
@@ -67,6 +67,7 @@
    }
    .about-section li {
       margin-bottom: 0.5em;
+      line-height: 1.7;
    }
   
   

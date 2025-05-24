@@ -78,11 +78,14 @@
     color: #721c24; /* Vermelho escuro (como no form de contato) */
   }
   
-  @media (max-width: 500px) {
-      .newsletter-form {
-          flex-direction: column; /* Empilha input e botão */
-      }
-      .newsletter-input, .newsletter-button {
-          width: 100%; /* Largura total quando empilhado */
-      }
-  }
+@media (max-width: 500px) {
+    .newsletter-form {
+        flex-direction: column; /* Empilha input e botão */
+    }
+    .newsletter-input, .newsletter-button {
+        width: auto;           /* Altere de 100% para auto */
+        max-width: 350px;      /* Limite a largura máxima */
+        min-width: 120px;      /* Opcional: largura mínima */
+        margin: 0 auto;        /* Centraliza o input */
+    }
+}

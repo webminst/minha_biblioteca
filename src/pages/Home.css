@@ -192,26 +192,33 @@
   /* --- Responsividade --- */
   @media (max-width: 768px) {
     .hero-content {
-      flex-direction: column-reverse; /* Imagem vai para cima */
+      flex-direction: column-reverse;
       text-align: center;
+      max-width: 100%;      /* Garante que não ultrapasse o container */
+      padding: 0;           /* Remove padding lateral extra */
+      box-sizing: border-box;
     }
-    .hero-text h1 {
-      font-size: 2.2rem;
+    .hero-text {
+      min-width: 0;         /* Permite encolher em telas pequenas */
+      width: 100%;          /* Ocupa toda a largura disponível */
+      margin: 0 auto;       /* Centraliza */
+      box-sizing: border-box;
+      padding: 0 0.5rem;      /* Espaço lateral para não colar na borda */
     }
-     .hero-subtitle {
-        font-size: 1.2rem;
-     }
+    .hero-subtitle {
+      font-size: 1.2rem;
+    }
     .hero-photo {
-        width: 180px;
-        height: 180px;
-        margin-bottom: 1.5rem;
-    }
-  
+      width: 180px;
+      height: 180px;
+      margin-bottom: 1.5rem;
+    } 
+    
     .featured-section h2, .cta-section h2 {
         font-size: 1.8rem;
     }
     .featured-list {
-         grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+          grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
     }
   }
 

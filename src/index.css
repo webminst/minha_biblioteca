@@ -14,7 +14,7 @@ body {
   font-family: var(--font-primary);
   background-color: var(--color-white);
   color: var(--color-gray-dark);
-  line-height: 0.9; /* Melhora legibilidade */
+  line-height: 1.2; /* Melhora legibilidade */
 }
 
 h1, h2, h3, h4, h5, h6 {

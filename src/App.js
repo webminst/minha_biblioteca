@@ -1,5 +1,6 @@
 // src/App.js
 import React from 'react';
+import ScrollToTop from './components/ScrollToTop';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
@@ -18,30 +19,21 @@ import './App.css';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="sermoes" element={<Sermons />} />
-          {/* Rota de detalhe para sermões */}
           <Route path="sermoes/:contentId" element={<ContentDetail />} />
-
           <Route path="estudos" element={<Studies />} />
-          {/* Rota de detalhe para estudos */}
           <Route path="estudos/:contentId" element={<ContentDetail />} />
-
           <Route path="livros" element={<Books />} />
-          {/* Rota de detalhe para livros */}
           <Route path="livros/:contentId" element={<ContentDetail />} />
-
           <Route path="agenda" element={<Agenda />} />
           <Route path="sobre" element={<About />} />
-
           <Route path="contato" element={<Contact />} />
-          <Route path="*" element={<NotFound />} />
-
           <Route path="busca" element={<SearchResults />} />
           <Route path="*" element={<NotFound />} />
-          
         </Route>
       </Routes>
     </Router>
