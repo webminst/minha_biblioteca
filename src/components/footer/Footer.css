@@ -1,0 +1,19 @@
+/* src/components/Footer/Footer.css */
+.app-footer {
+  padding: 1.5rem 2rem;
+  background-color: var(--color-gray-dark); /* Fundo cinza escuro */
+  color: var(--color-gray-light); /* Texto cinza claro */
+  text-align: center;
+  margin-top: auto; /* Empurra o footer para baixo */
+  font-size: 0.9rem;
+}
+
+.app-footer a {
+    color: var(--color-white); /* Links no footer em branco */
+}
+
+.newsletter-section-in-footer {
+  max-width: 700px; /* Ou largura desejada */
+  margin: 0 auto 2rem auto; /* Centraliza e adiciona margem inferior */
+  padding: 0 1rem; /* Espaçamento lateral */
+}

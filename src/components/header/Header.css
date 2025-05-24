@@ -1,0 +1,233 @@
+/* src/components/Header/Header.css */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.5rem;
+  background-color: var(--color-white);
+  border-bottom: 2px solid var(--color-gray-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative; /* Para posicionamento do menu móvel */
+  z-index: 1000; /* Para o header ficar sobre outros elementos */
+}
+
+/* --- Botão Hambúrguer --- */
+.mobile-menu-toggle {
+  display: none; /* Escondido por padrão em telas grandes */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001; /* Acima do menu móvel para poder fechar */
+}
+
+.mobile-menu-toggle .bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px auto;
+  background-color: var(--color-green-ipb);
+  transition: all 0.3s ease-in-out;
+}
+
+/* --- Navegação Principal --- */
+.main-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.main-nav ul li a {
+  color: var(--color-green-ipb);
+  font-weight: 500;
+  text-decoration: none;
+  padding-bottom: 5px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.main-nav ul li a:hover,
+.main-nav ul li a.active {
+  color: var(--color-gray-dark);
+  border-bottom-color: var(--color-green-ipb);
+}
+
+/* Formulário de Busca para Desktop (escondido em mobile por padrão com .desktop-search) */
+.search-form.desktop-search {
+  display: flex; /* Visível em desktop */
+  align-items: center;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: 20px;
+  padding: 0.2rem 0.2rem 0.2rem 0.8rem;
+  background-color: var(--color-white);
+}
+.search-form-mobile {
+    display: none; /* Escondido por padrão, aparecerá no menu mobile */
+    margin-top: 1.5rem; /* Espaço acima da busca no menu mobile */
+    padding: 0 1rem; /* Padding lateral dentro do menu mobile */
+}
+.search-form-mobile .search-input {
+    border: 1px solid var(--color-gray-medium);
+    border-radius: 20px 0 0 20px;
+    padding: 0.6rem 1rem;
+}
+.search-form-mobile .search-button {
+    border-radius: 0 20px 20px 0;
+    height: calc(1.2rem + 1.4rem); /* Ajusta altura para alinhar com input */
+}
+
+
+.search-input { /* Estilo genérico para input de busca */
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  background: none;
+  flex-grow: 1;
+  min-width: 150px;
+}
+.search-input::placeholder {
+  color: var(--color-gray-medium);
+}
+
+.search-button { /* Estilo genérico para botão de busca */
+  background-color: var(--color-gray-medium);
+  color: var(--color-white);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.9rem; /* Pode precisar ajustar o tamanho do ícone via font-size do botão */
+  /* Se o ícone não estiver centralizado, pode precisar ajustar padding ou line-height */
+}
+.search-button:hover {
+  background-color: #004a38;
+  background-color: var(--color-green-ipb);
+  transform: translateY(-2px); /* Leve elevação */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+
+/* --- Estilos para Telas Menores (Mobile) --- */
+@media (max-width: 992px) { /* Ponto de quebra - ajuste conforme necessário */
+  .mobile-menu-toggle {
+    display: block; /* Mostra o botão hambúrguer */
+  }
+
+  .main-nav {
+    display: none; /* Esconde a navegação principal */
+    position: absolute;
+    top: 0; /* Alinha com o topo do header */
+    left: 0;
+    width: 100%;
+    min-height: 100vh; /* Ocupa a altura da tela */
+    background-color: rgba(255, 255, 255, 0.98); /* Fundo branco quase opaco */
+    backdrop-filter: blur(5px); /* Efeito de desfoque (suporte variado) */
+    padding-top: 70px; /* Espaço para o header não sobrepor (altura do header + um pouco) */
+    flex-direction: column;
+    align-items: center;
+    z-index: 999; /* Abaixo do botão de toggle */
+    transform: translateX(-100%); /* Escondido fora da tela à esquerda */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .main-nav.open {
+    display: flex; /* Mostra o menu quando 'open' */
+    transform: translateX(0); /* Traz para a tela */
+  }
+
+  .main-nav ul {
+    flex-direction: column; /* Links em coluna */
+    gap: 0; /* Remove gap padrão */
+    width: 100%;
+    text-align: center;
+  }
+
+  .main-nav ul li {
+    width: 100%;
+  }
+
+  .main-nav ul li a {
+    display: block; /* Links ocupam toda a largura */
+    padding: 1.2rem 1rem; /* Mais área de toque */
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--color-gray-light); /* Divisória entre links */
+  }
+  .main-nav ul li a.active {
+      background-color: var(--color-gray-light);
+      border-bottom-color: var(--color-green-ipb); /* Mantém borda ativa */
+  }
+  .main-nav ul li:last-child a {
+    border-bottom: none; /* Remove borda do último item */
+  }
+
+  /* Animação do ícone hambúrguer para 'X' quando aberto */
+  .mobile-menu-toggle.open .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .mobile-menu-toggle.open .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .mobile-menu-toggle.open .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+
+  /* Esconder busca de desktop e mostrar busca de mobile (se for usar uma separada) */
+  .search-form.desktop-search {
+    display: none; /* Esconde a busca de desktop */
+  }
+   .main-nav.open .search-form-mobile { /* Mostrar busca dentro do menu mobile aberto */
+      display: flex;
+      width: 90%; /* Largura da busca dentro do menu */
+      max-width: 350px; /* Largura máxima */
+      margin-left: auto;
+      margin-right: auto;
+   }
+}
+
+/* Ajuste para header fixo (se quiser no futuro) */
+/*
+.app-header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+*/
+
+.app-header .logo-container a { /* Estilo para o link que envolve o logo */
+  display: flex; /* Para alinhar imagem e texto (se houver) */
+  align-items: center;
+  padding: 0px 0px 0px 20px; /* Espaçamento interno */
+  text-align: center; /* Centraliza o conteúdo */
+  text-decoration: none;
+  color: var(--color-gray-dark); /* Cor para o texto do logo, se houver */
+}
+
+.header-logo {
+  height: 100px; /* Defina a altura desejada para o seu logo */
+  width: auto;    /* Mantém a proporção da imagem */
+  margin-right: 10px; /* Espaço se houver texto ao lado do logo */
+  /* Outros estilos como vertical-align se necessário */
+}
+
+.app-header .logo-text { /* Se você decidir manter um texto ao lado do logo */
+    font-weight: bold;
+    font-size: 1.5rem; /* Ou o tamanho que estava antes */
+}
+
+/* Remova ou ajuste o estilo anterior de '.app-header .logo a' se ele conflitar */
+/* .app-header .logo a { ... }  <-- Verifique este estilo */

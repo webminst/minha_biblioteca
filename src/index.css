@@ -1,13 +1,54 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* src/index.css */
+:root {
+  --color-white: #FFFFFF;
+  --color-gray-light: #f0f0f0; /* Fundo secundário, cards */
+  --color-gray-medium: #a9a9a9; /* Texto secundário, bordas */
+  --color-gray-dark: #333333;  /* Texto principal */
+  --color-green-ipb: #006A4E; /* Destaques, links, botões */
+  --font-primary: 'Open Sans', sans-serif; /* Para corpo */
+  --font-headings: 'Montserrat', sans-serif; /* Para títulos */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  background-color: var(--color-white);
+  color: var(--color-gray-dark);
+  line-height: 0.9; /* Melhora legibilidade */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings);
+  color: var(--color-green-ipb); /* Títulos em verde */
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+a {
+  color: var(--color-green-ipb);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  padding: 20px;
+}
+
+.empty-state-image {
+  margin-bottom: 8px;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
 }

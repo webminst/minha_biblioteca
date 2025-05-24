@@ -1,0 +1,152 @@
+/* src/pages/ListPage.css */
+
+/* Nova seção de filtros */
+.filter-controls {
+background-color: var(--color-gray-light);
+padding: 1.5rem 2rem;
+margin-bottom: 2.5rem;
+border-radius: 8px;
+display: flex;
+flex-wrap: wrap; /* Permite que os grupos quebrem linha */
+gap: 1.5rem; /* Espaçamento entre grupos de filtros */
+align-items: flex-end; /* Alinha itens na parte inferior (bom para botão) */
+}
+
+.filter-group {
+display: flex;
+flex-direction: column; /* Label acima do select */
+gap: 0.5rem; /* Espaço entre label e select */
+min-width: 180px; /* Largura mínima para cada filtro */
+flex-grow: 1; /* Permite que cresçam para preencher espaço */
+}
+
+.filter-group label {
+font-weight: 500;
+font-size: 0.9rem;
+color: var(--color-gray-dark);
+}
+
+.filter-group select {
+padding: 0.7rem;
+border: 1px solid var(--color-gray-medium);
+border-radius: 5px;
+font-size: 1rem;
+font-family: inherit;
+background-color: var(--color-white);
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--color-green-ipb);
+  box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2);
+}
+
+.clear-filter-button {
+  padding: 0.7rem 1rem;
+  background-color: var(--color-gray-medium);
+  color: var(--color-white);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  height: fit-content; /* Ajusta altura ao conteúdo */
+  /* margin-left: auto; */ /* Se quiser empurrar para a direita */
+}
+
+.clear-filter-button:hover {
+  background-color: var(--color-gray-dark);
+}
+
+
+/* Estilos da lista e cards ... */
+/* ... */
+
+/* Media Query para filtros em telas menores */
+@media (max-width: 768px) {
+  .filter-controls {
+      gap: 1rem;
+      padding: 1rem;
+  }
+  .filter-group {
+      min-width: 150px; /* Reduz largura mínima */
+  }
+  /* Pode fazer o botão ocupar largura total se preferir */
+  /* .clear-filter-button { width: 100%; margin-top: 1rem; } */
+}
+
+/* --- Estilos de Paginação --- */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem; /* Espaço entre botões */
+  margin-top: 2.5rem; /* Espaço acima da paginação */
+  padding-bottom: 1rem; /* Espaço abaixo */
+}
+
+.pagination-button {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--color-gray-medium);
+  background-color: var(--color-white);
+  color: var(--color-green-ipb);
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+    text-decoration: none;
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    transform: translateY(-2px); /* Leve elevação */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.pagination-button:disabled {
+  color: var(--color-gray-medium);
+  border-color: var(--color-gray-light);
+  cursor: not-allowed;
+}
+
+.pagination-button.page-number.active {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  border-color: var(--color-green-ipb);
+  font-weight: bold;
+}
+
+/* Responsividade para paginação (se necessário) */
+@media (max-width: 480px) {
+    .pagination-controls {
+        gap: 0.3rem;
+    }
+    .pagination-button {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
+    }
+    /* Opcional: esconder números de página em telas muito pequenas e deixar só Anterior/Próxima */
+    /*
+    .pagination-button.page-number {
+        display: none;
+    }
+    */
+}
+
+.fade-in-on-load {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0; /* Começa invisível */
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.pagination-button {
+  /* ... */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em; /* Espaço entre ícone e texto nos botões de paginacao */
+}

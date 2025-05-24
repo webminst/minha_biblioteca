@@ -1,0 +1,119 @@
+/* src/components/ContentCard/ContentCard.css */
+.content-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem; /* Espaçamento entre cards */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .content-card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02)
+  }
+  
+  .card-type {
+    display: inline-block;
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    align-self: flex-start; /* Alinha no início */
+  }
+  
+  .card-title {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    /* Herdando a cor verde do h3 global ou defina especificamente */
+  }
+  
+  .card-title a {
+      text-decoration: none;
+      color: inherit; /* Herda cor do h3 */
+  }
+   .card-title a:hover {
+      text-decoration: underline;
+   }
+  
+  .card-meta {
+    font-size: 0.9rem;
+    color: var(--color-gray-medium);
+    margin-bottom: 1rem;
+  }
+  
+  .card-description {
+    flex-grow: 1; /* Faz a descrição ocupar espaço disponível */
+    margin-bottom: 1.5rem;
+    color: var(--color-gray-dark);
+    line-height: 1.5;
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 1rem; /* Espaço entre botões */
+    margin-top: auto; /* Empurra ações para baixo */
+  }
+  
+  .card-button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  .details-button {
+    background-color: var(--color-gray-light);
+    color: var(--color-green-ipb);
+    border: 1px solid var(--color-gray-medium);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s eas
+  }
+  .details-button:hover {
+    text-decoration: none;
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    transform: translateY(-2px); /* Leve elevação */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .download-button {
+    background-color: var(--color-gray-light);
+    color: var(--color-gray-dark);
+    border: 1px solid var(--color-gray-medium);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+   .download-button:hover {
+    background-color: #004a38; /* Verde IPB mais escuro */
+    text-decoration: none;
+    background-color: var(--color-gray-light);
+    color: var(--color-gray-dark);
+    transform: translateY(-2px); /* Leve elevação */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .fade-in-on-load {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0; /* Começa invisível */
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.card-button .icon-before-text {
+  margin-right: 0.5em; /* Espaço entre ícone e texto */
+}
+.card-button .icon-after-text {
+  margin-left: 0.5em;
+}

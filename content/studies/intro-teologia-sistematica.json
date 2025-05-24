@@ -1,0 +1,13 @@
+{
+    "id": "intro-teologia-sistematica",
+    "title": "Introdução à Teologia Sistemática",
+    "type": "Estudo Bíblico",
+    "reference": "Doutrinas Fundamentais",
+    "bookLink": null, 
+    "theme": "Teologia Sistemática", 
+    "format": "Estudo Aprofundado", 
+    "fullText": "<p>Este estudo aborda os pilares...</p>",
+    "description": "Uma visão geral das principais doutrinas...",
+    "detailsUrl": "/estudos/intro-teologia-sistematica",
+    "pdfUrl": "/path/to/study-001.pdf"
+  }
