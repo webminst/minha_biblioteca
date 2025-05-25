@@ -37,12 +37,19 @@
     min-width: 300px; /* Largura mínima antes de quebrar */
   }
   
-  .intro-text p {
-      margin-top: 0; /* Remove margem superior do primeiro parágrafo */
-      font-size: 1.1rem;
-      line-height: 1.7;
+  .intro-text {
+    flex: 1;
+    min-width: 0;         /* Permite encolher em telas pequenas */
+    max-width: 100%;      /* Garante que não ultrapasse o container */
+    word-break: break-word;
+    overflow-wrap: break-word;
+    box-sizing: border-box;
+    line-height: 1.7;
   }
   
+  .about-intro {
+  padding: 1rem 0.5rem;
+  }
   
   .about-section {
     margin-bottom: 2.5rem;
