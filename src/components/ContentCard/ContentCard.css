@@ -117,3 +117,54 @@
 .card-button .icon-after-text {
   margin-left: 0.5em;
 }
+
+.content-card.with-cover {
+  display: flex; /* Para layout lado a lado da capa e conteúdo */
+  gap: 1rem;
+}
+
+.card-cover-link {
+    display: block; /* Para o link ocupar o espaço da imagem */
+    flex-shrink: 0; /* Evita que a imagem encolha */
+}
+
+.card-cover-image {
+  width: 100px; /* Tamanho da miniatura da capa */
+  height: auto;
+  max-height: 150px; /* Limite de altura para manter proporção */
+  object-fit: cover; /* Ou 'contain' dependendo do efeito desejado */
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-light);
+}
+
+.card-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+/* Se o card não tiver capa, o .card-content-wrapper não é necessário,
+   ou você pode ajustar para que o .content-card sem .with-cover se comporte como antes.
+   Pode ser mais simples ter duas estruturas de JSX no ContentCard dependendo do tipo.
+   Ou, ajuste os estilos para que .card-content-wrapper funcione bem mesmo sem a capa.
+*/
+
+@media (max-width: 480px) { /* Exemplo para telas pequenas */
+    .content-card.with-cover {
+        flex-direction: column; /* Empilha capa e conteúdo no card */
+        align-items: center; /* Centraliza */
+    }
+    .card-cover-link {
+        margin-bottom: 1rem;
+    }
+    .card-cover-image {
+        width: 120px; /* Pode aumentar um pouco quando empilhado */
+        max-height: 180px;
+    }
+    .card-content-wrapper {
+        text-align: center; /* Centraliza texto no card */
+    }
+    .card-actions {
+        justify-content: center; /* Centraliza botões no card */
+    }
+}

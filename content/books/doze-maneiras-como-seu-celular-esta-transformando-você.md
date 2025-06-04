@@ -9,6 +9,7 @@ area: "Teologia Prática, Vida Cristã e Ética Cristã"
 description: "Na era digital em que vivemos, o celular tornou-se uma extensão quase onipresente de nós mesmos, moldando sutilmente nossos hábitos, pensamentos, relacionamentos e até mesmo nossa espiritualidade de maneiras que muitas vezes não percebemos."
 detailsUrl: "/livros/doze-maneiras-como-seu-celular-esta-transformando-você"
 pdfUrl: "https://drive.google.com/file/d/1-dDe7TlgY6L2wXreNsfac9rxCEawdVCZ/view?usp=drive_link"
+coverImageUrl: "/images/covers/doze-maneiras-Reinke.jpg"
 ---
 
 Tony Reinke

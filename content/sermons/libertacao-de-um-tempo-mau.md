@@ -1,6 +1,6 @@
 ---
-id: "libertacao-de-um-tempo-mal"
-title: "Libertação de um tempo mal."
+id: "libertacao-de-um-tempo-mau"
+title: "Libertação de um tempo mau."
 type: "Sermão"
 date: "2016-01-10"
 reference: "Gl 1:3-5"
@@ -14,9 +14,9 @@ tags:
   - "Jesus Cristo"
   - "Vontade de Deus"
 description: "Explora como Jesus Cristo nos livra do presente século mau, abordando a libertação da culpa, do poder e da tentação do pecado, bem como das trevas morais e do mundo passageiro."
-detailsUrl: "/sermoes/libertacao-de-um-tempo-mal"
-pdfUrl: "https://drive.google.com/file/d/15t7g06MEYc7znPRsxTPCwqYYWsJp3dlE/view?usp=drive_link"
-audioUrl: "/path/to/libertacao-de-um-tempo-mal.mp3"
+detailsUrl: "/sermoes/libertacao-de-um-tempo-mau"
+pdfUrl: "https://drive.google.com/file/d/16ubN2tu4QApvDiZVGy_khutZp_uJkTI5/view?usp=drive_link"
+audioUrl: "/path/to/libertacao-de-um-tempo-mau.mp3"
 ---
 Gl 1:3-5
 
@@ -30,7 +30,7 @@ Gl 1:3-5
    2. Ele nos desarraiga (livra) deste mundo perverso (paz!).  
 3. Eu gostaria de dirigir a nossa atenção para a última frase...  
    1. Sem dúvida, temos ouvido falar muito sobre Jesus morrer por nossos pecados.  
-   2. Mas que ideia é essa de livrar-nos de um mundo mal?  
+   2. Mas que ideia é essa de livrar-nos de um mundo mau?  
 4. A palavra “mundo” (*aion*[^3]), utilizada aqui significa *“período de tempo”* ...  
    1. Paulo tem em mente o presente tempo.  
    2. Paulo vê esta era como má - cf. Ef 5:16; 6:13.
@@ -59,7 +59,7 @@ Não levamos a sério o mal deste século? Agradecemos a libertação que Jesus 
 3. Cada vez mais a nossa cultura está aceitando a lascívia, a pornografia e o uso de drogas.  
 4. Tudo isso reflete uma visão de mundo impactado pelo humanismo, pelo evolucionismo e pelo egoísmo.
 
-- Hoje nos encontramos vivendo em um tempo muito mal.  
+- Hoje nos encontramos vivendo em um tempo muito mau.  
 Sim, as coisas não são muito diferentes hoje do que eram nos dias de Paulo. No entanto, Jesus *“se entregou a si mesmo pelos nossos pecados, para nos desarraigar* (livrar, RC) *deste mundo perverso”* (Gl 1:4). Considere, portanto...
 
 # O livramento do Senhor provê...
@@ -124,4 +124,4 @@ Sim, as coisas não são muito diferentes hoje do que eram nos dias de Paulo. No
    1. Ela foi planejada para ser *“para o louvor da glória de sua graça”* - Ef 1:6.  
    2. Assim, Paulo escreve a respeito de Deus: *“a quem seja a glória pelos séculos dos séculos. Amém”* - Gl 1:5.
 
-Não devemos glorificar a Deus, aceitando Seu livramento gracioso deste mundo mal, que Ele nos concede através de Seu Filho Jesus Cristo? Fazemo-lo através da obediência ao Evangelho... - cf. Mc 16:15-16.
+Não devemos glorificar a Deus, aceitando Seu livramento gracioso deste mundo mau, que Ele nos concede através de Seu Filho Jesus Cristo? Fazemo-lo através da obediência ao Evangelho... - cf. Mc 16:15-16.

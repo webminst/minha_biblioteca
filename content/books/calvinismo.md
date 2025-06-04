@@ -9,23 +9,18 @@ area: "Teologia Sistemática, Filosofia Cristã, História, Ciência Política, 
 description: "Kuyper argumenta vigorosamente que o Calvinismo é, na verdade, um sistema de vida abrangente, uma cosmovisão completa com princípios próprios."
 detailsUrl: "/livros/calvinismo"
 pdfUrl: "https://drive.google.com/file/d/1-RSKIiGNUleTwawRVYNpjQSxzNy_qm3X/view?usp=drive_link"
+coverImageUrl: "/images/covers/calvinismo-Kuyper.webp"
 ---
 
 Abraham Kuyper
 
 # **Descrição Geral do Livro.**
 
-* **Área do Conhecimento:** Teologia Sistemática, Filosofia Cristã, História, Ciência Política, Sociologia da Religião.
+* **Ano de Publicação:** As palestras foram proferidas em 1898. A data de publicação desta 2ª edição brasileira é 2019, mas o livro original (“Lectures on Calvinism”) foi publicado logo após as palestras.
 
-* **Autor:** Abraham Kuyper (1837-1920) \- Teólogo, filósofo e estadista holandês (foi Primeiro Ministro da Holanda).
+* **Quantidade de Páginas:** 208.
 
-* **Ano de Publicação:** As palestras foram proferidas em 1898\. A data de publicação desta edição brasileira específica é de 2022, mas o livro original (“Lectures on Calvinism”) foi publicado logo após as palestras.
-
-* **Editora:** Editora Cultura Cristã.
-
-* **Quantidade de Páginas:** 160 páginas.
-
-* **Preço Médio:** Não informado no OCR. Geralmente, livros desta editora e natureza têm um preço acessível no mercado de livros teológicos/acadêmicos.
+* **Preço Médio:** Geralmente, livros desta editora e natureza têm um preço acessível no mercado de livros teológicos/acadêmicos, especialmente no próprio site. Noutros sites o preço varia, podendo chegar até R$ 149,90 (Amazon)
 
 * **Qualidade do Material:** A Editora Cultura Cristã é conhecida por publicar obras teológicas reformadas de qualidade padrão em brochura (paperback).
 
@@ -43,7 +38,7 @@ Você deveria ler “Calvinismo” de Abraham Kuyper porque ele desafia a visão
 
 * Destaca sua imensa energia e produção intelectual (mais de 200 volumes).
 
-* Contextualiza o livro como as *“Stone Lectures”* proferidas em Princeton em 1898\.
+* Contextualiza o livro como as *“Stone Lectures”* proferidas em Princeton em 1898.
 
 * Afirma a tese central: Calvinismo não é só um conjunto de dogmas, mas um fundamento para uma visão abrangente da vida.
 
@@ -113,7 +108,7 @@ Você deveria ler “Calvinismo” de Abraham Kuyper porque ele desafia a visão
 
 * Libertou a ciência dos laços artificiais da tutela eclesiástica excessiva, reconhecendo a autonomia da esfera científica.
 
-* Aborda o conflito científico: não é entre fé e ciência, mas entre dois sistemas científicos com pressupostos diferentes sobre a natureza do cosmos \- *“Normalistas”* (que assumem o estado atual como normal, levando ao naturalismo/evolucionismo) e *“Anormalistas”* (que reconhecem a condição atual como anormal devido ao pecado, afirmando Criação, Queda e Redenção). O Calvinismo fundamenta o sistema Anormalista e defende a necessidade de desenvolver a ciência a partir de seus próprios pressupostos.
+* Aborda o conflito científico: não é entre fé e ciência, mas entre dois sistemas científicos com pressupostos diferentes sobre a natureza do cosmos - *“Normalistas”* (que assumem o estado atual como normal, levando ao naturalismo/evolucionismo) e *“Anormalistas”* (que reconhecem a condição atual como anormal devido ao pecado, afirmando Criação, Queda e Redenção). O Calvinismo fundamenta o sistema Anormalista e defende a necessidade de desenvolver a ciência a partir de seus próprios pressupostos.
 
 # **Capítulo 5: Calvinismo e Arte.**
 
@@ -123,7 +118,7 @@ Você deveria ler “Calvinismo” de Abraham Kuyper porque ele desafia a visão
 
 * Princípio calvinista sobre a arte: A arte revela uma realidade superior, uma beleza que transcende a natureza caída, lembrando a glória original da criação e antecipando sua restauração futura. É um dom da graça comum, presente em crentes e incrédulos.
 
-* O Calvinismo promoveu a arte: (1) Libertando-a da tutela exclusiva da Igreja, permitindo que explorasse toda a vida humana (graça comum). (2) Despertando o interesse pela vida comum e pela profundidade da experiência humana (resultado da doutrina da eleição e da valorização do indivíduo). Exemplos: a pintura holandesa e a música (Bourgeois, Goudimel \- desenvolvimento do canto congregacional, harmonia, melodia popular adaptada).
+* O Calvinismo promoveu a arte: (1) Libertando-a da tutela exclusiva da Igreja, permitindo que explorasse toda a vida humana (graça comum). (2) Despertando o interesse pela vida comum e pela profundidade da experiência humana (resultado da doutrina da eleição e da valorização do indivíduo). Exemplos: a pintura holandesa e a música (Bourgeois, Goudimel - desenvolvimento do canto congregacional, harmonia, melodia popular adaptada).
 
 # **Capítulo 6: Calvinismo e o Futuro.**
 
@@ -141,4 +136,4 @@ Você deveria ler “Calvinismo” de Abraham Kuyper porque ele desafia a visão
 
 # Sobre o autor.
 
-Abraham Kuyper (1837-1920) foi uma figura monumental e multifacetada na Holanda do final do século XIX e início do século XX, destacando-se como teólogo, pastor, jornalista, estadista (servindo como Primeiro Ministro dos Países Baixos de 1901 a 1905\) e educador, fundador da Universidade Livre de Amsterdã. Como principal arquiteto do Neocalvinismo, Kuyper defendeu vigorosamente que o Calvinismo não se limitava a um conjunto de doutrinas eclesiásticas, mas constituía um sistema de vida abrangente, uma cosmovisão completa que afirmava a soberania de Cristo sobre "cada centímetro quadrado" da criação. Suas influentes ideias sobre "soberania das esferas" e "graça comum" forneceram um arcabouço para o engajamento cristão em todas as áreas da cultura, política, ciência e arte, deixando um legado duradouro no pensamento cristão e na ação social.
+Abraham Kuyper (1837-1920) foi uma figura monumental e multifacetada na Holanda do final do século XIX e início do século XX, destacando-se como teólogo, pastor, jornalista, estadista (servindo como Primeiro Ministro dos Países Baixos de 1901 a 1905) e educador, fundador da Universidade Livre de Amsterdã. Como principal arquiteto do Neocalvinismo, Kuyper defendeu vigorosamente que o Calvinismo não se limitava a um conjunto de doutrinas eclesiásticas, mas constituía um sistema de vida abrangente, uma cosmovisão completa que afirmava a soberania de Cristo sobre "cada centímetro quadrado" da criação. Suas influentes ideias sobre "soberania das esferas" e "graça comum" forneceram um arcabouço para o engajamento cristão em todas as áreas da cultura, política, ciência e arte, deixando um legado duradouro no pensamento cristão e na ação social.

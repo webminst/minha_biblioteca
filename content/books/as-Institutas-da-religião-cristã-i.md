@@ -9,6 +9,7 @@ area: "Teologia Cristã Sistemática, Teologia Reformada, História da Igreja"
 description: "As Institutas” é universalmente reconhecida como uma das obras mais importantes da teologia protestante e da literatura ocidental."
 detailsUrl: "/livros/as-Institutas-da-religião-cristã-i"
 pdfUrl: "https://drive.google.com/open?id=1-QzbKTw7rI8Eth1HGQY3DTbfvd98jENy&usp=drive_copy"
+coverImageUrl: "/images/covers/as-institutas-i-Calvino.jpg"
 ---
 
 **João Calvino**

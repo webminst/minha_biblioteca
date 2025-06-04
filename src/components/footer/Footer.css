@@ -17,3 +17,29 @@
   margin: 0 auto 2rem auto; /* Centraliza e adiciona margem inferior */
   padding: 0 1rem; /* Espaçamento lateral */
 }
+
+.footer-support-cta {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem; /* Ou ajuste conforme necessário */
+    /* background-color: var(--color-gray-light); /* Opcional: um fundo sutil */
+    /* border-top: 1px solid var(--color-gray-medium); */
+}
+.footer-support-cta p {
+    margin-bottom: 0.75rem;
+    color: var(--color-gray-dark);
+}
+.footer-support-button {
+    display: inline-block;
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.footer-support-button:hover {
+    background-color: #004a38; /* Verde mais escuro */
+    text-decoration: none;
+}

@@ -72,6 +72,7 @@ const Header = () => {
           <li><NavLink to="/agenda" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
           <li><NavLink to="/sobre" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
           <li><NavLink to="/contato" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
+          <li><NavLink to="/apoie" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Apoie</NavLink></li>
         </ul>
          {/* Adicionar a busca dentro do menu mobile também (opcional) */}
 <form onSubmit={handleSearchSubmit} className="search-form-mobile">

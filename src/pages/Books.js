@@ -124,6 +124,7 @@ const Books = () => {
               description={book.description}
               detailsUrl={book.detailsUrl}
               pdfUrl={book.pdfUrl}
+              coverImageUrl={book.coverImageUrl}
             />
           ))
         ) : (

@@ -40,6 +40,32 @@ const ContentDetail = () => {
         <FontAwesomeIcon icon={faArrowLeft} /> Voltar {/* ÍCONE AQUI */}
       </button>
 
+<div className="content-header-wrapper"> {/* Wrapper para título e capa */}
+        {/* Exibir Capa do Livro */}
+        {content.type === 'Resumo de Livro' && content.coverImageUrl && (
+          <div className="book-cover-container">
+            <img
+              src={content.coverImageUrl}
+              alt={`Capa do livro ${content.title}`}
+              className="book-cover-image"
+            />
+          </div>
+        )}
+
+        <div className="title-and-meta-container"> {/* Para alinhar título e meta */}
+          <div className="content-meta">
+            <span className="content-type-badge">{content.type}</span>
+            {/* ... (outros metadados como data, reference, author, etc.) ... */}
+             {content.author && <span className="meta-item">Autor: {content.author}</span>}
+             {content.publisher && <span className="meta-item">Editora: {content.publisher}</span>}
+             {content.area && <span className="meta-item">Área: {content.area}</span>}
+          </div>
+  
+        </div>
+      </div> {/* Fim de .content-header-wrapper */}
+
+
+
       {/* ... Metadados e Título ... */}
        <div className="content-meta">
         {/* ... */}

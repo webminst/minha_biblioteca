@@ -9,6 +9,7 @@ area: "Teologia, especificamente Teologia das Religiões / Estudos Inter-religio
 description: "Este livro oferece uma introdução acessível e, ao mesmo tempo, profunda e provocativa ao debate contemporâneo para quem deseja entender o pluralismo religioso dentro da teologia cristã católica, especialmente a partir de uma perspectiva latino-americana influenciada pela Teologia da Libertação."
 detailsUrl: "/livros/teologia-pluralismo-religioso"
 pdfUrl: "https://drive.google.com/file/d/1-cH_SkeijeLBBq_quumlAozQeqOFsgQ5/view?usp=drive_link"
+coverImageUrl: "/images/covers/teologia-pluralismo-Virgil.jpg"
 ---
 José Maria Vigil.
 

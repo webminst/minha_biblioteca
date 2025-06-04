@@ -9,6 +9,7 @@ area: "Soteriologia, Apologética Cristã"
 description: "O livro se propõe a encontrar um caminho equilibrado entre as doutrinas da soberania divina e do livre-arbítrio humano no que diz respeito à salvação."
 detailsUrl: "/livros/eleitos-mas-livres"
 pdfUrl: "https://drive.google.com/file/d/1-Qp-uU3ze5toQphHCurRCoNRJnriOrbM/view?usp=drive_link"
+coverImageUrl: "/images/covers/eleitos-mas-Geisler.jpg"
 ---
 
 Autor: Norman Geisler

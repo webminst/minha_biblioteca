@@ -1,0 +1,162 @@
+/* src/pages/SupportPage.css */
+
+.support-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  color: var(--color-gray-dark);
+}
+
+.support-container h1 {
+  text-align: center;
+  color: var(--color-green-ipb); /* Ou var(--color-gray-dark) */
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+}
+
+.support-intro,
+.pix-donation-section,
+.alternative-support,
+.thank-you-note {
+  background-color: var(--color-white);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-gray-light);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.support-intro p,
+.pix-donation-section p,
+.alternative-support p,
+.thank-you-note p {
+  line-height: 1.7;
+  margin-bottom: 1em;
+}
+.support-intro p:last-child,
+.pix-donation-section p:last-child,
+.alternative-support p:last-child,
+.thank-you-note p:last-child {
+    margin-bottom: 0;
+}
+
+
+.pix-donation-section h2,
+.alternative-support h2 {
+  color: var(--color-gray-dark);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.pix-key-container {
+  background-color: var(--color-gray-light);
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.pix-label {
+  font-size: 0.9rem;
+  color: var(--color-gray-medium);
+  margin-bottom: 0.5rem !important; /* Sobrescreve margem de p */
+}
+
+.pix-key-value-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap; /* Quebra em telas menores */
+}
+
+.pix-key-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--color-green-ipb);
+  word-break: break-all; /* Para chaves longas não quebrarem o layout */
+}
+
+.copy-pix-button {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.copy-pix-button:hover {
+  background-color: #004a38; /* Verde mais escuro */
+}
+
+.pix-details {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.pix-details p {
+    margin-bottom: 0.3em !important;
+}
+
+.pix-instructions {
+  font-size: 0.9rem;
+  color: var(--color-gray-medium);
+  margin-top: 1rem !important;
+  text-align: center;
+}
+
+.pix-qrcode { /* Estilo para o QR Code, se adicionar */
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    max-width: 200px;
+    border: 1px solid var(--color-gray-light);
+    padding: 5px;
+}
+
+.alternative-support ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+.alternative-support li {
+  margin-bottom: 0.75em;
+}
+
+.thank-you-note {
+    text-align: center;
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    border-color: var(--color-green-ipb);
+}
+.thank-you-note p em {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+.thank-you-note strong {
+    font-size: 1.1rem;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .support-container {
+        padding: 1rem;
+    }
+    .support-container h1 {
+        font-size: 1.8rem;
+    }
+    .support-intro, .pix-donation-section, .alternative-support, .thank-you-note {
+        padding: 1rem 1.5rem;
+    }
+    .pix-key-value {
+        font-size: 1.2rem;
+    }
+}

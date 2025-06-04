@@ -11,6 +11,7 @@ import Agenda from './pages/Agenda';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
+import SupportPage from './pages/SupportPage'; // Importar
 // Importar os novos componentes de detalhe
 import ContentDetail from './pages/ContentDetail'; // Criaremos este componente genérico
 import SearchResults from './pages/SearchResults'; // Importa a nova página
@@ -33,6 +34,7 @@ function App() {
           <Route path="sobre" element={<About />} />
           <Route path="contato" element={<Contact />} />
           <Route path="busca" element={<SearchResults />} />
+          <Route path="apoie" element={<SupportPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

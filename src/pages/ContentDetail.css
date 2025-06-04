@@ -201,3 +201,58 @@ margin-left: auto; /* Empurra para a direita, se o download estiver à esquerda 
 .action-button.download-button .icon-before-text {
   margin-right: 0.5em;
 }
+
+.content-header-wrapper {
+  display: flex;
+  flex-wrap: wrap; /* Para telas menores */
+  gap: 1.5rem; /* Espaço entre capa e texto/meta */
+  margin-bottom: 1.5rem; /* Espaço antes do fullText */
+  align-items: flex-start; /* Alinha itens no topo */
+}
+
+.book-cover-container {
+  flex-shrink: 0; /* Evita que a imagem encolha demais */
+  /* max-width: 200px; */ /* Ou defina a largura diretamente na imagem */
+}
+
+.book-cover-image {
+  width: 180px; /* Largura desejada para a capa */
+  height: auto; /* Mantém proporção */
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border: 1px solid var(--color-gray-light);
+}
+
+.title-and-meta-container {
+  flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+/* Ajuste no .content-meta e .content-title se necessário para o novo layout */
+.content-meta {
+  /* margin-bottom: 0.5rem; */ /* Pode reduzir ou remover se o título vier logo abaixo */
+  /* border-bottom: none; */ /* Pode remover a borda se o layout ficar melhor */
+  /* padding-bottom: 0.5rem; */
+}
+
+.content-title {
+  margin-top: 0.3rem; /* Menor margem se a meta estiver acima */
+}
+
+
+/* Responsividade para o header do conteúdo */
+@media (max-width: 600px) {
+  .content-header-wrapper {
+    flex-direction: column; /* Empilha capa e texto */
+    align-items: center; /* Centraliza itens empilhados */
+    text-align: center;
+  }
+  .book-cover-container {
+    margin-bottom: 1rem; /* Espaço abaixo da capa quando empilhada */
+  }
+  .title-and-meta-container {
+    width: 100%; /* Ocupa toda a largura quando empilhado */
+  }
+  .content-meta {
+    justify-content: center; /* Centraliza metadados */
+  }
+}
