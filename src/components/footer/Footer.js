@@ -1,6 +1,6 @@
 // src/components/Footer/Footer.js
 import React from 'react';
-import { Link } from 'react-router-dom'; // Importar Link
+import { Link } from 'react-router-dom';
 import NewsletterForm from '../NewsletterForm/NewsletterForm';
 import './Footer.css';
 

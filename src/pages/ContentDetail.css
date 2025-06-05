@@ -1,258 +1,210 @@
 /* src/pages/ContentDetail.css */
 
 .content-detail-container {
-    max-width: 850px; /* Largura ideal para leitura */
-    margin: 2rem auto; /* Centraliza e adiciona margem */
-    padding: 1.5rem;
-    background-color: var(--color-white);
-    /* Pode adicionar borda ou sombra se quiser destacar */
-    /* border: 1px solid var(--color-gray-light); */
-    /* box-shadow: 0 2px 8px rgba(0,0,0,0.05); */
-  }
-  
-  .back-button {
-      background: none;
-      border: none;
-      color: var(--color-green-ipb);
-      font-size: 1rem;
-      cursor: pointer;
-      margin-bottom: 1.5rem;
-      padding: 0.5rem 0;
-      display: inline-flex;
-      align-items: center;
-  }
-  .back-button:hover {
-      text-decoration: underline;
-  }
-  
-  .content-meta {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem; /* Espaçamento vertical e horizontal entre itens */
-    color: var(--color-gray-medium);
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--color-gray-light);
-    padding-bottom: 1rem;
-  }
-  
-  .content-type-badge {
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-  
-  .meta-item {
-      /* Estilo específico se necessário */
-  }
-  
-  .content-title {
-    font-size: 2.2rem; /* Tamanho grande para o título */
-    margin-top: 0.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--color-gray-dark); /* Título principal em cinza escuro */
-    line-height: 1.3;
-  }
-  
-  .audio-player-placeholder {
-      background-color: var(--color-gray-light);
-      border: 1px dashed var(--color-gray-medium);
-      color: var(--color-gray-medium);
-      padding: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-      border-radius: 8px;
-  }
-  
-  .content-full-text {
-    line-height: 1.7; /* Boa legibilidade */
-    margin-bottom: 2.5rem;
-    color: var(--color-gray-dark);
-  }
-  
-  /* Estilos básicos para HTML dentro do texto (se usado) */
-  .content-full-text p {
-    margin-bottom: 1em;
-  }
-  .content-full-text strong {
-    font-weight: bold;
-  }
-  .content-full-text em {
-    font-style: italic;
-  }
-  .content-full-text ul,
-  .content-full-text ol {
-    margin-bottom: 1em;
-    padding-left: 30px;
-  }
-   .content-full-text li {
-    margin-bottom: 0.5em;
-  }
-  
-  .content-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-gray-light);
-  }
-  
-  .action-button {
-    padding: 0.7rem 1.5rem;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 1rem;
-    text-align: center;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .action-button:hover {
-    text-decoration: none;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-  .download-button {
-      background-color: var(--color-gray-light);
-      color: var(--color-green-ipb);
-      border: 1px solid var(--color-gray-medium);
-      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .download-button:hover {
-      text-decoration: none;
-      background-color: var(--color-green-ipb);
-      color: var(--color-white);
-      transform: translateY(-2px); /* Leve elevação */
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  
-  .share-buttons-placeholder {
-      color: var(--color-gray-medium);
-      font-style: italic;
-  }
-  
-  /* Responsividade */
-  @media (max-width: 768px) {
-      .content-title {
-          font-size: 1.8rem;
-      }
-       .content-detail-container {
-          margin: 1rem auto;
-          padding: 1rem;
-       }
-  }
-
-  
-
-.share-buttons-container {
-display: flex;
-align-items: center;
-gap: 0.8rem; /* Espaço entre ícones */
-margin-left: auto; /* Empurra para a direita, se o download estiver à esquerda */
-/* Se não houver botão de download, remova margin-left ou ajuste o layout do .content-actions */
-}
-
-.share-label {
-  font-size: 0.9rem;
-  color: var(--color-gray-medium);
-  margin-right: 0.5rem; /* Pequeno espaço antes dos ícones */
-}
-
-/* O react-share já estiliza os ícones, mas você pode querer ajustar */
-.share-buttons-container button { /* Target <button> gerado pelo react-share */
-  transition: opacity 0.2s ease-in-out;
-}
-.share-buttons-container button:hover {
-  opacity: 0.7;
-}
-
-/* Ajuste o .content-actions se necessário */
-.content-actions {
-  /* display: flex; */ /* Já deve estar */
-  justify-content: space-between; /* Se quiser o download à esquerda e share à direita */
-  align-items: center;
-  /* ... */
-}
-
-.fade-in-on-load {
-  animation: fadeIn 0.8s ease-out forwards;
-  opacity: 0; /* Começa invisível */
-}
-@keyframes fadeIn {
-  to { opacity: 1; }
+  max-width: 850px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--color-white);
 }
 
 .back-button {
-  /* ... */
-  display: inline-flex; /* Para alinhar ícone e texto */
+  background: none;
+  border: none;
+  color: var(--color-green-ipb);
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5em; /* Espaço entre ícone e texto */
+  gap: 0.5em;
+}
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.content-meta {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  color: var(--color-gray-medium);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--color-gray-light);
+  padding-bottom: 1rem;
+}
+
+.content-type-badge {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.content-title {
+  font-size: 2.2rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-gray-dark);
+  line-height: 1.3;
+}
+
+.audio-player-placeholder {
+  background-color: var(--color-gray-light);
+  border: 1px dashed var(--color-gray-medium);
+  color: var(--color-gray-medium);
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+}
+
+.content-full-text {
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  color: var(--color-gray-dark);
+}
+.content-full-text p {
+  margin-bottom: 1em;
+}
+.content-full-text strong {
+  font-weight: bold;
+}
+.content-full-text em {
+  font-style: italic;
+}
+.content-full-text ul,
+.content-full-text ol {
+  margin-bottom: 1em;
+  padding-left: 30px;
+}
+.content-full-text li {
+  margin-bottom: 0.5em;
+}
+
+.content-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-gray-light);
+  justify-content: space-between;
+}
+
+.action-button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.action-button:hover {
+  text-decoration: none;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.download-button {
+  background-color: var(--color-gray-light);
+  color: var(--color-green-ipb);
+  border: 1px solid var(--color-gray-medium);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.download-button:hover {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .action-button.download-button .icon-before-text {
   margin-right: 0.5em;
 }
 
+.share-buttons-placeholder {
+  color: var(--color-gray-medium);
+  font-style: italic;
+}
+
+.share-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-left: auto;
+}
+.share-label {
+  font-size: 0.9rem;
+  color: var(--color-gray-medium);
+  margin-right: 0.5rem;
+}
+.share-buttons-container button {
+  transition: opacity 0.2s ease-in-out;
+}
+.share-buttons-container button:hover {
+  opacity: 0.7;
+}
+
 .content-header-wrapper {
   display: flex;
-  flex-wrap: wrap; /* Para telas menores */
-  gap: 1.5rem; /* Espaço entre capa e texto/meta */
-  margin-bottom: 1.5rem; /* Espaço antes do fullText */
-  align-items: flex-start; /* Alinha itens no topo */
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
 }
-
 .book-cover-container {
-  flex-shrink: 0; /* Evita que a imagem encolha demais */
-  /* max-width: 200px; */ /* Ou defina a largura diretamente na imagem */
+  flex-shrink: 0;
 }
-
 .book-cover-image {
-  width: 180px; /* Largura desejada para a capa */
-  height: auto; /* Mantém proporção */
+  width: 180px;
+  height: auto;
   border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   border: 1px solid var(--color-gray-light);
 }
-
 .title-and-meta-container {
-  flex-grow: 1; /* Ocupa o espaço restante */
+  flex-grow: 1;
 }
 
-/* Ajuste no .content-meta e .content-title se necessário para o novo layout */
-.content-meta {
-  /* margin-bottom: 0.5rem; */ /* Pode reduzir ou remover se o título vier logo abaixo */
-  /* border-bottom: none; */ /* Pode remover a borda se o layout ficar melhor */
-  /* padding-bottom: 0.5rem; */
+.fade-in-on-load {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
 }
 
-.content-title {
-  margin-top: 0.3rem; /* Menor margem se a meta estiver acima */
+/* Responsividade */
+@media (max-width: 768px) {
+  .content-title {
+    font-size: 1.8rem;
+  }
+  .content-detail-container {
+    margin: 1rem auto;
+    padding: 1rem;
+  }
 }
-
-
-/* Responsividade para o header do conteúdo */
 @media (max-width: 600px) {
   .content-header-wrapper {
-    flex-direction: column; /* Empilha capa e texto */
-    align-items: center; /* Centraliza itens empilhados */
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
   .book-cover-container {
-    margin-bottom: 1rem; /* Espaço abaixo da capa quando empilhada */
+    margin-bottom: 1rem;
   }
   .title-and-meta-container {
-    width: 100%; /* Ocupa toda a largura quando empilhado */
+    width: 100%;
   }
   .content-meta {
-    justify-content: center; /* Centraliza metadados */
+    justify-content: center;
   }
 }

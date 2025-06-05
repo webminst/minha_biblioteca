@@ -1,31 +1,44 @@
-// src/pages/Studies.js
 import React, { useState, useMemo } from 'react';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { studiesData } from '../data/generatedData'; // NOVA LINHA para atualizar os dados
-import './ListPage.css'; // Reutiliza o mesmo CSS de lista
+import { studiesData } from '../data/generatedData';
+import './ListPage.css';
+import { useNavigate, useLocation } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 6; // Defina quantos itens por página
+const ITEMS_PER_PAGE = 6;
 
 const Studies = () => {
-  // --- Estados para os Filtros ---
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const query = new URLSearchParams(location.search);
+  const pageFromUrl = parseInt(query.get("page") || "1", 10);
+
   const [selectedFormat, setSelectedFormat] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
 
-  // --- Estado para a Página Atual ---
-  const [currentPage, setCurrentPage] = useState(1);
+  const goToPage = (pageNumber) => {
+    navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}`);
+  };
 
-  // --- Extrair Opções Únicas ---
-  const uniqueFormats = useMemo(() => {
-    return [...new Set(studiesData.map(s => s.format).filter(Boolean))].sort();
-  }, []);
+  const handleFormatChange = (e) => {
+    setSelectedFormat(e.target.value);
+    navigate(`${location.pathname}?page=1${e.target.value ? `&format=${e.target.value}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}`);
+  };
+  const handleThemeChange = (e) => {
+    setSelectedTheme(e.target.value);
+    navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${e.target.value ? `&theme=${e.target.value}` : ''}`);
+  };
+  const clearFilters = () => {
+    setSelectedFormat('');
+    setSelectedTheme('');
+    navigate(`${location.pathname}?page=1`);
+  };
 
-  const uniqueThemes = useMemo(() => {
-    return [...new Set(studiesData.map(s => s.theme).filter(Boolean))].sort();
-  }, []);
+  const uniqueFormats = useMemo(() => [...new Set(studiesData.map(s => s.format).filter(Boolean))].sort(), []);
+  const uniqueThemes = useMemo(() => [...new Set(studiesData.map(s => s.theme).filter(Boolean))].sort(), []);
 
-  // --- Lógica de Filtragem ---
   const filteredStudies = useMemo(() => {
     return studiesData.filter(study => {
       const formatMatch = !selectedFormat || study.format === selectedFormat;
@@ -34,34 +47,16 @@ const Studies = () => {
     });
   }, [selectedFormat, selectedTheme]);
 
-  // --- Lógica de Paginação ---
   const paginatedStudies = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     return filteredStudies.slice(startIndex, endIndex);
-  }, [filteredStudies, currentPage]);
+  }, [filteredStudies, pageFromUrl]);
 
   const totalPages = Math.ceil(filteredStudies.length / ITEMS_PER_PAGE);
 
-  // --- Handlers para mudança nos selects e Limpar Filtros ---
-  const handleFormatChange = (e) => {
-    setSelectedFormat(e.target.value);
-    setCurrentPage(1); // Reseta para a primeira página
-  };
-  const handleThemeChange = (e) => {
-    setSelectedTheme(e.target.value);
-    setCurrentPage(1); // Reseta para a primeira página
-  };
-  const clearFilters = () => {
-    setSelectedFormat('');
-    setSelectedTheme('');
-    setCurrentPage(1); // Reseta para a primeira página
-  };
-
-  // --- Handlers para Paginação ---
-  const goToNextPage = () => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-  const goToPreviousPage = () => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
+  const goToNextPage = () => goToPage(Math.min(pageFromUrl + 1, totalPages));
+  const goToPreviousPage = () => goToPage(Math.max(pageFromUrl - 1, 1));
 
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -77,10 +72,7 @@ const Studies = () => {
       <p className="list-page-description">
         Aprofunde seu conhecimento da Palavra com estudos temáticos, panoramas bíblicos e devocionais.
       </p>
-
-      {/* --- Controles de Filtro --- */}
       <div className="filter-controls">
-        {/* Filtro por Formato */}
         <div className="filter-group">
           <label htmlFor="format-filter">Formato:</label>
           <select id="format-filter" value={selectedFormat} onChange={handleFormatChange}>
@@ -90,8 +82,6 @@ const Studies = () => {
             ))}
           </select>
         </div>
-
-        {/* Filtro por Tema */}
         <div className="filter-group">
           <label htmlFor="theme-filter">Tema:</label>
           <select id="theme-filter" value={selectedTheme} onChange={handleThemeChange}>
@@ -101,17 +91,12 @@ const Studies = () => {
             ))}
           </select>
         </div>
-
-        {/* Botão Limpar Filtros */}
         {(selectedFormat || selectedTheme) && (
           <button onClick={clearFilters} className="clear-filter-button">
             Limpar Filtros
           </button>
         )}
       </div>
-      {/* --- Fim dos Filtros --- */}
-
-      {/* --- Lista de Conteúdo --- */}
       <div className="content-list">
         {paginatedStudies.length > 0 ? (
           paginatedStudies.map((study) => (
@@ -129,29 +114,26 @@ const Studies = () => {
           <p>Nenhum estudo encontrado com os filtros selecionados.</p>
         )}
       </div>
-
-      {/* --- Controles de Paginação --- */}
       {totalPages > 1 && (
         <div className="pagination-controls">
-          <button onClick={goToPreviousPage} disabled={currentPage === 1} className="pagination-button">
+          <button onClick={goToPreviousPage} disabled={pageFromUrl === 1} className="pagination-button">
             <FontAwesomeIcon icon={faChevronLeft} /> Anterior
           </button>
           {getPageNumbers().map(number => (
             <button
               key={number}
               onClick={() => goToPage(number)}
-              className={`pagination-button page-number ${currentPage === number ? 'active' : ''}`}
-              disabled={currentPage === number}
+              className={`pagination-button page-number ${pageFromUrl === number ? 'active' : ''}`}
+              disabled={pageFromUrl === number}
             >
               {number}
             </button>
           ))}
-          <button onClick={goToNextPage} disabled={currentPage === totalPages} className="pagination-button">
+          <button onClick={goToNextPage} disabled={pageFromUrl === totalPages} className="pagination-button">
             Próxima <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
       )}
-      {/* --- Fim dos Controles de Paginação --- */}
     </div>
   );
 };

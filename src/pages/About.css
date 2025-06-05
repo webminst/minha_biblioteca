@@ -1,128 +1,119 @@
 /* src/pages/About.css */
 
 .about-container {
-    max-width: 900px; /* Limita a largura para melhor leitura */
-    margin: 0 auto; /* Centraliza o container */
-    padding: 0.4rem;
-  }
-  
-  .about-container h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-      color: var(--color-green-ipb); /* Garante a cor do título principal */
-  }
-  
-  .about-intro {
-    display: flex;
-    flex-wrap: wrap; /* Permite quebrar em telas menores */
-    align-items: flex-start; /* Alinha itens no topo */
-    gap: 2rem; /* Espaço entre foto e texto */
-    margin-bottom: 3rem;
-    background-color: var(--color-gray-light); /* Fundo levemente destacado */
-    padding: 1rem;
-    border-radius: 8px;
-  }
-  
-  .about-photo {
-    width: 200px; /* Tamanho da foto */
-    height: 200px;
-    border-radius: 50%; /* Foto redonda */
-    object-fit: cover; /* Garante que a foto cubra a área sem distorcer */
-    border: 4px solid var(--color-white); /* Borda branca */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .intro-text {
-    flex: 1; /* Ocupa o espaço restante */
-    min-width: 300px; /* Largura mínima antes de quebrar */
-  }
-  
-  .intro-text {
-    flex: 1;
-    min-width: 0;         /* Permite encolher em telas pequenas */
-    max-width: 100%;      /* Garante que não ultrapasse o container */
-    word-break: break-word;
-    overflow-wrap: break-word;
-    box-sizing: border-box;
-    line-height: 1.7;
-  }
-  
-  .about-intro {
+  max-width: 900px; /* Limita a largura para melhor leitura */
+  margin: 0 auto; /* Centraliza o container */
+  padding: 0.4rem;
+}
+
+.about-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--color-green-ipb); /* Garante a cor do título principal */
+}
+
+.about-intro {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar em telas menores */
+  align-items: flex-start; /* Alinha itens no topo */
+  gap: 2rem; /* Espaço entre foto e texto */
+  margin-bottom: 3rem;
+  background-color: var(--color-gray-light); /* Fundo levemente destacado */
   padding: 1rem 0.5rem;
-  }
-  
-  .about-section {
-    margin-bottom: 2.5rem;
-  }
-  
-  .about-section h2 {
-    border-bottom: 2px solid var(--color-green-ipb); /* Linha abaixo dos subtítulos */
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    color: var(--color-gray-dark); /* Subtítulos em cinza escuro */
-    font-size: 1.6rem;
-  }
-  
-  .about-section p,
-  .about-section ul {
-    color: var(--color-gray-dark);
-    line-height: 1.7;
-    margin-bottom: 1em;
-  }
-   .about-section ul {
-      padding-left: 20px; /* Indentação padrão para listas */
-   }
-   .about-section li {
-      margin-bottom: 0.5em;
-      line-height: 1.7;
-   }
-  
-  
-  /* Estilos para a galeria opcional */
-  .about-gallery h2 {
-     border-bottom: 2px solid var(--color-green-ipb);
-     padding-bottom: 0.5rem;
-     margin-bottom: 1rem;
-     color: var(--color-gray-dark);
-     font-size: 1.6rem;
-  }
-  
-  .gallery-images {
-     display: flex;
-     flex-wrap: wrap;
-     gap: 1rem;
-  }
-  
-  .gallery-images img {
-     max-width: 200px;
-     height: auto;
-     border-radius: 4px;
-     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  /* Media Query para telas menores (exemplo) */
-  @media (max-width: 600px) {
-    .about-intro {
-      flex-direction: column; /* Empilha foto e texto */
-      align-items: center; /* Centraliza itens empilhados */
-      text-align: center;
-    }
-  
-    .about-photo {
-      width: 150px;
-      height: 150px;
-      margin-bottom: 1rem; /* Espaço abaixo da foto quando empilhado */
-    }
-  
-     .about-container h1 {
-          font-size: 1.8rem;
-     }
-     .about-section h2 {
-          font-size: 1.4rem;
-     }
+  border-radius: 8px;
+}
+
+.about-photo {
+  width: 200px; /* Tamanho da foto */
+  height: 200px;
+  border-radius: 50%; /* Foto redonda */
+  object-fit: cover; /* Garante que a foto cubra a área sem distorcer */
+  border: 4px solid var(--color-white); /* Borda branca */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.intro-text {
+  flex: 1; /* Ocupa o espaço restante */
+  min-width: 0;         /* Permite encolher em telas pequenas */
+  max-width: 100%;      /* Garante que não ultrapasse o container */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  line-height: 1.7;
+}
+
+.about-section {
+  margin-bottom: 2.5rem;
+}
+
+.about-section h2 {
+  border-bottom: 2px solid var(--color-green-ipb); /* Linha abaixo dos subtítulos */
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-gray-dark); /* Subtítulos em cinza escuro */
+  font-size: 1.6rem;
+}
+
+.about-section p,
+.about-section ul {
+  color: var(--color-gray-dark);
+  line-height: 1.7;
+  margin-bottom: 1em;
+}
+.about-section ul {
+  padding-left: 20px; /* Indentação padrão para listas */
+}
+.about-section li {
+  margin-bottom: 0.5em;
+  line-height: 1.7;
+}
+
+/* Estilos para a galeria opcional */
+.about-gallery h2 {
+  border-bottom: 2px solid var(--color-green-ipb);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-gray-dark);
+  font-size: 1.6rem;
+}
+
+.gallery-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.gallery-images img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Media Query para telas menores (exemplo) */
+@media (max-width: 600px) {
+  .about-intro {
+    flex-direction: column; /* Empilha foto e texto */
+    align-items: center; /* Centraliza itens empilhados */
+    text-align: center;
   }
 
-  .fade-in-on-load {
+  .about-photo {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 1rem; /* Espaço abaixo da foto quando empilhado */
+  }
+
+  .about-container h1 {
+    font-size: 1.8rem;
+  }
+  .about-section h2,
+  .about-gallery h2 {
+    font-size: 1.4rem;
+  }
+}
+
+.fade-in-on-load {
   animation: fadeIn 0.8s ease-out forwards;
   opacity: 0; /* Começa invisível */
 }

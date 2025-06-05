@@ -1,159 +1,155 @@
 /* src/pages/Contact.css */
 
 .contact-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem 2rem;
-  }
-  
-  .contact-container h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .contact-info {
-      text-align: center;
-      margin-bottom: 2rem;
-      background-color: var(--color-gray-light);
-      padding: 1.5rem;
-      border-radius: 8px;
-  }
-  
-  .contact-info h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      color: var(--color-gray-dark);
-  }
-  
-  .contact-info p {
-      line-height: 1.6;
-  }
-  .contact-info a {
-      font-weight: 500;
-  }
-  
-  .section-divider {
-      border: none;
-      border-top: 1px solid var(--color-gray-light);
-      margin: 3rem 0;
-  }
-  
-  .form-section {
-    margin-bottom: 2rem;
-  }
-  
-  .form-section h2 {
-    margin-bottom: 1.5rem;
-    color: var(--color-gray-dark);
-    text-align: center;
-  }
-  
-  .prayer-note {
-      text-align: center;
-      font-style: italic;
-      color: var(--color-gray-medium);
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--color-gray-dark);
-  }
-  
-  .form-input,
-  .form-textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--color-gray-medium);
-    border-radius: 5px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border-color 0.3s ease;
-  }
-  
-  .form-input:focus,
-  .form-textarea:focus {
-    outline: none;
-    border-color: var(--color-green-ipb);
-    box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2); /* Leve brilho verde */
-  }
-  
-  .form-textarea {
-    resize: vertical; /* Permite redimensionar verticalmente */
-  }
-  
-  .form-button {
-    display: block; /* Faz o botão ocupar a largura */
-    width: 100%;   /* Botão de largura total */
-    /* Ou use: display: inline-block; width: auto; para botão de tamanho automático */
-    /* Se usar inline-block, adicione margin: 0 auto; no botão ou centralize o container pai */
-  
-    padding: 0.9rem 2rem;
-    background-color: var(--color-gray-light);
-    color: var(--color-green-ipb);
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center; /* Garante texto centralizado */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .form-button:hover:not(:disabled) {
-    text-decoration: none;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  
-  .form-button:disabled {
-    background-color: var(--color-gray-medium);
-    cursor: not-allowed;
-  }
-  
-  /* Mensagens de Status */
-  .form-status {
-    margin-top: 1rem;
-    padding: 0.8rem;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: 500;
-  }
-  
-  .form-status.success {
-    background-color: #d4edda; /* Verde claro */
-    color: #155724; /* Verde escuro */
-    border: 1px solid #c3e6cb;
-  }
-  
-  .form-status.error {
-    background-color: #f8d7da; /* Vermelho claro */
-    color: #721c24; /* Vermelho escuro */
-    border: 1px solid #f5c6cb;
-  }
-  
-  /* Responsividade */
-  @media (max-width: 600px) {
-      .contact-container {
-          padding: 1rem;
-      }
-       .contact-info, .form-section {
-          padding: 1rem;
-       }
-  }
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+}
 
-  .fade-in-on-load {
+.contact-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-info {
+  text-align: center;
+  margin-bottom: 2rem;
+  background-color: var(--color-gray-light);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.contact-info h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--color-gray-dark);
+}
+
+.contact-info p {
+  line-height: 1.6;
+}
+
+.contact-info a {
+  font-weight: 500;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--color-gray-light);
+  margin: 3rem 0;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section h2 {
+  margin-bottom: 1.5rem;
+  color: var(--color-gray-dark);
+  text-align: center;
+}
+
+.prayer-note {
+  text-align: center;
+  font-style: italic;
+  color: var(--color-gray-medium);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-gray-dark);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-green-ipb);
+  box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2);
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-button {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 2rem;
+  background-color: var(--color-gray-light);
+  color: var(--color-green-ipb);
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-button:hover:not(:disabled) {
+  text-decoration: none;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.form-button:disabled {
+  background-color: var(--color-gray-medium);
+  cursor: not-allowed;
+}
+
+.form-status {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.form-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.form-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 600px) {
+  .contact-container {
+    padding: 1rem;
+  }
+  .contact-info, .form-section {
+    padding: 1rem;
+  }
+}
+
+.fade-in-on-load {
   animation: fadeIn 0.8s ease-out forwards;
-  opacity: 0; /* Começa invisível */
+  opacity: 0;
 }
 @keyframes fadeIn {
   to { opacity: 1; }

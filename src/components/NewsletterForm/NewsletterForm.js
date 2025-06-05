@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import jsonp from 'jsonp'; // Para fazer a requisição JSONP ao Mailchimp
+import jsonp from 'jsonp';
 import './NewsletterForm.css';
+
+// Todas as importações acima são utilizadas no componente NewsletterForm.
 
 const NewsletterForm = () => {
   const [email, setEmail] = useState('');
@@ -22,8 +24,6 @@ const NewsletterForm = () => {
     // Remova o "/post-json" e adicione "&c=?" no final para JSONP
     const mailchimpUrl = 'https://ipb.us17.list-manage.com/subscribe/post?u=1ba241b229abed33a57cc2fe2&amp;id=54e21d70a6&amp;f_id=00a846e0f0'.replace('/post?', '/post-json?');
 
-    // Os nomes dos campos (ex: 'EMAIL' para Mailchimp) devem corresponder ao seu formulário Mailchimp
-    // O campo 'b_SEU_USER_ID_SEU_LIST_ID' é um campo oculto anti-spam do Mailchimp, não é necessário aqui com JSONP
     jsonp(`${mailchimpUrl}&EMAIL=${encodeURIComponent(email)}`, { param: 'c' }, (err, data) => {
       if (err) {
         setStatus('error');
@@ -31,14 +31,12 @@ const NewsletterForm = () => {
         console.error("Mailchimp error:", err);
       } else if (data.result !== 'success') {
         setStatus('error');
-        // A mensagem do Mailchimp pode ser muito técnica, então use uma genérica ou traduza.
-        // Ex: data.msg pode ser "user@example.com is already subscribed to list..."
         setMessage(data.msg.includes("already subscribed") ? "Este e-mail já está inscrito!" : "Ocorreu um erro. Verifique seu e-mail.");
         console.error("Mailchimp result error:", data.msg);
       } else {
         setStatus('success');
         setMessage('Inscrição realizada com sucesso! Verifique seu e-mail para confirmar.');
-        setEmail(''); // Limpa o campo
+        setEmail('');
       }
     });
   };

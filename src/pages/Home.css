@@ -1,230 +1,227 @@
 /* src/pages/Home.css */
 
 .home-container {
-    /* Sem max-width fixo aqui, deixa as seções controlarem */
-  }
-  
-  /* --- Hero Section --- */
-  .hero-section {
-    background-color: var(--color-gray-medium); /* Fundo cinza claro */
-    padding: 2rem 2rem; /* Espaçamento generoso */
-    margin-bottom: 3rem; /* Espaço antes da próxima seção */
-    border-radius: 0 0 15px 15px; /* Cantos inferiores arredondados */
-  }
-  
-  .hero-content {
-    max-width: 1100px; /* Limita largura do conteúdo hero */
-    margin: 0 auto; /* Centraliza */
-    display: flex;
-    align-items: center;
-    gap: 3rem; /* Espaço entre texto e imagem */
-    flex-wrap: wrap; /* Quebra em telas menores */
-  }
-  
-  .hero-text {
-    flex: 1; /* Ocupa espaço disponível */
-    min-width: 300px; /* Largura mínima antes de quebrar */
-  }
-  
-  .hero-text h1 {
-    font-size: 2.8rem;
-    color: var(--color-green-ipb);
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.4rem;
-    color: var(--color-gray-dark);
-    margin-bottom: 1.5rem;
-    font-weight: 400; /* Fonte mais leve */
-  }
-  
-   .hero-text p {
-     line-height: 1.7;
-     margin-bottom: 1.5rem;
-   }
-  
-  .hero-image-container {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-  }
-  
-  .hero-photo {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid var(--color-white);
-    box-shadow: 0 6px 15px rgba(0, 106, 78, 0.2); /* Sombra com tom verde */
-  }
-  
-  .hero-button {
-    display: inline-block;
-    background-color: var(--color-gray-light);
-    color: var(--color-green-ipb);
-    padding: 0.8rem 1.8rem;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .hero-button:hover {
-    text-decoration: none;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  
-  /* --- Featured Section --- */
-  .featured-section {
-    max-width: 1200px;
-    margin: 3rem auto; /* Centraliza e adiciona margem vertical */
-    padding: 0 2rem; /* Padding lateral */
-  }
-  
-  .featured-section h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    color: var(--color-gray-dark);
-  }
-  
-  /* Reutiliza o grid da ListPage */
-  .featured-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Ajuste minmax se necessário */
-    gap: 2rem;
-  }
-  .featured-list .content-card {
-      margin-bottom: 0; /* Remove margem padrão do card */
-  }
-  
-  
-  /* --- CTA Section --- */
-  .cta-section {
-    background-color: var(--color-green-ipb); /* Fundo verde */
-    color: var(--color-white); /* Texto branco */
-    text-align: center;
-    padding: 3rem 2rem;
-    margin-top: 3rem; /* Espaço acima */
-  }
-  
-  .cta-section h2 {
-    color: var(--color-white); /* Título branco */
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .cta-section p {
-      margin-bottom: 2rem;
-      opacity: 0.9; /* Leve transparência */
-  }
-  
-  .cta-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem; /* Espaço entre botões */
-    flex-wrap: wrap; /* Quebra em telas menores */
-  }
-  
-  .cta-button {
-    background-color: var(--color-gray-light);
-    color: var(--color-green-ipb);
-    padding: 0.8rem 1.8rem;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    border: 2px solid var(--color-white); /* Borda sólida */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .cta-button:hover {
-    text-decoration: none;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  
-   /* --- Agenda Widget Section (Opcional) --- */
-   .agenda-widget-section {
-      max-width: 1100px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: var(--color-gray-light);
-      border-radius: 8px;
-   }
-    .agenda-widget-section h2 {
-        text-align: center;
-        margin-top: 0;
-        margin-bottom: 1rem;
-        color: var(--color-gray-dark);
-    }
-     .agenda-widget-section p {
-          text-align: center;
-          color: var(--color-gray-medium);
-          margin-bottom: 1.5rem;
-     }
-      .agenda-widget-section ul {
-          list-style: none;
-          padding: 0;
-          margin-bottom: 1.5rem;
-      }
-      .agenda-widget-section li {
-          margin-bottom: 0.5rem;
-          text-align: center;
-      }
-      .widget-link {
-          display: block;
-          text-align: center;
-          font-weight: bold;
-          color: var(--color-green-ipb);
-      }
-       .widget-link:hover {
-           text-decoration: underline;
-       }
-  
-  /* --- Responsividade --- */
-  @media (max-width: 768px) {
-    .hero-content {
-      flex-direction: column-reverse;
-      text-align: center;
-      max-width: 100%;      /* Garante que não ultrapasse o container */
-      padding: 0;           /* Remove padding lateral extra */
-      box-sizing: border-box;
-    }
-    .hero-text {
-      min-width: 0;         /* Permite encolher em telas pequenas */
-      width: 100%;          /* Ocupa toda a largura disponível */
-      margin: 0 auto;       /* Centraliza */
-      box-sizing: border-box;
-      padding: 0 0.5rem;      /* Espaço lateral para não colar na borda */
-    }
-    .hero-subtitle {
-      font-size: 1.2rem;
-    }
-    .hero-photo {
-      width: 180px;
-      height: 180px;
-      margin-bottom: 1.5rem;
-    } 
-    
-    .featured-section h2, .cta-section h2 {
-        font-size: 1.8rem;
-    }
-    .featured-list {
-          grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
-    }
-  }
+  /* Deixe vazio se não houver estilos específicos */
+}
 
-  .fade-in-on-load {
+/* --- Hero Section --- */
+.hero-section {
+  background-color: var(--color-gray-medium);
+  padding: 2rem 2rem;
+  margin-bottom: 3rem;
+  border-radius: 0 0 15px 15px;
+}
+
+.hero-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.hero-text h1 {
+  font-size: 2.8rem;
+  color: var(--color-green-ipb);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.4rem;
+  color: var(--color-gray-dark);
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.hero-text p {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.hero-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-photo {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid var(--color-white);
+  box-shadow: 0 6px 15px rgba(0, 106, 78, 0.2);
+}
+
+.hero-button {
+  display: inline-block;
+  background-color: var(--color-gray-light);
+  color: var(--color-green-ipb);
+  padding: 0.8rem 1.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-button:hover {
+  text-decoration: none;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* --- Featured Section --- */
+.featured-section {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.featured-section h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: var(--color-gray-dark);
+}
+
+.featured-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+.featured-list .content-card {
+  margin-bottom: 0;
+}
+
+/* --- CTA Section --- */
+.cta-section {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  text-align: center;
+  padding: 3rem 2rem;
+  margin-top: 3rem;
+}
+
+.cta-section h2 {
+  color: var(--color-white);
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cta-button {
+  background-color: var(--color-gray-light);
+  color: var(--color-green-ipb);
+  padding: 0.8rem 1.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  border: 2px solid var(--color-white);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button:hover {
+  text-decoration: none;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* --- Agenda Widget Section (Opcional) --- */
+.agenda-widget-section {
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: var(--color-gray-light);
+  border-radius: 8px;
+}
+.agenda-widget-section h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--color-gray-dark);
+}
+.agenda-widget-section p {
+  text-align: center;
+  color: var(--color-gray-medium);
+  margin-bottom: 1.5rem;
+}
+.agenda-widget-section ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+.agenda-widget-section li {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.widget-link {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  color: var(--color-green-ipb);
+}
+.widget-link:hover {
+  text-decoration: underline;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column-reverse;
+    text-align: center;
+    max-width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .hero-text {
+    min-width: 0;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0 0.5rem;
+  }
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  .hero-photo {
+    width: 180px;
+    height: 180px;
+    margin-bottom: 1.5rem;
+  }
+  .featured-section h2, .cta-section h2 {
+    font-size: 1.8rem;
+  }
+  .featured-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fade-in-on-load {
   animation: fadeIn 0.8s ease-out forwards;
-  opacity: 0; /* Começa invisível */
+  opacity: 0;
 }
 @keyframes fadeIn {
   to { opacity: 1; }

@@ -11,11 +11,12 @@ import Agenda from './pages/Agenda';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
-import SupportPage from './pages/SupportPage'; // Importar
-// Importar os novos componentes de detalhe
-import ContentDetail from './pages/ContentDetail'; // Criaremos este componente genérico
-import SearchResults from './pages/SearchResults'; // Importa a nova página
+import SupportPage from './pages/SupportPage';
+import ContentDetail from './pages/ContentDetail';
+import SearchResults from './pages/SearchResults';
 import './App.css';
+
+// Todas as importações acima são utilizadas no componente App.
 
 function App() {
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Para o link "Leia Mais"
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf, faArrowRight } from '@fortawesome/free-solid-svg-icons'; // faArrowRight para "Ver Detalhes"
+import { faFilePdf, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import './ContentCard.css';
 
 // Props esperadas: title, type (Sermão, Estudo, Livro), date, reference, description, detailsUrl, pdfUrl (opcional)
@@ -13,12 +13,11 @@ const ContentCard = ({ title, type, date, reference, description, detailsUrl, pd
           <img src={coverImageUrl} alt={`Capa de ${title}`} className="card-cover-image" />
         </Link>
       )}
-      <div className="card-content-wrapper"> {/* Wrapper para alinhar texto se houver capa */}
+      <div className="card-content-wrapper">
         <span className="card-type">{type}</span>
         <h3 className="card-title">
           <Link to={detailsUrl}>{title}</Link>
         </h3>
-        {/* ... (meta, description, actions) ... */}
         <div className="card-meta">
           {date && <span>{date}</span>}
           {reference && <span> | {reference}</span>}

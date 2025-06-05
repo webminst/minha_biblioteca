@@ -1,91 +1,90 @@
 /* src/components/NewsletterForm/NewsletterForm.css */
 .newsletter-form-container {
-    background-color: var(--color-gray-light);
-    padding: 2rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-top: 2rem; /* Ou conforme necessidade */
-  }
-  
-  .newsletter-form-container h3 {
-    color: var(--color-gray-dark);
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1.5rem;
-  }
-  
-  .newsletter-form-container p {
-    color: var(--color-gray-medium);
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-  }
-  
-  .newsletter-form {
-    display: flex;
-    gap: 0.5rem; /* Espaço entre input e botão */
-    max-width: 450px; /* Limita largura do form */
-    margin: 0 auto; /* Centraliza */
-    justify-content: center; /* Centraliza itens se houver espaço */
-    flex-wrap: wrap; /* Quebra em telas menores */
-  }
-  
-  .newsletter-input {
-    flex-grow: 1; /* Input ocupa espaço disponível */
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--color-gray-medium);
-    border-radius: 5px;
-    font-size: 1rem;
-    min-width: 200px; /* Largura mínima */
-  }
-  .newsletter-input:focus {
-    outline: none;
-    border-color: var(--color-green-ipb);
-    box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2);
-  }
-  
-  .newsletter-button {
-    padding: 0.8rem 1.5rem;
-    background-color: var(--color-white);
-    color: var(--color-green-ipb);
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: var(--color-gray-light);
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 2rem;
 }
-  
-  .newsletter-button:hover:not(:disabled) {
-    background-color: #004a38; /* Verde mais escuro */
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  .newsletter-button:disabled {
-    background-color: var(--color-gray-medium);
-    cursor: not-allowed;
-  }
-  
-  .newsletter-message {
-    margin-top: 1rem;
-    font-weight: 500;
-  }
-  .newsletter-message.success {
-    color: #155724; /* Verde escuro (como no form de contato) */
-  }
-  .newsletter-message.error {
-    color: #721c24; /* Vermelho escuro (como no form de contato) */
-  }
-  
+
+.newsletter-form-container h3 {
+  color: var(--color-gray-dark);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.newsletter-form-container p {
+  color: var(--color-gray-medium);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 450px;
+  margin: 0 auto;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.newsletter-input {
+  flex-grow: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: 5px;
+  font-size: 1rem;
+  min-width: 200px;
+}
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--color-green-ipb);
+  box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2);
+}
+
+.newsletter-button {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--color-white);
+  color: var(--color-green-ipb);
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.newsletter-button:hover:not(:disabled) {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.newsletter-button:disabled {
+  background-color: var(--color-gray-medium);
+  cursor: not-allowed;
+}
+
+.newsletter-message {
+  margin-top: 1rem;
+  font-weight: 500;
+}
+.newsletter-message.success {
+  color: #155724;
+}
+.newsletter-message.error {
+  color: #721c24;
+}
+
 @media (max-width: 500px) {
-    .newsletter-form {
-        flex-direction: column; /* Empilha input e botão */
-    }
-    .newsletter-input, .newsletter-button {
-        width: auto;           /* Altere de 100% para auto */
-        max-width: 350px;      /* Limite a largura máxima */
-        min-width: 120px;      /* Opcional: largura mínima */
-        margin: 0 auto;        /* Centraliza o input */
-    }
+  .newsletter-form {
+    flex-direction: column;
+  }
+  .newsletter-input, .newsletter-button {
+    width: auto;
+    max-width: 350px;
+    min-width: 120px;
+    margin: 0 auto;
+  }
 }

@@ -1,11 +1,11 @@
 .layout-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Garante que o layout ocupe toda a altura da tela */
-  }
-  
-  .main-content {
-    flex-grow: 1; /* Faz o conteúdo principal ocupar o espaço restante */
-    padding: 2rem; /* Espaçamento interno */
-    background-color: #FFFFFF; /* Fundo branco padrão */
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: #FFFFFF;
+}

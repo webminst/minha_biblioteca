@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import './Contact.css'; // Criaremos este CSS
+import './Contact.css';
 
+// Todas as importações acima são utilizadas no componente Contact.
+// --- Estados para o Formulário de Contato ---
+// login?: webgigio@gmail.com - Senha: Giggio57#
 const Contact = () => {
   // --- Estados para o Formulário de Contato ---
-  // login?: webgigio@gmail.com - Senha: Giggio57#
   const [contactFormData, setContactFormData] = useState({
     name: '',
     email: '',
@@ -20,7 +22,7 @@ const Contact = () => {
 
   // --- Estados para o Formulário de Pedido de Oração ---
   const [prayerFormData, setPrayerFormData] = useState({
-    name: '', // Nome opcional
+    name: '',
     request: '',
   });
   const [prayerStatus, setPrayerStatus] = useState({
@@ -57,7 +59,7 @@ const Contact = () => {
 
       if (response.ok) {
         setContactStatus({ submitting: false, succeeded: true, error: null });
-        setContactFormData({ name: '', email: '', subject: '', message: '' }); // Limpa o formulário
+        setContactFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         const data = await response.json();
         const errorMessage = data.errors?.map((err) => err.message).join(', ') || 'Ocorreu um erro ao enviar.';
@@ -69,9 +71,8 @@ const Contact = () => {
     }
   };
 
-
   // --- Handlers para o Formulário de Pedido de Oração ---
-   const handlePrayerChange = (e) => {
+  const handlePrayerChange = (e) => {
     const { name, value } = e.target;
     setPrayerFormData((prevData) => ({
       ...prevData,
@@ -93,16 +94,15 @@ const Contact = () => {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        // Enviar 'Anônimo' se o nome estiver vazio
         body: JSON.stringify({
-            ...prayerFormData,
-            name: prayerFormData.name || 'Anônimo'
+          ...prayerFormData,
+          name: prayerFormData.name || 'Anônimo'
         }),
       });
 
       if (response.ok) {
         setPrayerStatus({ submitting: false, succeeded: true, error: null });
-        setPrayerFormData({ name: '', request: '' }); // Limpa o formulário
+        setPrayerFormData({ name: '', request: '' });
       } else {
         const data = await response.json();
         const errorMessage = data.errors?.map((err) => err.message).join(', ') || 'Ocorreu um erro ao enviar.';
@@ -114,7 +114,6 @@ const Contact = () => {
     }
   };
 
-
   return (
     <div className="contact-container">
       <h1>Contato</h1>
@@ -123,9 +122,8 @@ const Contact = () => {
         <h2>Informações</h2>
         <p>
           Para entrar em contato diretamente, envie um e-mail para: <br />
-          <a href="mailto:webminst@hotmail.com">webminst@hotmail.com</a> {/* Substitua pelo seu e-mail */}
+          <a href="mailto:webminst@hotmail.com">webminst@hotmail.com</a>
         </p>
-        {/* Adicionar outras infos se necessário (Telefone da secretaria da igreja, etc.) */}
       </section>
 
       <hr className="section-divider" />
@@ -197,11 +195,11 @@ const Contact = () => {
 
           <button type="submit" className="form-button" disabled={contactStatus.submitting}>
             {contactStatus.submitting ? 'Enviando...' : (
-                <>
+              <>
                 Enviar Mensagem <FontAwesomeIcon icon={faPaperPlane} className="icon-after-text" />
-                </>
+              </>
             )}
-            </button>
+          </button>
         </form>
       </section>
 
@@ -215,47 +213,47 @@ const Contact = () => {
           Deixar o nome é opcional.
         </p>
         <form onSubmit={handlePrayerSubmit}>
-            <div className="form-group">
-                <label htmlFor="prayer-name" className="form-label">Nome (Opcional):</label>
-                <input
-                type="text"
-                id="prayer-name"
-                name="name"
-                className="form-input"
-                value={prayerFormData.name}
-                onChange={handlePrayerChange}
-                disabled={prayerStatus.submitting}
-                />
-            </div>
-            <div className="form-group">
-                <label htmlFor="prayer-request" className="form-label">Seu Pedido:</label>
-                <textarea
-                id="prayer-request"
-                name="request"
-                className="form-textarea"
-                rows="5"
-                value={prayerFormData.request}
-                onChange={handlePrayerChange}
-                required
-                disabled={prayerStatus.submitting}
-                ></textarea>
-            </div>
+          <div className="form-group">
+            <label htmlFor="prayer-name" className="form-label">Nome (Opcional):</label>
+            <input
+              type="text"
+              id="prayer-name"
+              name="name"
+              className="form-input"
+              value={prayerFormData.name}
+              onChange={handlePrayerChange}
+              disabled={prayerStatus.submitting}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="prayer-request" className="form-label">Seu Pedido:</label>
+            <textarea
+              id="prayer-request"
+              name="request"
+              className="form-textarea"
+              rows="5"
+              value={prayerFormData.request}
+              onChange={handlePrayerChange}
+              required
+              disabled={prayerStatus.submitting}
+            ></textarea>
+          </div>
 
-            {/* --- Mensagens de Status (Oração) --- */}
-            {prayerStatus.succeeded && (
-                <p className="form-status success">Pedido de oração enviado com sucesso.</p>
-            )}
-            {prayerStatus.error && (
-                <p className="form-status error">Erro: {prayerStatus.error}</p>
-            )}
+          {/* --- Mensagens de Status (Oração) --- */}
+          {prayerStatus.succeeded && (
+            <p className="form-status success">Pedido de oração enviado com sucesso.</p>
+          )}
+          {prayerStatus.error && (
+            <p className="form-status error">Erro: {prayerStatus.error}</p>
+          )}
 
-            <button type="submit" className="form-button" disabled={prayerStatus.submitting}>
-                 {prayerStatus.submitting ? 'Enviando...' : (
-                    <>
-                    Enviar Pedido <FontAwesomeIcon icon={faPaperPlane} className="icon-after-text" />
-                    </>
-                 )}
-            </button>
+          <button type="submit" className="form-button" disabled={prayerStatus.submitting}>
+            {prayerStatus.submitting ? 'Enviando...' : (
+              <>
+                Enviar Pedido <FontAwesomeIcon icon={faPaperPlane} className="icon-after-text" />
+              </>
+            )}
+          </button>
         </form>
       </section>
     </div>

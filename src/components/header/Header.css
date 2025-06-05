@@ -8,20 +8,19 @@
   background-color: var(--color-white);
   border-bottom: 2px solid var(--color-gray-light);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative; /* Para posicionamento do menu móvel */
-  z-index: 1000; /* Para o header ficar sobre outros elementos */
+  position: relative;
+  z-index: 1000;
 }
 
-/* --- Botão Hambúrguer --- */
+/* Botão Hambúrguer */
 .mobile-menu-toggle {
-  display: none; /* Escondido por padrão em telas grandes */
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  z-index: 1001; /* Acima do menu móvel para poder fechar */
+  z-index: 1001;
 }
-
 .mobile-menu-toggle .bar {
   display: block;
   width: 25px;
@@ -31,7 +30,7 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* --- Navegação Principal --- */
+/* Navegação Principal */
 .main-nav ul {
   list-style: none;
   padding: 0;
@@ -39,7 +38,6 @@
   display: flex;
   gap: 1.5rem;
 }
-
 .main-nav ul li a {
   color: var(--color-green-ipb);
   font-weight: 500;
@@ -48,35 +46,36 @@
   border-bottom: 2px solid transparent;
   transition: border-color 0.3s ease, color 0.3s ease;
 }
-
 .main-nav ul li a:hover,
 .main-nav ul li a.active {
   color: var(--color-gray-dark);
   border-bottom-color: var(--color-green-ipb);
 }
 
-/* Formulário de Busca para Desktop (escondido em mobile por padrão com .desktop-search) */
+/* Busca Desktop */
 .search-form.desktop-search {
-  display: flex; /* Visível em desktop */
+  display: flex;
   align-items: center;
   border: 1px solid var(--color-gray-medium);
   border-radius: 20px;
   padding: 0.2rem 0.2rem 0.2rem 0.8rem;
   background-color: var(--color-white);
 }
+
+/* Busca Mobile */
 .search-form-mobile {
-    display: none; /* Escondido por padrão, aparecerá no menu mobile */
-    margin-top: 1.5rem; /* Espaço acima da busca no menu mobile */
-    padding: 0 1rem; /* Padding lateral dentro do menu mobile */
+  display: none; /* Escondido por padrão, aparecerá no menu mobile */
+  margin-top: 1.5rem; /* Espaço acima da busca no menu mobile */
+  padding: 0 1rem; /* Padding lateral dentro do menu mobile */
 }
 .search-form-mobile .search-input {
-    border: 1px solid var(--color-gray-medium);
-    border-radius: 20px 0 0 20px;
-    padding: 0.6rem 1rem;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: 20px 0 0 20px;
+  padding: 0.6rem 1rem;
 }
 .search-form-mobile .search-button {
-    border-radius: 0 20px 20px 0;
-    height: calc(1.2rem + 1.4rem); /* Ajusta altura para alinhar com input */
+  border-radius: 0 20px 20px 0;
+  height: calc(1.2rem + 1.4rem); /* Ajusta altura para alinhar com input */
 }
 
 

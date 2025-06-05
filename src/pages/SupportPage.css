@@ -9,7 +9,7 @@
 
 .support-container h1 {
   text-align: center;
-  color: var(--color-green-ipb); /* Ou var(--color-gray-dark) */
+  color: var(--color-green-ipb);
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -40,9 +40,8 @@
 .pix-donation-section p:last-child,
 .alternative-support p:last-child,
 .thank-you-note p:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
-
 
 .pix-donation-section h2,
 .alternative-support h2 {
@@ -64,22 +63,22 @@
 .pix-label {
   font-size: 0.9rem;
   color: var(--color-gray-medium);
-  margin-bottom: 0.5rem !important; /* Sobrescreve margem de p */
+  margin-bottom: 0.5rem !important;
 }
 
 .pix-key-value-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap; /* Quebra em telas menores */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .pix-key-value {
   font-size: 1.4rem;
   font-weight: bold;
   color: var(--color-green-ipb);
-  word-break: break-all; /* Para chaves longas não quebrarem o layout */
+  word-break: break-all;
 }
 
 .copy-pix-button {
@@ -96,16 +95,16 @@
   gap: 0.5em;
 }
 .copy-pix-button:hover {
-  background-color: #004a38; /* Verde mais escuro */
+  background-color: #004a38;
 }
 
 .pix-details {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 0.9rem;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
 }
 .pix-details p {
-    margin-bottom: 0.3em !important;
+  margin-bottom: 0.3em !important;
 }
 
 .pix-instructions {
@@ -115,12 +114,12 @@
   text-align: center;
 }
 
-.pix-qrcode { /* Estilo para o QR Code, se adicionar */
-    display: block;
-    margin: 1.5rem auto 0 auto;
-    max-width: 200px;
-    border: 1px solid var(--color-gray-light);
-    padding: 5px;
+.pix-qrcode {
+  display: block;
+  margin: 1.5rem auto 0 auto;
+  max-width: 200px;
+  border: 1px solid var(--color-gray-light);
+  padding: 5px;
 }
 
 .alternative-support ul {
@@ -132,31 +131,31 @@
 }
 
 .thank-you-note {
-    text-align: center;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    border-color: var(--color-green-ipb);
+  text-align: center;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  border-color: var(--color-green-ipb);
 }
 .thank-you-note p em {
-    font-size: 0.9rem;
-    opacity: 0.9;
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 .thank-you-note strong {
-    font-size: 1.1rem;
+  font-size: 1.1rem;
 }
 
 /* Responsividade */
 @media (max-width: 600px) {
-    .support-container {
-        padding: 1rem;
-    }
-    .support-container h1 {
-        font-size: 1.8rem;
-    }
-    .support-intro, .pix-donation-section, .alternative-support, .thank-you-note {
-        padding: 1rem 1.5rem;
-    }
-    .pix-key-value {
-        font-size: 1.2rem;
-    }
+  .support-container {
+    padding: 1rem;
+  }
+  .support-container h1 {
+    font-size: 1.8rem;
+  }
+  .support-intro, .pix-donation-section, .alternative-support, .thank-you-note {
+    padding: 1rem 1.5rem;
+  }
+  .pix-key-value {
+    font-size: 1.2rem;
+  }
 }

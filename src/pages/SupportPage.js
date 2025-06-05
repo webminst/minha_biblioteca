@@ -1,13 +1,13 @@
 // src/pages/SupportPage.js
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faCopy } from '@fortawesome/free-solid-svg-icons'; // Ícone de coração e copiar
-import './SupportPage.css'; // Criaremos este CSS
+import { faHeart, faCopy } from '@fortawesome/free-solid-svg-icons';
+import './SupportPage.css';
 
 const SupportPage = () => {
-  const pixKey = "webminst@hotmail.com"; // Sua chave PIX (E-mail)
-  const bankName = "Caixa Econômica Federal"; // Adicione o nome do seu banco
-  const accountHolderName = "Giovanni Moreira Guimarães"; // Adicione seu nome completo
+  const pixKey = "webminst@hotmail.com";
+  const bankName = "Caixa Econômica Federal";
+  const accountHolderName = "Giovanni Moreira Guimarães";
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(pixKey)

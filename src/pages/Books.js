@@ -1,32 +1,44 @@
-// src/pages/Books.js
 import React, { useState, useMemo } from 'react';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-// import { booksData } from '../data/mockData'; // LINHA ANTIGA
-import { booksData } from '../data/generatedData'; // NOVA LINHA para atualizar os dados
-import './ListPage.css'; // Reutiliza o mesmo CSS de lista
+import { booksData } from '../data/generatedData';
+import './ListPage.css';
+import { useNavigate, useLocation } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 6; // Defina quantos itens por página
+const ITEMS_PER_PAGE = 6;
 
 const Books = () => {
-  // --- Estados para os Filtros ---
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const query = new URLSearchParams(location.search);
+  const pageFromUrl = parseInt(query.get("page") || "1", 10);
+
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedAuthor, setSelectedAuthor] = useState('');
 
-  // --- Estado para a Página Atual ---
-  const [currentPage, setCurrentPage] = useState(1);
+  const goToPage = (pageNumber) => {
+    navigate(`${location.pathname}?page=${pageNumber}${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}`);
+  };
 
-  // --- Extrair Opções Únicas ---
-  const uniqueAreas = useMemo(() => {
-    return [...new Set(booksData.map(b => b.area).filter(Boolean))].sort();
-  }, []);
+  const handleAreaChange = (e) => {
+    setSelectedArea(e.target.value);
+    navigate(`${location.pathname}?page=1${e.target.value ? `&area=${e.target.value}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}`);
+  };
+  const handleAuthorChange = (e) => {
+    setSelectedAuthor(e.target.value);
+    navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${e.target.value ? `&author=${e.target.value}` : ''}`);
+  };
+  const clearFilters = () => {
+    setSelectedArea('');
+    setSelectedAuthor('');
+    navigate(`${location.pathname}?page=1`);
+  };
 
-  const uniqueAuthors = useMemo(() => {
-    return [...new Set(booksData.map(b => b.author).filter(Boolean))].sort();
-  }, []);
+  const uniqueAreas = useMemo(() => [...new Set(booksData.map(b => b.area).filter(Boolean))].sort(), []);
+  const uniqueAuthors = useMemo(() => [...new Set(booksData.map(b => b.author).filter(Boolean))].sort(), []);
 
-  // --- Lógica de Filtragem ---
   const filteredBooks = useMemo(() => {
     return booksData.filter(book => {
       const areaMatch = !selectedArea || book.area === selectedArea;
@@ -35,34 +47,16 @@ const Books = () => {
     });
   }, [selectedArea, selectedAuthor]);
 
-  // --- Lógica de Paginação ---
   const paginatedBooks = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     return filteredBooks.slice(startIndex, endIndex);
-  }, [filteredBooks, currentPage]);
+  }, [filteredBooks, pageFromUrl]);
 
   const totalPages = Math.ceil(filteredBooks.length / ITEMS_PER_PAGE);
 
-  // --- Handlers para mudança nos selects e Limpar Filtros ---
-  const handleAreaChange = (e) => {
-    setSelectedArea(e.target.value);
-    setCurrentPage(1); // Reseta para a primeira página
-  };
-  const handleAuthorChange = (e) => {
-    setSelectedAuthor(e.target.value);
-    setCurrentPage(1); // Reseta para a primeira página
-  };
-  const clearFilters = () => {
-    setSelectedArea('');
-    setSelectedAuthor('');
-    setCurrentPage(1); // Reseta para a primeira página
-  };
-
-  // --- Handlers para Paginação ---
-  const goToNextPage = () => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-  const goToPreviousPage = () => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
+  const goToNextPage = () => goToPage(Math.min(pageFromUrl + 1, totalPages));
+  const goToPreviousPage = () => goToPage(Math.max(pageFromUrl - 1, 1));
 
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -78,10 +72,7 @@ const Books = () => {
       <p className="list-page-description">
         Explore resumos, análises e indicações de livros relevantes para a fé e o pensamento cristão.
       </p>
-
-      {/* --- Controles de Filtro --- */}
       <div className="filter-controls">
-        {/* Filtro por Área */}
         <div className="filter-group">
           <label htmlFor="area-filter">Área:</label>
           <select id="area-filter" value={selectedArea} onChange={handleAreaChange}>
@@ -91,8 +82,6 @@ const Books = () => {
             ))}
           </select>
         </div>
-
-        {/* Filtro por Autor */}
         <div className="filter-group">
           <label htmlFor="author-filter">Autor:</label>
           <select id="author-filter" value={selectedAuthor} onChange={handleAuthorChange}>
@@ -102,17 +91,12 @@ const Books = () => {
             ))}
           </select>
         </div>
-
-        {/* Botão Limpar Filtros */}
         {(selectedArea || selectedAuthor) && (
           <button onClick={clearFilters} className="clear-filter-button">
             Limpar Filtros
           </button>
         )}
       </div>
-      {/* --- Fim dos Filtros --- */}
-
-      {/* --- Lista de Conteúdo --- */}
       <div className="content-list">
         {paginatedBooks.length > 0 ? (
           paginatedBooks.map((book) => (
@@ -131,29 +115,26 @@ const Books = () => {
           <p>Nenhum resumo encontrado com os filtros selecionados.</p>
         )}
       </div>
-
-      {/* --- Controles de Paginação --- */}
       {totalPages > 1 && (
         <div className="pagination-controls">
-          <button onClick={goToPreviousPage} disabled={currentPage === 1} className="pagination-button">
+          <button onClick={goToPreviousPage} disabled={pageFromUrl === 1} className="pagination-button">
             <FontAwesomeIcon icon={faChevronLeft} /> Anterior
           </button>
           {getPageNumbers().map(number => (
             <button
               key={number}
               onClick={() => goToPage(number)}
-              className={`pagination-button page-number ${currentPage === number ? 'active' : ''}`}
-              disabled={currentPage === number}
+              className={`pagination-button page-number ${pageFromUrl === number ? 'active' : ''}`}
+              disabled={pageFromUrl === number}
             >
               {number}
             </button>
           ))}
-          <button onClick={goToNextPage} disabled={currentPage === totalPages} className="pagination-button">
+          <button onClick={goToNextPage} disabled={pageFromUrl === totalPages} className="pagination-button">
             Próxima <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
       )}
-      {/* --- Fim dos Controles de Paginação --- */}
     </div>
   );
 };

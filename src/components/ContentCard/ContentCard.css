@@ -13,7 +13,7 @@
   
   .content-card:hover {
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-    transform: scale(1.02)
+    transform: scale(1.02);
   }
   
   .card-type {
@@ -78,7 +78,7 @@
     background-color: var(--color-gray-light);
     color: var(--color-green-ipb);
     border: 1px solid var(--color-gray-medium);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s eas
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
   .details-button:hover {
     text-decoration: none;
@@ -96,9 +96,7 @@
   }
    .download-button:hover {
     background-color: #004a38; /* Verde IPB mais escuro */
-    text-decoration: none;
-    background-color: var(--color-gray-light);
-    color: var(--color-gray-dark);
+    color: var(--color-white);
     transform: translateY(-2px); /* Leve elevação */
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   }
@@ -126,6 +124,7 @@
 .card-cover-link {
     display: block; /* Para o link ocupar o espaço da imagem */
     flex-shrink: 0; /* Evita que a imagem encolha */
+    margin-bottom: 0;
 }
 
 .card-cover-image {

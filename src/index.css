@@ -1,12 +1,12 @@
 /* src/index.css */
 :root {
   --color-white: #FFFFFF;
-  --color-gray-light: #f0f0f0; /* Fundo secundário, cards */
-  --color-gray-medium: #a9a9a9; /* Texto secundário, bordas */
-  --color-gray-dark: #333333;  /* Texto principal */
-  --color-green-ipb: #006A4E; /* Destaques, links, botões */
-  --font-primary: 'Open Sans', sans-serif; /* Para corpo */
-  --font-headings: 'Montserrat', sans-serif; /* Para títulos */
+  --color-gray-light: #f0f0f0;
+  --color-gray-medium: #a9a9a9;
+  --color-gray-dark: #333333;
+  --color-green-ipb: #006A4E;
+  --font-primary: 'Open Sans', sans-serif;
+  --font-headings: 'Montserrat', sans-serif;
 }
 
 body {
@@ -14,12 +14,12 @@ body {
   font-family: var(--font-primary);
   background-color: var(--color-white);
   color: var(--color-gray-dark);
-  line-height: 1.2; /* Melhora legibilidade */
+  line-height: 1.2;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headings);
-  color: var(--color-green-ipb); /* Títulos em verde */
+  color: var(--color-green-ipb);
   margin-top: 0.2em;
   margin-bottom: 0.2em;
 }
