@@ -13,7 +13,7 @@ tags:
   - "Vinda de Cristo"
   - "Reino de paz"
   - "Louvor"
-description: "Enquanto aguardamos a “entrada triunfal” de Jesus no último dia, vamos servi-Lo fielmente hoje em Seu reino espiritual de justiça, alegria e paz!"
+description: "Enquanto aguardamos a “entrada triunfal” de Jesus no último dia, um dia de salvação para aqueles que O aguardam ansiosamente, vamos servi-Lo fielmente hoje em Seu reino espiritual de justiça, alegria e paz! Este é um desafio que vale a pena aceitar."
 detailsUrl: "/sermoes/a-entrada-triunfal"
 pdfUrl: "https://drive.google.com/file/d/10R6T4CNzuZia1hC2KLaXmH-djjbP3HWR/view?usp=drive_link"
 audioUrl: "/path/to/a-entrada-triunfal.mp3"

@@ -2,12 +2,13 @@
 id: "o-culto-cristao-uma-perspectiva-reformada"
 title: "O Culto Cristão: Uma Perspectiva Reformada"
 type: "Estudo Bíblico"
-reference: "João 4:23-24, Hebreus 10:25, Salmo 50:14, 1 Pedro 2:9, Romanos 1:25, Isaías 66:3-4, João 17"
+reference: "Jo 4:23-24, Hb 10:25, Sl 50:14, 1Pe 2:9, Rm 1:25, Is 66:3-4, Jo 17"
 bookLink: ""
 theme: "Culto e Adoração"
 format: "Palestra"
-description: "Uma análise aprofundada do Rev. Hermistein Maia sobre a natureza e o propósito do culto cristão sob uma perspectiva reformada, abordando sua base na iniciativa divina, a importância da Palavra de Deus, a resposta consciente do adorador, e os desafios contemporâneos à adoração genuína."
+description: "Nesta que é uma sequência da palestra anterior: A Igreja Reformada e os desafios teológicos e litúrgicos da pós-modernidade, o Rev. Hermistein fala sobre a natureza e o propósito do culto cristão sob uma perspectiva reformada, abordando sua base na iniciativa divina, a importância da Palavra de Deus, a resposta consciente do adorador, e os desafios contemporâneos à adoração genuína. O estudo é um alerta contra a pós-modernidade."
 detailsUrl: "/estudos/o-culto-cristao-uma-perspectiva-reformada"
+pdfUrl: "https://drive.google.com/file/d/1mYGcAde35T_-Befzua0I2E2gvLI3zyxA/view?usp=drive_link"
 ---
 **Rev. Hermistein Maia**
 

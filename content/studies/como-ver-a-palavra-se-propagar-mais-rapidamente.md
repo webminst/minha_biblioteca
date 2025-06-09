@@ -1,13 +1,14 @@
 ---
 id: "como-ver-a-palavra-se-propagar-mais-rapidamente"
-title: "Orai Pelo Homem: A Importância da Oração Pelos Pregadores da Palavra"
+title: "A Importância da Oração Pelos Pregadores"
 type: "Estudo Bíblico"
-reference: "2 Tessalonicenses 3:1, Efésios 6:19-20, Atos 13, 1 Coríntios 11"
-bookLink: "" # Não menciona um livro específico do autor
+reference: "2Ts 3:1, Ef 6:19-20, At 13, 1Co 11"
+bookLink: "" # 
 theme: "Oração, Ministério da Palavra, Vida da Igreja"
-format: "Pregação/Estudo em evento" # Pelo contexto, parece ser um evento ou conferência
-description: "Um estudo sobre a necessidade vital de orar pelos pregadores, para que a Palavra de Deus se propague livremente e seja glorificada, explorando os desafios enfrentados no ministério e o poder de Deus liberado através da intercessão."
-detailsUrl: "/estudos/como-ver-a-palavra-se-propagar-mais-rapidamente" # Se houver uma URL específica para este estudo, pode ser adicionada aqui
+format: "Pregação/Estudo em evento"
+description: "Um estudo baseado em 2 Tessalonicenses 3:1 e diversas ilustrações sobre a necessidade vital de que a igreja interceda especificamente pelos seus pregadores, para que a Palavra de Deus se propague livremente, alcance vidas e seja glorificada, explorando os desafios enfrentados no ministério e o poder de Deus liberado através da intercessão. Vale a pena conferir e lembrar que devemos estar sempre na dependência de Deus!"
+detailsUrl: "/estudos/como-ver-a-palavra-se-propagar-mais-rapidamente" 
+pdfUrl: "https://drive.google.com/file/d/1jotMBggy_oFKJjPjtofvgUfNSsGGoUXx/view?usp=drive_link"
 ---
 ## Resumo
 

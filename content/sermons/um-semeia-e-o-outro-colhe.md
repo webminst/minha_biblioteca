@@ -17,7 +17,7 @@ tags:
   - "Alegria espiritual"
   - "Compromisso"
   - "Obra de Deus"
-description: "Reflexão sobre o princípio ensinado por Jesus em João 4:35-38: 'Um semeia e o outro colhe'. O sermão destaca a importância do trabalho conjunto na evangelização, mostrando que tanto a semeadura quanto a colheita são essenciais e que cada um tem seu papel na obra de Deus."
+description: "Reflexão sobre o princípio ensinado por Jesus em João 4:35-38: 'Um semeia e o outro colhe'. O sermão destaca a importância do trabalho conjunto na evangelização, mostrando que tanto a semeadura quanto a colheita são essenciais e que cada um tem seu papel na obra."
 detailsUrl: "/sermoes/um-semeia-e-o-outro-colhe"
 pdfUrl: "https://drive.google.com/file/d/17Io-GrBR-4KyWJZIo7MC_kmh-NBhOBUe/view?usp=drive_link"
 ---

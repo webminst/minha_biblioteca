@@ -10,8 +10,8 @@ tags:
   - "Convite"
   - "Jesus"
   - "alívio"
-description: "Jesus faz um maravilhoso convite, você está disposto a aceitá-lo?"
-detailsUrl: "/sermoes/o-convite-do-salvador" # Você pode gerar isso no script ou manter aqui
+description: "Jesus faz um maravilhoso convite: “Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei. Tomai sobre vós o meu jugo e aprendei de mim, porque sou manso e humilde de coração; e achareis descanso para a vossa alma”. Você está disposto a aceitá-lo?"
+detailsUrl: "/sermoes/o-convite-do-salvador" 
 pdfUrl: "https://drive.google.com/file/d/16th9aAOBbiWPR32XkwOKDcnddS_uP5nI/view?usp=drive_link"
 audioUrl: "/path/to/o-convite-do-salvador.mp3" # Adicione se tiver
 ---
@@ -19,7 +19,7 @@ audioUrl: "/path/to/o-convite-do-salvador.mp3" # Adicione se tiver
 **Mateus 11:28-30.**
 
 # INTRODUÇÃO.
-1. No texto para nossa reflexão de hoje, encontramos um convite maravilhoso feito por Jesus... *“Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei. Tomai sobre vós o meu jugo e aprendei de mim, porque sou manso e humilde de coração; e achareis descanso para a vossa alma. Porque o meu jugo é suave, e o meu fardo é leve.* **(Mateus 11:28-30).**  
+1. No texto para nossa reflexão de hoje, encontramos um convite maravilhoso feito por Jesus... *“Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei. Tomai sobre vós o meu jugo e aprendei de mim, porque sou manso e humilde de coração; e achareis descanso para a vossa alma. Porque o meu jugo é suave, e o meu fardo é leve”.* **(Mateus 11:28-30).**  
 2. Do céu, Jesus ainda oferece esse terno convite; mas será que realmente o entendemos e apreciamos...  
 a. A quem Jesus faz este convite?  
 b. O que Jesus está oferecendo?  

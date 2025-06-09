@@ -3,14 +3,14 @@ id: "graca-suficiente"
 title: "A Graça Suficiente em Meio à Fraqueza"
 type: "Sermão"
 date: "2024-03-17"
-reference: "2 Coríntios 12:9-10"
+reference: "2Co 12:9-10"
 book: "2 Coríntios"
 series: "Fundamentos da Graça"
 tags:
   - "Graça"
   - "Fraqueza"
   - "Paulo"
-description: "Uma reflexão sobre como o poder de Deus se aperfeiçoa em nossa fraqueza, baseada na experiência do apóstolo Paulo."
+description: "Uma reflexão sobre como o poder de Deus se aperfeiçoa em nossa fraqueza, baseada na experiência do apóstolo Paulo. Este sermão explorará como a graça de Deus não apenas nos sustenta, mas se manifesta de forma mais plena justamente em nossos momentos de fraqueza."
 detailsUrl: "/sermoes/graca-suficiente" # Você pode gerar isso no script ou manter aqui
 pdfUrl: "https://drive.google.com/file/d/13wfiAfUCg5D1wcQX--KM3eThSyq38axU/view?usp=drive_link"
 audioUrl: "/path/to/raca-suficiente.mp3" # Adicione se tiver

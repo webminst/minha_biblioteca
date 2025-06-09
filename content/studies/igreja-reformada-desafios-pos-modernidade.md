@@ -2,12 +2,13 @@
 id: "igreja-reformada-desafios-pos-modernidade"
 title: "A Igreja Reformada e os desafios teológicos e litúrgicos da pós-modernidade."
 type: "Estudo Teológico"
-reference: "Efésios 1:3, Miquéias 6:6-8, Eclesiastes 3:11, Atos 20:29-30, 1 Pedro 1:23"
+reference: "Ef 1:3, Mq 6:6-8, Ec 3:11, At 20:29-30, 1Pe 1:23"
 bookLink: ""
 theme: "Teologia Reformada e Pós-modernidade"
 format: "Palestra"
-description: "Análise aprofundada do Rev. Hermistein Maia dos desafios teológicos e litúrgicos que a pós-modernidade impõe à Igreja Reformada. O estudo aborda o propósito da criação e da adoração, a dignidade humana, a busca por significado, e a necessidade de discernimento e fidelidade à Palavra de Deus frente a correntes filosóficas como humanismo, iluminismo, relativismo, subjetivismo, pragmatismo e o princípio da excludência, que minam a noção de verdade absoluta."
+description: "O Rev. Hermistein analisa os desafios teológicos e litúrgicos impostos pela pós-modernidade à Igreja Reformada. O estudo aborda o propósito da criação e da adoração, a dignidade humana, a busca por significado, e a necessidade de discernimento e fidelidade à Palavra de Deus frente a correntes filosóficas seculares, o subjetivismo, o pragmatismo e o princípio da excludência, que minam a noção de verdade."
 detailsUrl: "/estudos/igreja-reformada-desafios-pos-modernidade"
+pdfUrl: "https://drive.google.com/file/d/1_FLmMLdhBFLbUXnG0tQQzw4JvVlW0yNc/view?usp=drive_link"
 ---
 **Rev. Hermistein Maia**
 

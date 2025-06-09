@@ -2,14 +2,16 @@
 id: "o-impacto-do-avivamento"
 title: "O impacto do avivamento: Transformações na igreja e na cultura"
 type: "Estudo Bíblico"
-reference: "Marcos 1, Gálatas 1, Romanos 1:18-32, 1 João 4, Atos 17"
+reference: "Mc 1, Gl 1, Rm 1:18-32, 1Jo 4, At 17"
 bookLink: ""
 theme: "Avivamento e Reforma"
 format: "Palestra"
-description: "Um estudo detalhado de Franklin Ferreira sobre a crise contemporânea da igreja evangélica e a urgente necessidade de um avivamento bíblico. A palestra analisa a perda do evangelho, a cooptação cultural, a diminuição de vocações e o liberalismo teológico, contrastando com as marcas do verdadeiro avivamento segundo Jonathan Edwards e o exemplo de John Wesley, e destacando o impacto transformador do avivamento na igreja e na sociedade."
+description: "Um estudo de Franklin Ferreira sobre a crise da igreja evangélica e a necessidade de um avivamento bíblico. A palestra analisa a perda do evangelho, a cooptação cultural, a diminuição de vocações e o liberalismo teológico, contrastando com as marcas do verdadeiro avivamento segundo Jonathan Edwards e o exemplo de John Wesley, e destacando o impacto do avivamento na igreja e na sociedade."
 detailsUrl: "/estudos/o-impacto-do-avivamento"
+pdfUrl: "https://drive.google.com/file/d/10IAlWZDUWqgO3uuxRZ2rGnuBa37Xam1X/view?usp=drive_link"
 ---
-## Resumo 
+
+**Rev. Franklin Ferreira**
 
 Este estudo aborda a necessidade e a natureza do verdadeiro avivamento bíblico, contrastando-o com modelos contemporâneos e destacando seus impactos na igreja e na cultura.
 

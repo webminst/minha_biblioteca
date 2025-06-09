@@ -2,11 +2,11 @@
 id: "como-permanecer-proximo-do-senhor"
 title: "Como permanecer próximo do Senhor."
 type: "Estudo Bíblico"
-reference: "Gênesis 5:18-24, Hebreus 11:5-6, Judas 1:14-15"
+reference: "Gn 5:18-24, Hb 11:5-6, Jd 1:14-15"
 bookLink: "" # Não há referência a um livro específico
 theme: "Vida Cristã"
 format: "Congresso" # Assumindo que seja um congresso, baseado no áudio
-description: "Uma análise da vida de Enoque, destacando como podemos viver em comunhão com Deus em meio a um mundo pecador, focando em Cristo e buscando uma vida de piedade que leva à recompensa eterna."
+description: "Uma análise da vida de Enoque, conhecido por seu relacionamento com Deus, destacando como podemos viver em comunhão com Deus em meio a um mundo pecador, focando em Cristo e buscando uma vida de piedade que leva à recompensa eterna. Oliott enfatiza a importância da escatologia (o estudo das últimas coisas) sobre a pneumatologia (o estudo do Espírito Santo) como motivação para uma vida de fé."
 detailsUrl: "/estudos/como-permanecer-proximo-do-senhor" # Exemplo de URL, pode ser ajustado
 pdfUrl: "https://drive.google.com/file/d/10IAlWZDUWqgO3uuxRZ2rGnuBa37Xam1X/view?usp=drive_link"
 ---

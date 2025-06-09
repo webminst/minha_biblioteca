@@ -2,11 +2,11 @@
 id: "como-ocorre-a-conversão"
 title: "Como ocorre a conversão."
 type: "Estudo Bíblico"
-reference: "Atos 8:26-40, Isaías 53"
+reference: "At 8:26-40, Is 53"
 bookLink: "Atos dos Apóstolos"
 theme: "Soteriologia (Doutrina da Salvação), Evangelismo"
 format: "Congresso"
-description: "Um estudo detalhado sobre a natureza da conversão cristã, utilizando a história do eunuco etíope em Atos 8 como exemplo principal. Destaca os papéis de Deus Pai na preparação, de Jesus Cristo como a mensagem central, do Espírito Santo na operação e do servo de Deus como instrumento, enfatizando a dinâmica paradoxal e os elementos essenciais da transformação espiritual."
+description: "Um estudo sobre a natureza da conversão cristã, utilizando a história do eunuco etíope em Atos 8 como exemplo principal. Destaca os papéis de Deus Pai na preparação, de Jesus Cristo como a mensagem central, do Espírito Santo na operação e do servo de Deus como instrumento, enfatizando a dinâmica paradoxal e os elementos essenciais da transformação espiritual. Olyott mostra que cada conversão, embora seja única, segue um padrão fundamental."
 detailsUrl: "/estudos/como-ocorre-a-conversão"
 pdfUrl: "https://drive.google.com/file/d/109t9OGrqZmCuGifwm0VW5Nxt82ADfCEr/view?usp=drive_link"
 ---

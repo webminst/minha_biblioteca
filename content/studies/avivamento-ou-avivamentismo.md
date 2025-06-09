@@ -2,7 +2,7 @@
 id: "avivamento-ou-avivamentismo"
 title: "Avivamento ou avivamentismo."
 type: "Estudo Teológico"
-reference: "Joel 2:28-29, Atos 2:37-41, Salmo 85:6, 2 Timóteo 4:1-5, Efésios 2:8-9"
+reference: "Jl 2:28-29, At 2:37-41, Sl 85:6, 2Tm 4:1-5, Ef 2:8-9"
 bookLink: ""
 theme: "Avivamento e História da Igreja"
 format: "Palestra"

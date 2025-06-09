@@ -2,7 +2,7 @@
 id: "redes-sociais-familia-alianca"
 title: "Redes Sociais: Perigos e Oportunidades para a Família da Aliança."
 type: "Estudo Bíblico"
-reference: "Ef 4:29, 1 Coríntios 10:31, Romanos 12:2"
+reference: "Ef 4:29, 1Co 10:31, Rm 12:2"
 bookLink: "Família da Aliança"
 theme: "Vida Cristã"
 format: "Congresso"
