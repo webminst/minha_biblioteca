@@ -1,12 +1,12 @@
 ---
 id: "as-Institutas-da-religião-cristã-i"
-title: "As Institutas da Religião Cristã - Volume 1."
+title: "As Institutas da Religião Cristã - Volume Único."
 type: "Resumo de Livro"
 date: "2024-03-17"
 author: "João Calvino"
 publisher: "Editora Cultura Cristã"
 area: "Teologia Cristã Sistemática, Teologia Reformada, História da Igreja"
-description: "As Institutas” é universalmente reconhecida como uma das obras mais importantes da teologia protestante e da literatura ocidental."
+description: "As Institutas” é universalmente reconhecida como uma das obras mais importantes da teologia protestante e da literatura ocidental. É densa, profunda, sistemática e desafiadora, mas imensamente recompensadora para o estudo sério da fé cristã."
 detailsUrl: "/livros/as-Institutas-da-religião-cristã-i"
 pdfUrl: "https://drive.google.com/open?id=1-QzbKTw7rI8Eth1HGQY3DTbfvd98jENy&usp=drive_copy"
 coverImageUrl: "/images/covers/as-institutas-i-Calvino.jpg"
@@ -18,11 +18,11 @@ coverImageUrl: "/images/covers/as-institutas-i-Calvino.jpg"
 
 * **Área do Conhecimento:** Teologia Cristã Sistemática, Teologia Reformada, História da Igreja.
 * **Ano de Publicação (Original):** A primeira edição foi em 1536, com a edição final e mais completa em 1559. A “Carta ao Rei Francisco I” incluída neste volume é datada de 1536. O “Prefácio à edição de 1559” também está presente.
-* **Editora (desta edição em português):** Editora Cultura Cristã (mencionada no prefácio à 2ª edição brasileira). A 1ª edição desta tradução foi de 1984, e a 2ª de 2003.
+* **Editora (desta edição em português):** Editora Cultura Cristã (mencionada no prefácio à 3ª edição brasileira). A 1ª edição desta tradução foi de 1984, a 2ª de 2003 e a 3ª e, 2022.
 * **Tradutor:** Waldyr Carvalho Luz.
-* **Quantidade de Páginas (Volume 1):** O conteúdo principal do Livro I, conforme o índice, vai até a página 235. O volume completo, incluindo prefácios, carta ao rei e o índice, ultrapassa isso consideravelmente.
+* **Quantidade de Páginas (Volume Único):** Esta edição, com volume único, possui 1632 páginas.
 * **Preço Médio:** Varia conforme a edição e livraria, mas por ser um clássico teológico de referência, geralmente tem um custo moderado a alto, dependendo se é capa dura, box com múltiplos volumes, etc.
-* **Qualidade do Material:** A Editora Cultura Cristã é conhecida por produzir obras teológicas de boa qualidade editorial no Brasil. Sem o livro físico, não se pode avaliar o papel e a encadernação específicos desta edição.
+* **Qualidade do Material:** A Editora Cultura Cristã é conhecida por produzir obras teológicas de boa qualidade editorial no Brasil. O livro físico, possui capa dura, o miolo impresso em Offset 37 g/m².
 * **Avaliações de Leitores:** “As Institutas” é universalmente reconhecida como uma das obras mais importantes da teologia protestante e da literatura ocidental. É densa, profunda e sistemática. Leitores geralmente a consideram desafiadora, mas imensamente recompensadora para o estudo sério da fé cristã. É um texto fundamental para pastores, teólogos, seminaristas e leigos interessados em aprofundar seu conhecimento doutrinário.
 
 # **Por que ler este livro?**

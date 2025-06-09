@@ -1,6 +1,6 @@
 ---
 id: "eleitos-mas-livres"
-title: "Eleitos, mas livres - Uma perspectiva equilibrada entre a eleição divina e o livre-arbítrio."
+title: "Eleitos, mas livres - Uma perspectiva equilibrada ..."
 type: "Resumo de Livro"
 date: "2024-03-17"
 author: "Norman Geisler"

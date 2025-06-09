@@ -6,7 +6,7 @@ import { booksData } from '../data/generatedData';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 8;
 
 const Books = () => {
   const navigate = useNavigate();

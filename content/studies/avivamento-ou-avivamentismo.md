@@ -1,12 +1,12 @@
 ---
 id: "avivamento-ou-avivamentismo"
-title: "Avivamento ou avivamentismo: Mudanças de paradigmas de Edwards e Wesley a Charles Finney"
+title: "Avivamento ou avivamentismo."
 type: "Estudo Teológico"
-reference: "Joel 2:28-29, Atos 2:37-41, Salmo 85:6, 2 Timóteo 4:1-5, Efésios 2:8-9, Isaías 61:1, Amós 4-5"
+reference: "Joel 2:28-29, Atos 2:37-41, Salmo 85:6, 2 Timóteo 4:1-5, Efésios 2:8-9"
 bookLink: ""
 theme: "Avivamento e História da Igreja"
 format: "Palestra"
-description: "O pastor Franklin Ferreira oferece uma análise histórica e teológica aprofundada sobre o declínio da busca por avivamento genuíno na igreja, especialmente no contexto brasileiro. Ele contrasta os paradigmas de avivamento de figuras como Jonathan Edwards e John Wesley, que enfatizavam a soberania de Deus e a profundidade da obra do Espírito, com a influência posterior de Charles Finney, que introduziu uma abordagem mais mecânica e pragmática. A palestra explora as causas dessa mudança, os perigos do 'avivamentismo' superficial e propõe um retorno aos fundamentos bíblicos – pregação fiel, arrependimento, oração e a soberania do Espírito Santo – como o caminho para a restauração da verdadeira busca por avivamento."
+description: "Uma análise histórica e teológica aprofundada sobre o declínio da busca por avivamento genuíno na igreja, especialmente no contexto brasileiro. A palestra de Franklin Ferreira explora as causas dessa mudança, os perigos do 'avivamentismo' superficial e propõe um retorno aos fundamentos bíblicos – pregação fiel, arrependimento, oração e a soberania do Espírito Santo – como o caminho para a restauração da verdadeira busca por avivamento."
 detailsUrl: "/estudos/avivamento-ou-avivamentismo"
 pdfUrl: "https://drive.google.com/file/d/1-nd_V-NCZntXh1slanBBRo177i0sOarG/view?usp=drive_link"
 ---
