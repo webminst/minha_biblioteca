@@ -1,22 +1,43 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { sermonsData } from '../data/generatedData';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const ITEMS_PER_PAGE = 8;
 
-const Sermons = () => {
+function Sermons() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const query = new URLSearchParams(location.search);
   const pageFromUrl = parseInt(query.get("page") || "1", 10);
 
+  const [sermons, setSermons] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('');
   const [selectedSeries, setSelectedSeries] = useState('');
+
+  useEffect(() => {
+    const fetchSermons = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/sermons');
+        setSermons(response.data);
+      } catch (err) {
+        setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
+        console.error('Erro ao buscar sermões:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSermons();
+  }, []);
 
   const goToPage = (pageNumber) => {
     navigate(`${location.pathname}?page=${pageNumber}${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}`);
@@ -36,16 +57,16 @@ const Sermons = () => {
     navigate(`${location.pathname}?page=1`);
   };
 
-  const uniqueBooks = useMemo(() => [...new Set(sermonsData.map(s => s.book).filter(Boolean))].sort(), []);
-  const uniqueSeries = useMemo(() => [...new Set(sermonsData.map(s => s.series).filter(Boolean))].sort(), []);
+  const uniqueBooks = useMemo(() => [...new Set(sermons.map(s => s.book).filter(Boolean))].sort(), [sermons]);
+  const uniqueSeries = useMemo(() => [...new Set(sermons.map(s => s.series).filter(Boolean))].sort(), [sermons]);
 
   const filteredSermons = useMemo(() => {
-    return sermonsData.filter(sermon => {
+    return sermons.filter(sermon => {
       const bookMatch = !selectedBook || sermon.book === selectedBook;
       const seriesMatch = !selectedSeries || sermon.series === selectedSeries;
       return bookMatch && seriesMatch;
     });
-  }, [selectedBook, selectedSeries]);
+  }, [selectedBook, selectedSeries, sermons]);
 
   const paginatedSermons = useMemo(() => {
     const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
@@ -65,6 +86,10 @@ const Sermons = () => {
     }
     return pageNumbers;
   };
+
+  if (loading) return <p>Carregando sermões...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (sermons.length === 0) return <p>Nenhum sermão encontrado. Adicione um sermão usando sua API de backend!</p>;
 
   return (
     <div className="list-page-container">
@@ -101,10 +126,15 @@ const Sermons = () => {
         {paginatedSermons.length > 0 ? (
           paginatedSermons.map((sermon) => (
             <ContentCard
-              key={sermon.id}
-              title={sermon.title} type={sermon.type} date={sermon.date}
-              reference={sermon.reference} description={sermon.description}
-              detailsUrl={sermon.detailsUrl} pdfUrl={sermon.pdfUrl}
+              key={sermon._id}
+              sermon={sermon}
+              title={sermon.title}
+              type={sermon.type}
+              date={sermon.date}
+              reference={sermon.reference}
+              description={sermon.description}
+              detailsUrl={`/sermoes/${sermon._id}`}
+              pdfUrl={sermon.pdfUrl}
             />
           ))
         ) : (
@@ -131,6 +161,19 @@ const Sermons = () => {
           </button>
         </div>
       )}
+      {sermons.map((sermon) => (
+        <div key={sermon._id} className="sermon-content">
+          <h1 className="content-title">{sermon.title}</h1>
+          {sermon.description && <p className="content-description">{sermon.description}</p>}
+          {sermon.content && (
+            <div className="content-full-text">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {sermon.content}
+              </ReactMarkdown>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

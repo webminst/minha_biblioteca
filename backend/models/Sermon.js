@@ -43,7 +43,7 @@ const SermonSchema = new mongoose.Schema({
   },
   content: {
     type: String, // Usar String para armazenar o texto completo
-    required: false // Ou 'true' se todo sermão deve ter conteúdo textual
+    required: true // Ou 'true' se todo sermão deve ter conteúdo textual
   },
   audioUrl: {
     type: String,

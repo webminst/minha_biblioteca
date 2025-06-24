@@ -1,22 +1,39 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { studiesData } from '../data/generatedData';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
 
-const Studies = () => {
+function Studies() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const query = new URLSearchParams(location.search);
   const pageFromUrl = parseInt(query.get("page") || "1", 10);
 
+  const [studies, setStudies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedFormat, setSelectedFormat] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
+
+  useEffect(() => {
+    const fetchStudies = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/studies');
+        setStudies(response.data);
+      } catch (err) {
+        setError('Erro ao carregar os estudos.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudies();
+  }, []);
 
   const goToPage = (pageNumber) => {
     navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}`);
@@ -36,16 +53,16 @@ const Studies = () => {
     navigate(`${location.pathname}?page=1`);
   };
 
-  const uniqueFormats = useMemo(() => [...new Set(studiesData.map(s => s.format).filter(Boolean))].sort(), []);
-  const uniqueThemes = useMemo(() => [...new Set(studiesData.map(s => s.theme).filter(Boolean))].sort(), []);
+  const uniqueFormats = useMemo(() => [...new Set(studies.map(s => s.format).filter(Boolean))].sort(), [studies]);
+  const uniqueThemes = useMemo(() => [...new Set(studies.map(s => s.theme).filter(Boolean))].sort(), [studies]);
 
   const filteredStudies = useMemo(() => {
-    return studiesData.filter(study => {
+    return studies.filter(study => {
       const formatMatch = !selectedFormat || study.format === selectedFormat;
       const themeMatch = !selectedTheme || study.theme === selectedTheme;
       return formatMatch && themeMatch;
     });
-  }, [selectedFormat, selectedTheme]);
+  }, [selectedFormat, selectedTheme, studies]);
 
   const paginatedStudies = useMemo(() => {
     const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
@@ -65,6 +82,10 @@ const Studies = () => {
     }
     return pageNumbers;
   };
+
+  if (loading) return <p>Carregando estudos...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (studies.length === 0) return <p>Nenhum estudo encontrado.</p>;
 
   return (
     <div className="list-page-container">
@@ -101,13 +122,13 @@ const Studies = () => {
         {paginatedStudies.length > 0 ? (
           paginatedStudies.map((study) => (
             <ContentCard
-              key={study.id}
+              key={study._id}
               title={study.title}
-              type={study.type}
-              reference={study.reference}
+              type="Estudo"
               description={study.description}
-              detailsUrl={study.detailsUrl}
+              detailsUrl={`/estudos/${study._id}`}
               pdfUrl={study.pdfUrl}
+              study={study}
             />
           ))
         ) : (

@@ -1,7 +1,7 @@
 // routes/studies.js
 const express = require('express');
 const router = express.Router();
-const Book = require('../models/Book'); // Importa o modelo Book
+const Book = require('../models/Book');
 
 // Rota para CRIAR um novo livro (POST)
 router.post('/', async (req, res) => {
@@ -18,9 +18,9 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const books = await Book.find();
-    res.status(200).json(books);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json(books);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -28,10 +28,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
-    if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
-    res.status(200).json(book);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (!book) return res.status(404).json({ message: 'Livro não encontrado' });
+    res.json(book);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

@@ -18,9 +18,9 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const studies = await Study.find();
-    res.status(200).json(studies);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json(studies);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -28,10 +28,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const study = await Study.findById(req.params.id);
-    if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
-    res.status(200).json(study);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (!study) return res.status(404).json({ message: 'Estudo não encontrado' });
+    res.json(study);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -58,3 +58,17 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+// models/Study.js
+const mongoose = require('mongoose');
+
+const StudySchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  theme: { type: String, required: true },
+  description: String,
+  content: String,
+  pdfUrl: String,
+  // adicione outros campos conforme necessário
+}, { timestamps: true });
+
+module.exports = mongoose.model('Study', StudySchema);

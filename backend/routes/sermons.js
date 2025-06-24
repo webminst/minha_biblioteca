@@ -28,10 +28,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const sermon = await Sermon.findById(req.params.id);
-    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado.' }); // 404 Not Found
-    res.status(200).json(sermon);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado' });
+    res.json(sermon);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

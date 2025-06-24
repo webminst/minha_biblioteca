@@ -1,11 +1,13 @@
 // src/pages/ContentDetail.js
-import React from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import NotFound from './NotFound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import './ContentDetail.css';
-import { sermonsData, studiesData, booksData, findContentById } from '../data/generatedData'; // NOVA LINHA para atualizar os dados
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -22,31 +24,52 @@ import {
 const ContentDetail = () => {
   const { contentId } = useParams();
   const navigate = useNavigate();
-  const content = findContentById(contentId);
+  const [sermon, setSermon] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!content) {
-    return <NotFound />;
-  }
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        let response;
+        if (window.location.pathname.startsWith('/sermoes')) {
+          response = await axios.get(`http://localhost:3001/api/sermons/${contentId}`);
+        } else if (window.location.pathname.startsWith('/estudos')) {
+          response = await axios.get(`http://localhost:3001/api/studies/${contentId}`);
+        } else if (window.location.pathname.startsWith('/livros')) {
+          response = await axios.get(`http://localhost:3001/api/books/${contentId}`);
+        }
+        setSermon(response.data);
+      } catch (err) {
+        setError('Conteúdo não encontrado.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, [contentId]);
 
-  const handleGoBack = () => navigate(-1);
+  if (loading) return <p>Carregando...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (!sermon) return <NotFound />;
 
   // URL atual da página para compartilhamento
   const shareUrl = window.location.href;
-  const shareTitle = content.title; // Título para compartilhar
+  const shareTitle = sermon.title; // Título para compartilhar
 
   return (
     <div className="content-detail-container">
-      <button onClick={handleGoBack} className="back-button">
+      <button onClick={() => navigate(-1)} className="back-button">
         <FontAwesomeIcon icon={faArrowLeft} /> Voltar {/* ÍCONE AQUI */}
       </button>
 
-<div className="content-header-wrapper"> {/* Wrapper para título e capa */}
+      <div className="content-header-wrapper"> {/* Wrapper para título e capa */}
         {/* Exibir Capa do Livro */}
-        {content.type === 'Resumo de Livro' && content.coverImageUrl && (
+        {sermon.type === 'Resumo de Livro' && sermon.coverImageUrl && (
           <div className="book-cover-container">
             <img
-              src={content.coverImageUrl}
-              alt={`Capa do livro ${content.title}`}
+              src={sermon.coverImageUrl}
+              alt={`Capa do livro ${sermon.title}`}
               className="book-cover-image"
             />
           </div>
@@ -54,11 +77,11 @@ const ContentDetail = () => {
 
         <div className="title-and-meta-container"> {/* Para alinhar título e meta */}
           <div className="content-meta">
-            <span className="content-type-badge">{content.type}</span>
+            <span className="content-type-badge">{sermon.type}</span>
             {/* ... (outros metadados como data, reference, author, etc.) ... */}
-             {content.author && <span className="meta-item">Autor: {content.author}</span>}
-             {content.publisher && <span className="meta-item">Editora: {content.publisher}</span>}
-             {content.area && <span className="meta-item">Área: {content.area}</span>}
+             {sermon.author && <span className="meta-item">Autor: {sermon.author}</span>}
+             {sermon.publisher && <span className="meta-item">Editora: {sermon.publisher}</span>}
+             {sermon.area && <span className="meta-item">Área: {sermon.area}</span>}
           </div>
   
         </div>
@@ -70,15 +93,21 @@ const ContentDetail = () => {
        <div className="content-meta">
         {/* ... */}
       </div>
-      <h1 className="content-title">{content.title}</h1>
+      <h1 className="content-title">{sermon.title}</h1>
       {/* ... Player de Áudio e Texto Completo ... */}
-       <div className="content-full-text" dangerouslySetInnerHTML={{ __html: content.fullText || '...' }} />
+       {sermon.content && (
+  <div className="content-full-text">
+    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {sermon.content}
+    </ReactMarkdown>
+  </div>
+)}
 
 
       {/* --- Ações (Download, Compartilhamento) --- */}
             <div className="content-actions">
-        {content.pdfUrl && (
-          <a href={content.pdfUrl} target="_blank" rel="noopener noreferrer" className="action-button download-button">
+        {sermon.pdfUrl && (
+          <a href={sermon.pdfUrl} target="_blank" rel="noopener noreferrer" className="action-button download-button">
             <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF {/* ÍCONE AQUI */}
           </a>
         )}
@@ -98,7 +127,7 @@ const ContentDetail = () => {
             <WhatsappIcon size={32} round />
           </WhatsappShareButton>
 
-          <LinkedinShareButton url={shareUrl} title={shareTitle} summary={content.description} source="Seu Nome - Site Pastoral">
+          <LinkedinShareButton url={shareUrl} title={shareTitle} summary={sermon.description} source="Seu Nome - Site Pastoral">
             <LinkedinIcon size={32} round />
           </LinkedinShareButton>
 

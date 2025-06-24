@@ -5,7 +5,12 @@ import { faFilePdf, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import './ContentCard.css';
 
 // Props esperadas: title, type (Sermão, Estudo, Livro), date, reference, description, detailsUrl, pdfUrl (opcional)
-const ContentCard = ({ title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl }) => {
+const ContentCard = ({
+  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book
+}) => {
+  // Use o objeto que estiver disponível
+  const content = sermon || study || book;
+
   return (
     <div className={`content-card ${type === 'Resumo de Livro' && coverImageUrl ? 'with-cover' : ''}`}>
       {type === 'Resumo de Livro' && coverImageUrl && (
@@ -24,9 +29,11 @@ const ContentCard = ({ title, type, date, reference, description, detailsUrl, pd
         </div>
         <p className="card-description">{description}</p>
         <div className="card-actions">
-          <Link to={detailsUrl} className="card-button details-button">
-            Ver Detalhes <FontAwesomeIcon icon={faArrowRight} className="icon-after-text" />
-          </Link>
+          {content && content._id && (
+            <Link to={detailsUrl || `/${type === 'Estudo' ? 'estudos' : type === 'Resumo de Livro' ? 'livros' : 'sermoes'}/${content._id}`} className="card-button details-button">
+              Ver Detalhes <FontAwesomeIcon icon={faArrowRight} className="icon-after-text" />
+            </Link>
+          )}
           {pdfUrl && (
             <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="card-button download-button">
               <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF

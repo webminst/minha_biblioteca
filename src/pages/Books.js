@@ -1,22 +1,39 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { booksData } from '../data/generatedData';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
 
-const Books = () => {
+function Books() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const query = new URLSearchParams(location.search);
   const pageFromUrl = parseInt(query.get("page") || "1", 10);
 
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedAuthor, setSelectedAuthor] = useState('');
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/books');
+        setBooks(response.data);
+      } catch (err) {
+        setError('Erro ao carregar os livros.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
+  }, []);
 
   const goToPage = (pageNumber) => {
     navigate(`${location.pathname}?page=${pageNumber}${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}`);
@@ -36,16 +53,16 @@ const Books = () => {
     navigate(`${location.pathname}?page=1`);
   };
 
-  const uniqueAreas = useMemo(() => [...new Set(booksData.map(b => b.area).filter(Boolean))].sort(), []);
-  const uniqueAuthors = useMemo(() => [...new Set(booksData.map(b => b.author).filter(Boolean))].sort(), []);
+  const uniqueAreas = useMemo(() => [...new Set(books.map(b => b.area).filter(Boolean))].sort(), [books]);
+  const uniqueAuthors = useMemo(() => [...new Set(books.map(b => b.author).filter(Boolean))].sort(), [books]);
 
   const filteredBooks = useMemo(() => {
-    return booksData.filter(book => {
+    return books.filter(book => {
       const areaMatch = !selectedArea || book.area === selectedArea;
       const authorMatch = !selectedAuthor || book.author === selectedAuthor;
       return areaMatch && authorMatch;
     });
-  }, [selectedArea, selectedAuthor]);
+  }, [selectedArea, selectedAuthor, books]);
 
   const paginatedBooks = useMemo(() => {
     const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
@@ -65,6 +82,10 @@ const Books = () => {
     }
     return pageNumbers;
   };
+
+  if (loading) return <p>Carregando livros...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (books.length === 0) return <p>Nenhum livro encontrado.</p>;
 
   return (
     <div className="list-page-container">
@@ -101,14 +122,15 @@ const Books = () => {
         {paginatedBooks.length > 0 ? (
           paginatedBooks.map((book) => (
             <ContentCard
-              key={book.id}
+              key={book._id}
               title={book.title}
-              type={book.type}
+              type="Resumo de Livro"
               reference={`Por ${book.author}`}
               description={book.description}
-              detailsUrl={book.detailsUrl}
+              detailsUrl={`/livros/${book._id}`}
               pdfUrl={book.pdfUrl}
               coverImageUrl={book.coverImageUrl}
+              book={book}
             />
           ))
         ) : (
