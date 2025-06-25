@@ -2,9 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
+const { protect, authorizeRoles } = require('../middleware/authMiddleware'); // Adicione esta linha
 
-// Rota para CRIAR um novo livro (POST)
-router.post('/', async (req, res) => {
+// Rota para CRIAR um novo sermão (POST) - PROTEGIDA
+router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
   try {
     const newBook = new Book(req.body);
     const savedBook = await newBook.save();
@@ -35,8 +36,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Rota para ATUALIZAR um livro pelo ID (PATCH/PUT)
-router.patch('/:id', async (req, res) => {
+// Rota para ATUALIZAR um sermão pelo ID (PATCH/PUT) - PROTEGIDA
+router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
   try {
     const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedBook) return res.status(404).json({ message: 'Livro não encontrado.' });
@@ -46,8 +47,8 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// Rota para DELETAR um livro pelo ID (DELETE)
-router.delete('/:id', async (req, res) => {
+// Rota para DELETAR um sermão pelo ID (DELETE) - PROTEGIDA
+router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => { // Apenas admin pode deletar
   try {
     const deletedBook = await Book.findByIdAndDelete(req.params.id);
     if (!deletedBook) return res.status(404).json({ message: 'Livro não encontrado.' });

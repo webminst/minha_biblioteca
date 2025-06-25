@@ -161,19 +161,6 @@ function Sermons() {
           </button>
         </div>
       )}
-      {sermons.map((sermon) => (
-        <div key={sermon._id} className="sermon-content">
-          <h1 className="content-title">{sermon.title}</h1>
-          {sermon.description && <p className="content-description">{sermon.description}</p>}
-          {sermon.content && (
-            <div className="content-full-text">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {sermon.content}
-              </ReactMarkdown>
-            </div>
-          )}
-        </div>
-      ))}
     </div>
   );
 };

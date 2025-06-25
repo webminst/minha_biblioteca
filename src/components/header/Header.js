@@ -55,14 +55,15 @@ const Header = () => {
 
       <nav className={`main-nav ${isMobileMenuOpen ? 'open' : ''}`}>
         <ul>
-          <li><NavLink to="/" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink></li>
-          <li><NavLink to="/sermoes" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sermões</NavLink></li>
-          <li><NavLink to="/estudos" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Estudos</NavLink></li>
-          <li><NavLink to="/livros" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Livros</NavLink></li>
-          <li><NavLink to="/agenda" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
-          <li><NavLink to="/sobre" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
-          <li><NavLink to="/contato" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
-          <li><NavLink to="/apoie" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Apoie</NavLink></li>
+          <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink></li>
+          <li><NavLink to="/sermoes" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sermões</NavLink></li>
+          <li><NavLink to="/estudos" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Estudos</NavLink></li>
+          <li><NavLink to="/livros" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Livros</NavLink></li>
+          <li><NavLink to="/agenda" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
+          <li><NavLink to="/sobre" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
+          <li><NavLink to="/contato" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
+          <li><NavLink to="/apoie" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Apoie</NavLink></li>
+          <li><NavLink to="/login" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Login</NavLink></li>
         </ul>
         <form onSubmit={handleSearchSubmit} className="search-form-mobile">
           <input

@@ -59,4 +59,5 @@ const SermonSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Sermon', SermonSchema);
+//module.exports = mongoose.model('Sermon', SermonSchema);
+module.exports = mongoose.models.Sermon || mongoose.model('Sermon', SermonSchema);

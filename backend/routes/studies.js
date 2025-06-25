@@ -2,9 +2,11 @@
 const express = require('express');
 const router = express.Router();
 const Study = require('../models/Study'); // Importa o modelo Study
+const User = require('../models/User');
+const { protect, authorizeRoles } = require('../middleware/authMiddleware'); // Adicione esta linha
 
-// Rota para CRIAR um novo estudo (POST)
-router.post('/', async (req, res) => {
+// Rota para CRIAR um novo sermão (POST) - PROTEGIDA
+router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
   try {
     const newStudy = new Study(req.body);
     const savedStudy = await newStudy.save();
@@ -35,8 +37,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Rota para ATUALIZAR um estudo pelo ID (PATCH/PUT)
-router.patch('/:id', async (req, res) => {
+// Rota para ATUALIZAR um sermão pelo ID (PATCH/PUT) - PROTEGIDA
+router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
   try {
     const updatedStudy = await Study.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedStudy) return res.status(404).json({ message: 'Estudo não encontrado.' });
@@ -46,8 +48,8 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// Rota para DELETAR um estudo pelo ID (DELETE)
-router.delete('/:id', async (req, res) => {
+// Rota para DELETAR um sermão pelo ID (DELETE) - PROTEGIDA
+router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => { // Apenas admin pode deletar
   try {
     const deletedStudy = await Study.findByIdAndDelete(req.params.id);
     if (!deletedStudy) return res.status(404).json({ message: 'Estudo não encontrado.' });
@@ -58,17 +60,3 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
-
-// models/Study.js
-const mongoose = require('mongoose');
-
-const StudySchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  theme: { type: String, required: true },
-  description: String,
-  content: String,
-  pdfUrl: String,
-  // adicione outros campos conforme necessário
-}, { timestamps: true });
-
-module.exports = mongoose.model('Study', StudySchema);

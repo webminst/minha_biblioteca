@@ -10,6 +10,7 @@ const cors = require('cors');
 const sermonsRouter = require('./routes/sermons');
 const studiesRouter = require('./routes/studies');
 const booksRouter = require('./routes/books');
+const authRouter = require('./routes/auth'); 
 
 
 const app = express();
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
 app.use('/api/sermons', sermonsRouter); // Todas as rotas em sermonsRouter serão prefixadas com /api/sermons
 app.use('/api/studies', studiesRouter);   // Todas as rotas em studiesRouter serão prefixadas com /api/studies
 app.use('/api/books', booksRouter);     // Todas as rotas em booksRouter serão prefixadas com /api/books
+app.use('/api/auth', authRouter); // NOVO: Usa as rotas de autenticação (ex: /api/auth/login, /api/auth/register)
 
 // --- Iniciar o Servidor ---
 app.listen(PORT, () => {

@@ -70,4 +70,4 @@ const StudySchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Study', StudySchema);
+module.exports = mongoose.models.Study || mongoose.model('Study', StudySchema);
