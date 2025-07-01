@@ -17,7 +17,12 @@ body {
   line-height: 1.2;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-headings);
   color: var(--color-green-ipb);
   margin-top: 0.2em;

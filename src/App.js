@@ -1,7 +1,7 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
 import ScrollToTop from './components/ScrollToTop';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Sermons from './pages/Sermons';
@@ -59,7 +59,7 @@ function App() {
 
 
   return (
-    <Router>
+    <>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -92,10 +92,13 @@ function App() {
             {/* <Route path="/admin/estudos/novo" element={<StudyForm />} /> */}
             {/* <Route path="/admin/estudos/editar/:id" element={<StudyForm />} /> */}
 
+            {/* <Route path="/admin/livros" element={<AdminBooksList />} /> */}
+            {/* <Route path="/admin/livros/novo" element={<BookForm />} /> */}
+            {/* <Route path="/admin/livros/editar/:id" element={<BookForm />} /> */}
           </Route>
         </Route>
       </Routes>
-    </Router>
+    </>
   );
 }
 
