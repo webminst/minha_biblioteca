@@ -17,11 +17,14 @@ import ContentDetail from './pages/ContentDetail';
 import SearchResults from './pages/SearchResults';
 import ProtectedRoute from './components/ProtectedRoute'; // Importa o ProtectedRoute
 import Dashboard from './components/Dashboard'; // Vamos criar este em seguida
+import AdminSermonsList from './components/admin/AdminSermonsList'; // NOVO
+import SermonForm from './components/admin/SermonForm';             // NOVO
 import './App.css';
 
 // Todas as importações acima são utilizadas no componente App.
 
 function App() {
+  const navigate = useNavigate();
 
   // Estado para armazenar informações do usuário autenticado
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,7 +54,7 @@ function App() {
     localStorage.removeItem('userRole');
     setIsAuthenticated(false);
     setUser(null);
-    // navigate('/'); // Opcional: redirecionar para home após logout
+    navigate('/'); // Redireciona para home após logout
   };
 
 
@@ -79,6 +82,16 @@ function App() {
           <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/admin/dashboard" element={<Dashboard user={user} />} />
             {/* Futuras rotas de CRUD: /admin/sermoes/novo, /admin/estudos/editar/:id, etc. */}
+            {/* Rotas CRUD para Sermões */}
+            <Route path="/admin/sermoes" element={<AdminSermonsList />} />
+            <Route path="/admin/sermoes/novo" element={<SermonForm />} />
+            <Route path="/admin/sermoes/editar/:id" element={<SermonForm />} />
+
+            {/* Em breve: Rotas CRUD para Estudos e Livros */}
+            {/* <Route path="/admin/estudos" element={<AdminStudiesList />} /> */}
+            {/* <Route path="/admin/estudos/novo" element={<StudyForm />} /> */}
+            {/* <Route path="/admin/estudos/editar/:id" element={<StudyForm />} /> */}
+
           </Route>
         </Route>
       </Routes>

@@ -8,7 +8,7 @@ function Dashboard({ user }) {
         <div className="dashboard-container">
             <h2>Painel Administrativo</h2>
             {user && (
-                <p>Bem-vindo(a), **{user.username}**! (Cargo: {user.role})</p>
+                <p>Bem-vindo(a), <strong>{user.username}</strong>! ({user.role})</p>
             )}
 
             <h3>Gerenciar Conteúdo:</h3>
