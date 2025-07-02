@@ -18,7 +18,11 @@ import SearchResults from './pages/SearchResults';
 import ProtectedRoute from './components/ProtectedRoute'; // Importa o ProtectedRoute
 import Dashboard from './components/Dashboard'; // Vamos criar este em seguida
 import AdminSermonsList from './components/admin/AdminSermonsList'; // NOVO
-import SermonForm from './components/admin/SermonForm';             // NOVO
+import SermonForm from './components/admin/SermonForm'; // NOVO
+import AdminStudiesList from './components/admin/AdminStudiesList';
+import StudyForm from './components/admin/StudyForm';
+import AdminBooksList from './components/admin/AdminBooksList';
+import BookForm from './components/admin/BookForm'
 import './App.css';
 
 // Todas as importações acima são utilizadas no componente App.
@@ -87,14 +91,15 @@ function App() {
             <Route path="/admin/sermoes/novo" element={<SermonForm />} />
             <Route path="/admin/sermoes/editar/:id" element={<SermonForm />} />
 
-            {/* Em breve: Rotas CRUD para Estudos e Livros */}
-            {/* <Route path="/admin/estudos" element={<AdminStudiesList />} /> */}
-            {/* <Route path="/admin/estudos/novo" element={<StudyForm />} /> */}
-            {/* <Route path="/admin/estudos/editar/:id" element={<StudyForm />} /> */}
+            {/* NOVO: Rotas CRUD para Estudos */}
+            <Route path="/admin/estudos" element={<AdminStudiesList />} />
+            <Route path="/admin/estudos/novo" element={<StudyForm />} />
+            <Route path="/admin/estudos/editar/:id" element={<StudyForm />} />
 
-            {/* <Route path="/admin/livros" element={<AdminBooksList />} /> */}
-            {/* <Route path="/admin/livros/novo" element={<BookForm />} /> */}
-            {/* <Route path="/admin/livros/editar/:id" element={<BookForm />} /> */}
+            {/* Futuras rotas CRUD para Livros */}
+            <Route path="/admin/livros" element={<AdminBooksList />} />
+            <Route path="/admin/livros/novo" element={<BookForm />} />
+            <Route path="/admin/livros/editar/:id" element={<BookForm />} />
           </Route>
         </Route>
       </Routes>
