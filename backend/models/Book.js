@@ -60,6 +60,11 @@ const BookSchema = new mongoose.Schema({
     type: String,
     required: false // Opcional, se houver um PDF do sermão
   },
+  type: {
+    type: String,
+    default: 'Resumo de Livro',
+    required: true
+  }
 }, { timestamps: true });
 
 //module.exports = mongoose.model('Book', BookSchema);

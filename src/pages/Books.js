@@ -129,7 +129,7 @@ function Books() {
               description={book.description}
               detailsUrl={`/livros/${book._id}`}
               pdfUrl={book.pdfUrl}
-              coverImageUrl={book.coverImageUrl}
+              coverImageUrl={book.imageUrl}
               book={book}
             />
           ))
