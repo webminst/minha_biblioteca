@@ -3,7 +3,7 @@ id: "pqvc-o-testemunho-das-escrituras"
 title: "O Testemunho das Escrituras"  
 type: "Estudo Bíblico"  
 date: "2025-06-12"  
-reference: "João 5:39"  
+reference: "João 5:39"
 book: "João"  
 series: "Para Que Vocês Creiam"  
 tags:  

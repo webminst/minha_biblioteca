@@ -26,6 +26,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Rota para LER o último estudo (GET)
+router.get('/latest', async (req, res) => {
+  try {
+    const latestStudy = await Study.findOne().sort({ createdAt: -1 }); // Ordena por data de criação descrescente
+    if (!latestStudy) return res.status(404).json({ message: 'Nenhum estudo encontrado' });
+    res.status(200).json(latestStudy);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Rota para LER um estudo específico pelo ID (GET)
 router.get('/:id', async (req, res) => {
   try {

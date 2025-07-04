@@ -1,145 +1,171 @@
 /* src/components/ContentCard/ContentCard.css */
 .content-card {
-    background-color: var(--color-white);
-    border: 1px solid var(--color-gray-light);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem; /* Espaçamento entre cards */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .content-card:hover {
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-    transform: scale(1.02);
-  }
-  
-  .card-type {
-    display: inline-block;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    align-self: flex-start; /* Alinha no início */
-  }
-  
-  .card-title {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.3rem;
-    /* Herdando a cor verde do h3 global ou defina especificamente */
-  }
-  
-  .card-title a {
-      text-decoration: none;
-      color: inherit; /* Herda cor do h3 */
-  }
-   .card-title a:hover {
-      text-decoration: underline;
-   }
-  
-  .card-meta {
-    font-size: 0.9rem;
-    color: var(--color-gray-medium);
-    margin-bottom: 1rem;
-  }
-  
-  .card-description {
-    flex-grow: 1; /* Faz a descrição ocupar espaço disponível */
-    margin-bottom: 1.5rem;
-    color: var(--color-gray-dark);
-    line-height: 1.5;
-  }
-  
-  .card-actions {
-    display: flex;
-    gap: 1rem; /* Espaço entre botões */
-    margin-top: auto; /* Empurra ações para baixo */
-  }
-  
-  .card-button {
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    text-align: center;
-    font-size: 0.9rem;
-  }
-  
-  .details-button {
-    background-color: var(--color-gray-light);
-    color: var(--color-green-ipb);
-    border: 1px solid var(--color-gray-medium);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .details-button:hover {
-    text-decoration: none;
-    background-color: var(--color-green-ipb);
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  
-  .download-button {
-    background-color: var(--color-gray-light);
-    color: var(--color-gray-dark);
-    border: 1px solid var(--color-gray-medium);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-   .download-button:hover {
-    background-color: #004a38; /* Verde IPB mais escuro */
-    color: var(--color-white);
-    transform: translateY(-2px); /* Leve elevação */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-  
-  .fade-in-on-load {
-  animation: fadeIn 0.8s ease-out forwards;
-  opacity: 0; /* Começa invisível */
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  /* Espaçamento entre cards */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
+
+.content-card:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+}
+
+.card-type {
+  display: inline-block;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  align-self: flex-start;
+  /* Alinha no início */
+}
+
+.card-title {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  /* Herdando a cor verde do h3 global ou defina especificamente */
+}
+
+.card-title a {
+  text-decoration: none;
+  color: inherit;
+  /* Herda cor do h3 */
+}
+
+.card-title a:hover {
+  text-decoration: underline;
+}
+
+.card-meta {
+  font-size: 0.9rem;
+  color: var(--color-gray-medium);
+  margin-bottom: 1rem;
+}
+
+.card-description {
+  flex-grow: 1;
+  /* Faz a descrição ocupar espaço disponível */
+  margin-bottom: 1.5rem;
+  color: var(--color-gray-dark);
+  line-height: 1.5;
+}
+
+.card-actions {
+  display: flex;
+  gap: 1rem;
+  /* Espaço entre botões */
+  margin-top: auto;
+  /* Empurra ações para baixo */
+}
+
+.card-button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.details-button {
+  background-color: var(--color-gray-light);
+  color: var(--color-green-ipb);
+  border: 1px solid var(--color-gray-medium);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.details-button:hover {
+  text-decoration: none;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  /* Leve elevação */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.download-button {
+  background-color: var(--color-gray-light);
+  color: var(--color-gray-dark);
+  border: 1px solid var(--color-gray-medium);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-button:hover {
+  background-color: #004a38;
+  /* Verde IPB mais escuro */
+  color: var(--color-white);
+  transform: translateY(-2px);
+  /* Leve elevação */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fade-in-on-load {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+  /* Começa invisível */
+}
+
 @keyframes fadeIn {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .card-button .icon-before-text {
-  margin-right: 0.5em; /* Espaço entre ícone e texto */
+  margin-right: 0.5em;
+  /* Espaço entre ícone e texto */
 }
+
 .card-button .icon-after-text {
   margin-left: 0.5em;
 }
 
 .content-card.with-cover {
-  display: flex; /* Para layout lado a lado da capa e conteúdo */
+  display: flex;
+  /* Para layout lado a lado da capa e conteúdo */
   gap: 1rem;
 }
 
 .card-cover-link {
-    display: block; /* Para o link ocupar o espaço da imagem */
-    flex-shrink: 0; /* Evita que a imagem encolha */
-    margin-bottom: 0;
+  display: block;
+  /* Para o link ocupar o espaço da imagem */
+  flex-shrink: 0;
+  /* Evita que a imagem encolha */
+  margin-bottom: 0;
 }
 
 .card-cover-image {
-  width: 100px; /* Tamanho da miniatura da capa */
-  height: auto;
-  max-height: 150px; /* Limite de altura para manter proporção */
-  object-fit: cover; /* Ou 'contain' dependendo do efeito desejado */
-  border-radius: 4px;
-  border: 1px solid var(--color-gray-light);
+  width: 120px;
+  /* ajuste conforme desejar */
+  height: 180px;
+  /* ajuste conforme desejar */
+  object-fit: cover;
+  /* mantém o aspecto e preenche o espaço */
+  border-radius: 6px;
+  /* opcional, para cantos arredondados */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* opcional, para sombra leve */
 }
 
 .card-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Ocupa o espaço restante */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  /* Ocupa o espaço restante */
 }
 
 /* Se o card não tiver capa, o .card-content-wrapper não é necessário,
@@ -148,22 +174,47 @@
    Ou, ajuste os estilos para que .card-content-wrapper funcione bem mesmo sem a capa.
 */
 
-@media (max-width: 480px) { /* Exemplo para telas pequenas */
-    .content-card.with-cover {
-        flex-direction: column; /* Empilha capa e conteúdo no card */
-        align-items: center; /* Centraliza */
-    }
-    .card-cover-link {
-        margin-bottom: 1rem;
-    }
-    .card-cover-image {
-        width: 120px; /* Pode aumentar um pouco quando empilhado */
-        max-height: 180px;
-    }
-    .card-content-wrapper {
-        text-align: center; /* Centraliza texto no card */
-    }
-    .card-actions {
-        justify-content: center; /* Centraliza botões no card */
-    }
+@media (max-width: 480px) {
+
+  /* Exemplo para telas pequenas */
+  .content-card.with-cover {
+    flex-direction: column;
+    /* Empilha capa e conteúdo no card */
+    align-items: center;
+    /* Centraliza */
+  }
+
+  .card-cover-link {
+    margin-bottom: 1rem;
+  }
+
+  .card-cover-image {
+    width: 120px;
+    /* Pode aumentar um pouco quando empilhado */
+    max-height: 180px;
+  }
+
+  .card-content-wrapper {
+    text-align: center;
+    /* Centraliza texto no card */
+  }
+
+  .card-actions {
+    justify-content: center;
+    /* Centraliza botões no card */
+  }
+}
+
+.content-reference {
+  font-size: 1rem;
+  color: var(--color-gray-medium, #666);
+  margin-bottom: 0.5rem;
+  margin-top: -0.3rem;
+}
+
+.card-author,
+.card-area {
+  font-size: 0.95rem;
+  color: var(--color-gray-medium, #666);
+  margin-bottom: 0.2rem;
 }

@@ -7,12 +7,17 @@ import './Form.css'; // CSS geral para formulários admin
 function SermonForm() {
     const [title, setTitle] = useState('');
     const [bibleReference, setBibleReference] = useState('');
+    const [book, setBook] = useState('');
+    const [series, setSeries] = useState('');
     const [date, setDate] = useState('');
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [audioUrl, setAudioUrl] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
     const [pdfUrl, setPdfUrl] = useState('');
+    const [tags, setTags] = useState('');
+    const [speaker, setSpeaker] = useState('');
+    const [local, setLocal] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -47,6 +52,11 @@ function SermonForm() {
                     setAudioUrl(sermonData.audioUrl || '');
                     setVideoUrl(sermonData.videoUrl || '');
                     setPdfUrl(sermonData.pdfUrl || '');
+                    setTags((sermonData.tags || []).join(', '));
+                    setSpeaker(sermonData.speaker || '');
+                    setLocal(sermonData.local || '');
+                    setBook(sermonData.book || '');
+                    setSeries(sermonData.series || '');
                 } catch (err) {
                     setError('Erro ao carregar dados do sermão: ' + (err.response?.data?.message || err.message));
                     console.error('Erro ao buscar sermão para edição:', err);
@@ -67,12 +77,17 @@ function SermonForm() {
         const sermonData = {
             title,
             bibleReference,
-            date, // Enviar a data como string YYYY-MM-DD para o backend está ok
+            series,
+            tags: tags.split(',').map(tag => tag.trim()).filter(Boolean), // transforma string em array
+            speaker,
+            date,
+            local,
             description,
             content,
             audioUrl,
             videoUrl,
             pdfUrl,
+            book,
         };
 
         try {
@@ -99,6 +114,9 @@ function SermonForm() {
                 setAudioUrl('');
                 setVideoUrl('');
                 setPdfUrl('');
+                setTags('');
+                setSpeaker('');
+                setLocal('');
             }
             // Opcional: redirecionar para a lista de sermões após sucesso
             navigate('/admin/sermoes');
@@ -206,6 +224,64 @@ function SermonForm() {
                         id="pdfUrl"
                         value={pdfUrl}
                         onChange={(e) => setPdfUrl(e.target.value)}
+                        disabled={loading}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="tags">Tags (separadas por vírgula):</label>
+                    <input
+                        type="text"
+                        id="tags"
+                        value={tags}
+                        onChange={e => setTags(e.target.value)}
+                        disabled={loading}
+                        placeholder="Ex: Fé, Graça, Esperança"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="speaker">Pregador:</label>
+                    <input
+                        type="text"
+                        id="speaker"
+                        value={speaker}
+                        onChange={e => setSpeaker(e.target.value)}
+                        disabled={loading}
+                        placeholder="Nome do pregador"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="local">Local:</label>
+                    <input
+                        type="text"
+                        id="local"
+                        value={local}
+                        onChange={e => setLocal(e.target.value)}
+                        disabled={loading}
+                        placeholder="Local do sermão"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="book">Livro:</label>
+                    <input
+                        type="text"
+                        id="book"
+                        value={book}
+                        onChange={(e) => setBook(e.target.value)}
+                        disabled={loading}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="series">Série:</label>
+                    <input
+                        type="text"
+                        id="series"
+                        value={series}
+                        onChange={(e) => setSeries(e.target.value)}
                         disabled={loading}
                     />
                 </div>

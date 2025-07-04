@@ -8,6 +8,8 @@ function AdminSermonsList() {
   const [sermons, setSermons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOrder, setSortOrder] = useState('date-desc'); // Estado para controlar a ordenação
+  const [sortedSermons, setSortedSermons] = useState([]); // Estado para sermões ordenados
 
   const fetchSermons = async () => {
     setLoading(true);
@@ -45,7 +47,8 @@ function AdminSermonsList() {
         };
         await axios.delete(`http://localhost:3001/api/sermons/${id}`, config);
         // Atualiza a lista removendo o sermão excluído
-        setSermons(sermons.filter((sermon) => sermon._id !== id));
+        const updatedSermons = sermons.filter((sermon) => sermon._id !== id);
+        setSermons(updatedSermons);
         alert('Sermão excluído com sucesso!');
       } catch (err) {
         setError('Erro ao excluir sermão: ' + (err.response?.data?.message || err.message));
@@ -54,13 +57,74 @@ function AdminSermonsList() {
     }
   };
 
+  // Função para ordenar os sermões
+  const sortSermons = (sermonsArray, order) => {
+    const sorted = [...sermonsArray];
+
+    switch (order) {
+      case 'alphabetical-asc':
+        return sorted.sort((a, b) => a.title.localeCompare(b.title));
+      case 'alphabetical-desc':
+        return sorted.sort((a, b) => b.title.localeCompare(a.title));
+      case 'reference-asc':
+        return sorted.sort((a, b) => (a.bibleReference || '').localeCompare(b.bibleReference || ''));
+      case 'reference-desc':
+        return sorted.sort((a, b) => (b.bibleReference || '').localeCompare(a.bibleReference || ''));
+      case 'date-asc':
+        return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+      case 'date-desc':
+        return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+      default:
+        return sorted;
+    }
+  };
+
+  // useEffect para ordenar sermões quando sermons ou sortOrder mudarem
+  useEffect(() => {
+    if (sermons.length > 0) {
+      const sorted = sortSermons(sermons, sortOrder);
+      setSortedSermons(sorted);
+    }
+  }, [sermons, sortOrder]);
+
+  // Função para alterar a ordenação
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
   if (loading) return <p>Carregando sermões...</p>;
   if (error) return <p className="error-message">{error}</p>;
 
   return (
     <div className="admin-list-container">
       <h2>Gerenciar Sermões</h2>
-      <Link to="/admin/sermoes/novo" className="btn-add-new">Adicionar Novo Sermão</Link>
+
+      <div className="admin-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '20px' }}>
+        <Link to="/admin/sermoes/novo" className="btn-add-new">Adicionar Novo Sermão</Link>
+
+        <div className="sort-controls" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <label htmlFor="sortOrder" style={{ fontWeight: 'bold', minWidth: 'fit-content' }}>Ordenar por:</label>
+          <select
+            id="sortOrder"
+            value={sortOrder}
+            onChange={handleSortChange}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '4px',
+              border: '1px solid #ddd',
+              fontSize: '14px',
+              minWidth: '200px'
+            }}
+          >
+            <option value="date-desc">Data (Mais recente primeiro)</option>
+            <option value="date-asc">Data (Mais antigo primeiro)</option>
+            <option value="alphabetical-asc">Título (A-Z)</option>
+            <option value="alphabetical-desc">Título (Z-A)</option>
+            <option value="reference-asc">Referência (A-Z)</option>
+            <option value="reference-desc">Referência (Z-A)</option>
+          </select>
+        </div>
+      </div>
 
       {sermons.length === 0 ? (
         <p>Nenhum sermão cadastrado ainda.</p>
@@ -75,7 +139,7 @@ function AdminSermonsList() {
             </tr>
           </thead>
           <tbody>
-            {sermons.map((sermon) => (
+            {sortedSermons.map((sermon) => (
               <tr key={sermon._id}>
                 <td>{sermon.title}</td>
                 <td>{sermon.bibleReference}</td>

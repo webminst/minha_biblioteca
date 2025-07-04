@@ -26,6 +26,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Rota para LER o último sermão (GET)
+router.get('/latest', async (req, res) => {
+  try {
+    const latestSermon = await Sermon.findOne().sort({ createdAt: -1 }); // Ordena por data de criação descrescente
+    if (!latestSermon) return res.status(404).json({ message: 'Nenhum sermão encontrado' });
+    res.status(200).json(latestSermon);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Rota para LER um sermão específico pelo ID (GET)
 router.get('/:id', async (req, res) => {
   try {
@@ -34,30 +45,6 @@ router.get('/:id', async (req, res) => {
     res.json(sermon);
   } catch (err) {
     res.status(500).json({ message: err.message });
-  }
-});
-
-// POST /api/sermons - Criar um novo sermão
-router.post('/', async (req, res) => {
-  const sermon = new Sermon({
-    title: req.body.title,
-    bibleReference: req.body.bibleReference,
-    series: req.body.series,
-    tags: req.body.tags,
-    speaker: req.body.speaker,
-    date: req.body.date,
-    local: req.body.local,
-    description: req.body.description,
-    content: req.body.content,
-    audioUrl: req.body.audioUrl,
-    videoUrl: req.body.videoUrl,
-    pdfUrl: req.body.pdfUrl,
-  });
-  try {
-    const newSermon = await sermon.save();
-    res.status(201).json(newSermon);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 });
 
@@ -72,24 +59,6 @@ router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res
   }
 });
 
-// PUT /api/sermons/:id - Atualizar um sermão
-router.put('/:id', async (req, res) => {
-  try {
-    const sermon = await Sermon.findById(req.params.id);
-    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado' });
-
-    // Atualiza apenas os campos que foram enviados no body
-    Object.keys(req.body).forEach(key => {
-      sermon[key] = req.body[key];
-    });
-
-    const updatedSermon = await sermon.save();
-    res.json(updatedSermon);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
 // Rota para DELETAR um sermão pelo ID (DELETE) - PROTEGIDA
 router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => { // Apenas admin pode deletar
   try {
@@ -98,19 +67,6 @@ router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => { //
     res.status(200).json({ message: 'Sermão excluído com sucesso.' });
   } catch (error) {
     res.status(500).json({ message: error.message });
-  }
-});
-
-// DELETE /api/sermons/:id - Excluir um sermão
-router.delete('/:id', async (req, res) => {
-  try {
-    const sermon = await Sermon.findById(req.params.id);
-    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado' });
-
-    await sermon.deleteOne(); // Use deleteOne() ou deleteMany()
-    res.json({ message: 'Sermão excluído com sucesso' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
 });
 

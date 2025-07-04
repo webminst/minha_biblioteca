@@ -3,7 +3,7 @@ id: "quero-que-meus-filhos-saibam"
 title: "Quero que meus filhos saibam."  
 type: "Estudo Bíblico"  
 date: "2025-06-19"  
-reference: "Pv  22:6"  
+reference: "Pv 22:6"  
 book: "Provérbios"  
 series: ""  
 tags:

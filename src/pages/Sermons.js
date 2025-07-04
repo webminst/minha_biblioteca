@@ -1,3 +1,4 @@
+// src/components/Sermons.js
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import ContentCard from '../components/ContentCard/ContentCard';
@@ -57,12 +58,23 @@ function Sermons() {
     navigate(`${location.pathname}?page=1`);
   };
 
-  const uniqueBooks = useMemo(() => [...new Set(sermons.map(s => s.book).filter(Boolean))].sort(), [sermons]);
+  // Note: Seu schema de Sermão não tem 'book'. Se você tem um campo 'bibleBook' ou algo similar,
+  // precisará usá-lo aqui. Por agora, vou assumir que 'bibleReference' pode ser usado para extrair o livro.
+  // Ou, se 'book' é um campo que você pretende adicionar ao schema de sermão:
+  // const uniqueBooks = useMemo(() => [...new Set(sermons.map(s => s.bibleReference.split(' ')[0]).filter(Boolean))].sort(), [sermons]);
+  // Se 'book' for um campo real no seu modelo de sermão, mantenha 's.book'.
+  const uniqueBooks = useMemo(() => {
+    // Tentativa de extrair o livro da referência bíblica para o filtro, se 'book' não for um campo direto
+    const booksFromReferences = sermons.map(s => s.bibleReference ? s.bibleReference.split(' ')[0].replace(':', '') : '').filter(Boolean);
+    return [...new Set(booksFromReferences)].sort();
+  }, [sermons]);
   const uniqueSeries = useMemo(() => [...new Set(sermons.map(s => s.series).filter(Boolean))].sort(), [sermons]);
 
   const filteredSermons = useMemo(() => {
     return sermons.filter(sermon => {
-      const bookMatch = !selectedBook || sermon.book === selectedBook;
+      // Ajuste aqui se 'book' não é um campo direto no seu modelo de sermão e você está filtrando por 'bibleReference'
+      const sermonBook = sermon.bibleReference ? sermon.bibleReference.split(' ')[0].replace(':', '') : '';
+      const bookMatch = !selectedBook || sermonBook === selectedBook;
       const seriesMatch = !selectedSeries || sermon.series === selectedSeries;
       return bookMatch && seriesMatch;
     });
@@ -127,14 +139,13 @@ function Sermons() {
           paginatedSermons.map((sermon) => (
             <ContentCard
               key={sermon._id}
-              sermon={sermon}
               title={sermon.title}
-              type={sermon.type}
-              date={sermon.date}
-              reference={sermon.reference}
+              type="Sermão"
               description={sermon.description}
               detailsUrl={`/sermoes/${sermon._id}`}
               pdfUrl={sermon.pdfUrl}
+              reference={sermon.bibleReference}
+              sermon={sermon}
             />
           ))
         ) : (

@@ -125,6 +125,7 @@ function Studies() {
               key={study._id}
               title={study.title}
               type="Estudo"
+              reference={study.reference}
               description={study.description}
               detailsUrl={`/estudos/${study._id}`}
               pdfUrl={study.pdfUrl}

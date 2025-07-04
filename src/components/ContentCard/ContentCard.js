@@ -1,15 +1,40 @@
+// src/components/ContentCard/ContentCard.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import './ContentCard.css';
 
-// Props esperadas: title, type (Sermão, Estudo, Livro), date, reference, description, detailsUrl, pdfUrl (opcional)
 const ContentCard = ({
-  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book
+  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book, author, area, speaker
 }) => {
   // Use o objeto que estiver disponível
   const content = sermon || study || book;
+
+  // Renderiza a meta-informação baseada no tipo
+  const renderMetaInfo = () => {
+    if (type === 'Resumo de Livro') {
+      return (
+        <>
+          {author && <div className="card-author">Por: {author}</div>}
+          {area && <div className="card-area">Área: {area}</div>}
+        </>
+      );
+    } else if (type === 'Sermão') {
+      return (
+        <>
+          {reference && <div className="card-reference">{reference}</div>}
+        </>
+      );
+    } else if (type === 'Estudo Bíblico' || type === 'Estudo') {
+      return (
+        <>
+          {reference && <div className="card-reference">{reference}</div>}
+        </>
+      );
+    }
+    return null; // Caso não seja nenhum dos tipos esperados
+  };
 
   return (
     <div className={`content-card ${type === 'Resumo de Livro' && coverImageUrl ? 'with-cover' : ''}`}>
@@ -23,14 +48,11 @@ const ContentCard = ({
         <h3 className="card-title">
           <Link to={detailsUrl}>{title}</Link>
         </h3>
-        <div className="card-meta">
-          {date && <span>{date}</span>}
-          {reference && <span> | {reference}</span>}
-        </div>
+        {renderMetaInfo()} {/* Chama a função para renderizar a meta-informação */}
         <p className="card-description">{description}</p>
         <div className="card-actions">
-          {content && content._id && (
-            <Link to={detailsUrl || `/${type === 'Estudo' ? 'estudos' : type === 'Resumo de Livro' ? 'livros' : 'sermoes'}/${content._id}`} className="card-button details-button">
+          {(detailsUrl || (content && content._id)) && (
+            <Link to={detailsUrl || `/${type === 'Estudo Bíblico' ? 'estudos' : type === 'Resumo de Livro' ? 'livros' : 'sermoes'}/${content._id}`} className="card-button details-button">
               Ver Detalhes <FontAwesomeIcon icon={faArrowRight} className="icon-after-text" />
             </Link>
           )}

@@ -78,34 +78,47 @@ const ContentDetail = () => {
         <div className="title-and-meta-container"> {/* Para alinhar título e meta */}
           <div className="content-meta">
             <span className="content-type-badge">{sermon.type}</span>
-            {/* ... (outros metadados como data, reference, author, etc.) ... */}
-             {sermon.author && <span className="meta-item">Autor: {sermon.author}</span>}
-             {sermon.publisher && <span className="meta-item">Editora: {sermon.publisher}</span>}
-             {sermon.area && <span className="meta-item">Área: {sermon.area}</span>}
+            {sermon.type === 'Resumo de Livro' && sermon.author && (
+              <span className="meta-item">Autor: {sermon.author}</span>
+            )}
+            {sermon.publisher && <span className="meta-item">Editora: {sermon.publisher}</span>}
+            {sermon.area && <span className="meta-item">Área: {sermon.area}</span>}
           </div>
-  
+
         </div>
       </div> {/* Fim de .content-header-wrapper */}
 
 
 
       {/* ... Metadados e Título ... */}
-       <div className="content-meta">
-        {/* ... */}
-      </div>
+      {(['Sermão', 'Estudo', 'sermão', 'estudo'].includes(sermon.type)) && (
+        <div className="content-meta-above-title">
+          {(sermon.author || sermon.speaker) && (
+            <span className="meta-item">
+              Autor: {sermon.author || sermon.speaker}
+            </span>
+          )}
+          {(sermon.reference || sermon.bibleReference) && (
+            <span className="meta-item">
+              {' | Referência: '}{sermon.reference || sermon.bibleReference}
+            </span>
+          )}
+        </div>
+      )}
       <h1 className="content-title">{sermon.title}</h1>
+
       {/* ... Player de Áudio e Texto Completo ... */}
-       {sermon.content && (
-  <div className="content-full-text">
-    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-      {sermon.content}
-    </ReactMarkdown>
-  </div>
-)}
+      {sermon.content && (
+        <div className="content-full-text">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {sermon.content}
+          </ReactMarkdown>
+        </div>
+      )}
 
 
       {/* --- Ações (Download, Compartilhamento) --- */}
-            <div className="content-actions">
+      <div className="content-actions">
         {sermon.pdfUrl && (
           <a href={sermon.pdfUrl} target="_blank" rel="noopener noreferrer" className="action-button download-button">
             <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF {/* ÍCONE AQUI */}

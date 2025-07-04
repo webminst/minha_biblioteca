@@ -25,6 +25,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Rota para LER o último livro (GET)
+router.get('/latest', async (req, res) => {
+  try {
+    const latestBook = await Book.findOne().sort({ createdAt: -1 }); // Ordena por data de criação descrescente
+    if (!latestBook) return res.status(404).json({ message: 'Nenhum livro encontrado' });
+    res.status(200).json(latestBook);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Rota para LER um livro específico pelo ID (GET)
 router.get('/:id', async (req, res) => {
   try {
