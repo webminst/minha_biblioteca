@@ -58,6 +58,11 @@ async function buildContent() {
   try {
     console.log('Iniciando a construção dos dados de conteúdo a partir de Markdown...');
 
+    // Garantir que os diretórios existam
+    await fs.ensureDir(path.join(contentDir, 'sermons'));
+    await fs.ensureDir(path.join(contentDir, 'studies'));
+    await fs.ensureDir(path.join(contentDir, 'books'));
+
     const sermonFiles = await fs.readdir(path.join(contentDir, 'sermons'));
     const studyFiles = await fs.readdir(path.join(contentDir, 'studies'));
     const bookFiles = await fs.readdir(path.join(contentDir, 'books'));

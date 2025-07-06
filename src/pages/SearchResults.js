@@ -1,15 +1,14 @@
 // src/pages/SearchResults.js
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-// import { sermonsData, studiesData, booksData, findContentById } from '../data/mockData'; // LINHA ANTIGA
-import { sermonsData, studiesData, booksData, findContentById } from '../data/generatedData'; // NOVA LINHA para atualizar os dados
+import axios from 'axios';
 import ContentCard from '../components/ContentCard/ContentCard';
 import './ListPage.css'; // Reutilizar estilos da lista
 
 // Helper para pegar query param da URL
 function useQuery() {
-    const { search } = useLocation();
-    return React.useMemo(() => new URLSearchParams(search), [search]);
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
 }
 
 
@@ -17,27 +16,57 @@ const SearchResults = () => {
   const location = useLocation();
   const queryHook = useQuery();
 
-  // Pega o termo de busca - Escolha UMA das opções abaixo:
-  // Opção 1: Se usou query param no Header (?q=...)
-  const searchTerm = queryHook.get('q') || '';
-  // Opção 2: Se usou state no Header (navigate('/busca', { state: { query: ... } }))
-  // const searchTerm = location.state?.query || '';
+  // Estados para os dados do banco
+  const [sermons, setSermons] = useState([]);
+  const [studies, setStudies] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Pega o termo de busca do query param
+  const searchTerm = queryHook.get('q') || '';
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
 
-  const allContent = useMemo(() => [
-      ...sermonsData,
-      ...studiesData,
-      ...booksData
-    ], []); // Combina todos os dados uma vez
+  // Busca os dados do banco de dados
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setLoading(true);
 
+        const [sermonsResponse, studiesResponse, booksResponse] = await Promise.all([
+          axios.get('http://localhost:3001/api/sermons'),
+          axios.get('http://localhost:3001/api/studies'),
+          axios.get('http://localhost:3001/api/books')
+        ]);
+
+        setSermons(sermonsResponse.data);
+        setStudies(studiesResponse.data);
+        setBooks(booksResponse.data);
+      } catch (err) {
+        setError('Erro ao carregar dados para busca. Por favor, tente novamente mais tarde.');
+        console.error('Erro ao buscar dados:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
+  // Combina todos os dados e adiciona tipo para identificação
+  const allContent = useMemo(() => [
+    ...sermons.map(sermon => ({ ...sermon, type: 'Sermão' })),
+    ...studies.map(study => ({ ...study, type: 'Estudo' })),
+    ...books.map(book => ({ ...book, type: 'Livro' }))
+  ], [sermons, studies, books]);
+
+  // Filtra os resultados com base no termo de busca
   const filteredResults = useMemo(() => {
     if (!normalizedSearchTerm) {
-      return []; // Retorna vazio se não houver termo de busca
+      return [];
     }
 
     return allContent.filter(item => {
-      // Constrói uma string com todos os campos pesquisáveis do item
       const searchableString = `
         ${item.title || ''}
         ${item.description || ''}
@@ -50,12 +79,29 @@ const SearchResults = () => {
         ${item.area || ''}
         ${item.publisher || ''}
         ${(item.tags || []).join(' ')}
-      `.toLowerCase(); // Converte tudo para minúsculas
+      `.toLowerCase();
 
-      // Verifica se a string pesquisável inclui o termo de busca
       return searchableString.includes(normalizedSearchTerm);
     });
-  }, [allContent, normalizedSearchTerm]); // Recalcula quando o termo muda
+  }, [allContent, normalizedSearchTerm]);
+
+  if (loading) {
+    return (
+      <div className="list-page-container">
+        <h1>Resultados da Busca</h1>
+        <p>Carregando resultados...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="list-page-container">
+        <h1>Resultados da Busca</h1>
+        <p style={{ color: 'red' }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="list-page-container"> {/* Reutiliza o container */}
@@ -67,7 +113,7 @@ const SearchResults = () => {
         </p>
       ) : (
         <p className="list-page-description">
-            Por favor, digite um termo na barra de busca acima.
+          Por favor, digite um termo na barra de busca acima.
         </p>
       )}
 
@@ -83,7 +129,7 @@ const SearchResults = () => {
               date={item.date}
               // Adapta a referência conforme o tipo para melhor visualização
               reference={
-                  item.type === 'Resumo de Livro' ? `Por ${item.author}` :
+                item.type === 'Livro' ? `Por ${item.author}` :
                   item.reference || item.theme || item.format || item.area || ''
               }
               description={item.description}
@@ -92,22 +138,22 @@ const SearchResults = () => {
             />
           ))
         ) : searchTerm && filteredResults.length === 0 && (
-  <div className="empty-state-container">
-    {/* Pode adicionar um SVG/Imagem aqui */}
-    <img src="/images/nenhum-resultado-encontrado.png" alt="Nenhum resultado encontrado" className="empty-state-image" />
-    <h2>Nenhum resultado para "{searchTerm}"</h2>
-    <p>Tente palavras-chave diferentes ou explore nossas seções:</p>
-    <div className="empty-state-actions">
-      <Link to="/sermoes" className="empty-state-button"> Ver Sermões | </Link>
-      <Link to="/livros" className="empty-state-button">  Ver Livros  | </Link>
-      <Link to="/estudos" className="empty-state-button"> Ver Estudos | </Link>
-    </div>
-  </div>
-)}
+          <div className="empty-state-container">
+            {/* Pode adicionar um SVG/Imagem aqui */}
+            <img src="/images/nenhum-resultado-encontrado.png" alt="Nenhum resultado encontrado" className="empty-state-image" />
+            <h2>Nenhum resultado para "{searchTerm}"</h2>
+            <p>Tente palavras-chave diferentes ou explore nossas seções:</p>
+            <div className="empty-state-actions">
+              <Link to="/sermoes" className="empty-state-button"> Ver Sermões | </Link>
+              <Link to="/livros" className="empty-state-button">  Ver Livros  | </Link>
+              <Link to="/estudos" className="empty-state-button"> Ver Estudos | </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <Link to="/" className="hero-button">Voltar para Home</Link> {/* Reutiliza estilo do botão */}
+        <Link to="/" className="hero-button">Voltar para Home</Link> {/* Reutiliza estilo do botão */}
       </div>
     </div>
   );
