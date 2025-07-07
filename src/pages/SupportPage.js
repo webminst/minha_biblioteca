@@ -4,11 +4,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faCopy } from '@fortawesome/free-solid-svg-icons';
 import './SupportPage.css';
 
+/**
+ * Componente SupportPage - Página de apoio ao ministério
+ * Permite contribuições via PIX e apresenta outras formas de apoio
+ * Inclui funcionalidade para copiar chave PIX para área de transferência
+ */
 const SupportPage = () => {
+  // Dados para contribuição via PIX
   const pixKey = "webminst@hotmail.com";
   const bankName = "Caixa Econômica Federal";
   const accountHolderName = "Giovanni Moreira Guimarães";
 
+  // Função para copiar chave PIX para área de transferência
   const copyToClipboard = () => {
     navigator.clipboard.writeText(pixKey)
       .then(() => {
@@ -22,11 +29,13 @@ const SupportPage = () => {
 
   return (
     <div className="support-container">
+      {/* Título principal com ícone */}
       <h1>
         <FontAwesomeIcon icon={faHeart} style={{ marginRight: '10px', color: 'var(--color-green-ipb)' }} />
         Apoie este Ministério
       </h1>
 
+      {/* Seção de introdução e propósito */}
       <div className="support-intro">
         <p>
           Se o conteúdo compartilhado neste espaço tem sido uma bênção para sua vida e
@@ -44,11 +53,14 @@ const SupportPage = () => {
         </p>
       </div>
 
+      {/* Seção de contribuição via PIX */}
       <div className="pix-donation-section">
         <h2>Contribua via PIX</h2>
         <p>
           Você pode fazer sua contribuição de forma rápida e segura utilizando a chave PIX abaixo:
         </p>
+
+        {/* Container da chave PIX com botão de copiar */}
         <div className="pix-key-container">
           <p className="pix-label">Chave PIX (E-mail):</p>
           <div className="pix-key-value-wrapper">
@@ -58,17 +70,28 @@ const SupportPage = () => {
             </button>
           </div>
         </div>
+
+        {/* Detalhes da conta PIX */}
         <div className="pix-details">
-            <p><strong>Titular:</strong> {accountHolderName}</p>
-            <p><strong>Instituição:</strong> {bankName}</p>
+          <p><strong>Titular:</strong> {accountHolderName}</p>
+          <p><strong>Instituição:</strong> {bankName}</p>
         </div>
+
+        {/* Instruções de segurança */}
         <p className="pix-instructions">
           Ao realizar a transferência, por favor, verifique se o nome do titular confere
           antes de confirmar. Deus o abençoe por sua generosidade!
         </p>
-        <img src="/images/Chave PIX - E-mail.jpg" alt="QR Code PIX" className="pix-qrcode"/>
+
+        {/* QR Code para PIX */}
+        <img
+          src="/images/Chave PIX - E-mail.jpg"
+          alt="QR Code PIX para contribuição"
+          className="pix-qrcode"
+        />
       </div>
 
+      {/* Seção de formas alternativas de apoio */}
       <div className="alternative-support">
         <h2>Outras Formas de Apoio</h2>
         <p>
@@ -81,11 +104,17 @@ const SupportPage = () => {
         </ul>
       </div>
 
+      {/* Mensagem de agradecimento com versículo bíblico */}
       <div className="thank-you-note">
         <p>
           <strong>Muito obrigado pelo seu apoio e encorajamento!</strong>
         </p>
-        <p><em>"Cada um contribua segundo propôs no seu coração; não com tristeza ou por necessidade; porque Deus ama ao que dá com alegria." (2 Coríntios 9:7)</em></p>
+        <p>
+          <em>
+            "Cada um contribua segundo propôs no seu coração; não com tristeza ou por necessidade;
+            porque Deus ama ao que dá com alegria." (2 Coríntios 9:7)
+          </em>
+        </p>
       </div>
     </div>
   );

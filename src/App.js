@@ -1,8 +1,13 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
-import ScrollToTop from './components/ScrollToTop';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+
+// Componentes de infraestrutura
+import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Páginas públicas
 import Home from './pages/Home';
 import Sermons from './pages/Sermons';
 import Studies from './pages/Studies';
@@ -10,97 +15,134 @@ import Books from './pages/Books';
 import Agenda from './pages/Agenda';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import Login from './components/Login';
-import NotFound from './pages/NotFound';
 import SupportPage from './pages/SupportPage';
 import ContentDetail from './pages/ContentDetail';
 import SearchResults from './pages/SearchResults';
-import ProtectedRoute from './components/ProtectedRoute'; // Importa o ProtectedRoute
-import Dashboard from './components/Dashboard'; // Vamos criar este em seguida
-import AdminSermonsList from './components/admin/AdminSermonsList'; // NOVO
-import SermonForm from './components/admin/SermonForm'; // NOVO
+import NotFound from './pages/NotFound';
+
+// Componentes de autenticação e admin
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+
+// Componentes administrativos
+import AdminSermonsList from './components/admin/AdminSermonsList';
+import SermonForm from './components/admin/SermonForm';
 import AdminStudiesList from './components/admin/AdminStudiesList';
 import StudyForm from './components/admin/StudyForm';
 import AdminBooksList from './components/admin/AdminBooksList';
-import BookForm from './components/admin/BookForm'
+import BookForm from './components/admin/BookForm';
+
 import './App.css';
 
-// Todas as importações acima são utilizadas no componente App.
-
+/**
+ * Componente App - Componente raiz da aplicação
+ * Gerencia autenticação, rotas públicas e protegidas
+ * Mantém estado global de autenticação e controla navegação
+ */
 function App() {
   const navigate = useNavigate();
 
-  // Estado para armazenar informações do usuário autenticado
+  // Estados para controle de autenticação
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null); // Para guardar username, role, etc.
+  const [user, setUser] = useState(null);
 
-  // Verifica o localStorage ao carregar a aplicação para ver se já há um token
+  // Verifica se usuário já está logado ao carregar a aplicação
   useEffect(() => {
     const token = localStorage.getItem('userToken');
     const storedUsername = localStorage.getItem('username');
     const storedRole = localStorage.getItem('userRole');
+
     if (token && storedUsername && storedRole) {
-      // Aqui você poderia fazer uma requisição para validar o token no backend
-      // Por simplicidade, vamos apenas considerar que se o token existe, está logado.
+      // Restaura sessão do usuário logado
       setIsAuthenticated(true);
-      setUser({ username: storedUsername, role: storedRole, token });
+      setUser({
+        username: storedUsername,
+        role: storedRole,
+        token
+      });
     }
   }, []);
 
+  // Handler para sucesso no login
   const handleLoginSuccess = (userData) => {
     setIsAuthenticated(true);
     setUser(userData);
   };
 
+  // Handler para logout
   const handleLogout = () => {
+    // Remove dados do localStorage
     localStorage.removeItem('userToken');
     localStorage.removeItem('username');
     localStorage.removeItem('userRole');
+
+    // Limpa estado da aplicação
     setIsAuthenticated(false);
     setUser(null);
-    navigate('/'); // Redireciona para home após logout
-  };
 
+    // Redireciona para home
+    navigate('/');
+  };
 
   return (
     <>
+      {/* Componente para scroll automático ao navegar */}
       <ScrollToTop />
+
       <Routes>
+        {/* Layout principal com header, footer e navegação */}
         <Route path="/" element={<Layout />}>
+
+          {/* ========== ROTAS PÚBLICAS ========== */}
+          {/* Página inicial */}
           <Route index element={<Home />} />
+
+          {/* Páginas de listagem de conteúdo */}
           <Route path="sermoes" element={<Sermons />} />
-          <Route path="sermoes/:contentId" element={<ContentDetail />} />
           <Route path="estudos" element={<Studies />} />
-          <Route path="estudos/:contentId" element={<ContentDetail />} />
           <Route path="livros" element={<Books />} />
+
+          {/* Páginas de detalhes de conteúdo */}
+          <Route path="sermoes/:contentId" element={<ContentDetail />} />
+          <Route path="estudos/:contentId" element={<ContentDetail />} />
           <Route path="livros/:contentId" element={<ContentDetail />} />
+
+          {/* Páginas institucionais */}
           <Route path="agenda" element={<Agenda />} />
           <Route path="sobre" element={<About />} />
           <Route path="contato" element={<Contact />} />
-          <Route path="busca" element={<SearchResults />} />
           <Route path="apoie" element={<SupportPage />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
 
-          {/* Rotas Protegidas (apenas acessíveis após login) */}
+          {/* Páginas de funcionalidades */}
+          <Route path="busca" element={<SearchResults />} />
+          <Route path="login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+
+          {/* ========== ROTAS PROTEGIDAS (ADMIN) ========== */}
           <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-            <Route path="/admin/dashboard" element={<Dashboard user={user} />} />
-            {/* Futuras rotas de CRUD: /admin/sermoes/novo, /admin/estudos/editar/:id, etc. */}
-            {/* Rotas CRUD para Sermões */}
-            <Route path="/admin/sermoes" element={<AdminSermonsList />} />
-            <Route path="/admin/sermoes/novo" element={<SermonForm />} />
-            <Route path="/admin/sermoes/editar/:id" element={<SermonForm />} />
 
-            {/* NOVO: Rotas CRUD para Estudos */}
-            <Route path="/admin/estudos" element={<AdminStudiesList />} />
-            <Route path="/admin/estudos/novo" element={<StudyForm />} />
-            <Route path="/admin/estudos/editar/:id" element={<StudyForm />} />
+            {/* Dashboard administrativo */}
+            <Route path="admin/dashboard" element={<Dashboard user={user} onLogout={handleLogout} />} />
 
-            {/* Futuras rotas CRUD para Livros */}
-            <Route path="/admin/livros" element={<AdminBooksList />} />
-            <Route path="/admin/livros/novo" element={<BookForm />} />
-            <Route path="/admin/livros/editar/:id" element={<BookForm />} />
+            {/* CRUD de Sermões */}
+            <Route path="admin/sermoes" element={<AdminSermonsList />} />
+            <Route path="admin/sermoes/novo" element={<SermonForm />} />
+            <Route path="admin/sermoes/editar/:id" element={<SermonForm />} />
+
+            {/* CRUD de Estudos */}
+            <Route path="admin/estudos" element={<AdminStudiesList />} />
+            <Route path="admin/estudos/novo" element={<StudyForm />} />
+            <Route path="admin/estudos/editar/:id" element={<StudyForm />} />
+
+            {/* CRUD de Livros */}
+            <Route path="admin/livros" element={<AdminBooksList />} />
+            <Route path="admin/livros/novo" element={<BookForm />} />
+            <Route path="admin/livros/editar/:id" element={<BookForm />} />
+
           </Route>
+
+          {/* Página 404 - deve ser a última rota */}
+          <Route path="*" element={<NotFound />} />
+
         </Route>
       </Routes>
     </>

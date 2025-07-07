@@ -1,16 +1,26 @@
 /* src/pages/Contact.css */
 
+/**
+ * Estilos para a página de contato
+ * Inclui informações de contato e formulário de mensagem
+ */
+
+/* ========== CONTAINER PRINCIPAL ========== */
 .contact-container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 1rem 2rem;
 }
 
+/* Título principal da página */
 .contact-container h1 {
   text-align: center;
   margin-bottom: 2rem;
+  color: var(--color-green-ipb);
 }
 
+/* ========== SEÇÃO DE INFORMAÇÕES DE CONTATO ========== */
+/* Card com informações de contato */
 .contact-info {
   text-align: center;
   margin-bottom: 2rem;
@@ -29,16 +39,26 @@
   line-height: 1.6;
 }
 
+/* Links destacados nas informações de contato */
 .contact-info a {
   font-weight: 500;
+  color: var(--color-green-ipb);
+  text-decoration: none;
 }
 
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* ========== DIVISOR DE SEÇÕES ========== */
 .section-divider {
   border: none;
   border-top: 1px solid var(--color-gray-light);
   margin: 3rem 0;
 }
 
+/* ========== SEÇÃO DO FORMULÁRIO ========== */
+/* Container do formulário de contato */
 .form-section {
   margin-bottom: 2rem;
 }
@@ -49,6 +69,7 @@
   text-align: center;
 }
 
+/* Nota sobre pedidos de oração */
 .prayer-note {
   text-align: center;
   font-style: italic;
@@ -57,10 +78,13 @@
   font-size: 0.9rem;
 }
 
+/* ========== ELEMENTOS DO FORMULÁRIO ========== */
+/* Grupo de campo do formulário */
 .form-group {
   margin-bottom: 1.5rem;
 }
 
+/* Labels dos campos */
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
@@ -68,6 +92,7 @@
   color: var(--color-gray-dark);
 }
 
+/* Campos de entrada e textarea */
 .form-input,
 .form-textarea {
   width: 100%;
@@ -77,8 +102,10 @@
   font-size: 1rem;
   font-family: inherit;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
+/* Estado de foco dos campos */
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
@@ -86,10 +113,13 @@
   box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2);
 }
 
+/* Textarea específico */
 .form-textarea {
   resize: vertical;
+  min-height: 120px;
 }
 
+/* ========== BOTÃO DE ENVIO ========== */
 .form-button {
   display: block;
   width: 100%;
@@ -105,19 +135,29 @@
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Hover do botão */
 .form-button:hover:not(:disabled) {
   text-decoration: none;
   background-color: var(--color-green-ipb);
   color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Botão desabilitado */
 .form-button:disabled {
   background-color: var(--color-gray-medium);
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
+/* Ícone no botão */
+.form-button .icon-after-text {
+  margin-left: 0.5em;
+}
+
+/* ========== STATUS DO FORMULÁRIO ========== */
+/* Container de status (sucesso/erro) */
 .form-status {
   margin-top: 1rem;
   padding: 0.8rem;
@@ -126,35 +166,47 @@
   font-weight: 500;
 }
 
+/* Status de sucesso */
 .form-status.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
+/* Status de erro */
 .form-status.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
+/* ========== RESPONSIVIDADE ========== */
+/* Dispositivos móveis */
 @media (max-width: 600px) {
   .contact-container {
     padding: 1rem;
+    margin: 1rem auto;
   }
-  .contact-info, .form-section {
+
+  .contact-info,
+  .form-section {
     padding: 1rem;
+  }
+
+  .form-button {
+    font-size: 1rem;
   }
 }
 
+/* ========== ANIMAÇÕES ========== */
+/* Efeito de fade-in para carregamento suave */
 .fade-in-on-load {
   animation: fadeIn 0.8s ease-out forwards;
   opacity: 0;
 }
-@keyframes fadeIn {
-  to { opacity: 1; }
-}
 
-.form-button .icon-after-text {
-  margin-left: 0.5em;
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }

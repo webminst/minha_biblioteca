@@ -1,14 +1,104 @@
+/**
+ * Estilos para a página Agenda
+ * Responsável por exibir o calendário do Google de forma responsiva
+ */
+
+/* ========== CONTAINER PRINCIPAL DO CALENDÁRIO ========== */
+/* Container responsivo para o iframe do Google Calendar */
 .google-calendar-container {
   width: 100%;
   max-width: 800px;
+  /* Limita largura máxima para melhor visualização */
   margin: 0 auto;
+  /* Centraliza o container na página */
   overflow-x: auto;
+  /* Permite scroll horizontal em telas muito pequenas */
+  padding: 1rem;
+  /* Espaçamento interno para não colar nas bordas */
+  box-sizing: border-box;
+  /* Inclui padding no cálculo da largura */
 }
 
+/* ========== IFRAME DO GOOGLE CALENDAR ========== */
+/* Configurações do iframe que exibe o calendário */
 .google-calendar-container iframe {
   width: 100%;
+  /* Ocupa toda a largura do container */
   min-width: 320px;
+  /* Largura mínima para dispositivos pequenos */
   max-width: 100%;
+  /* Não ultrapassa o container pai */
   height: 600px;
+  /* Altura fixa adequada para visualização */
   border: none;
+  /* Remove borda padrão do iframe */
+  border-radius: 8px;
+  /* Bordas arredondadas para melhor aparência */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* Sombra sutil */
+}
+
+/* ========== RESPONSIVIDADE ========== */
+/* Ajustes para dispositivos móveis */
+@media (max-width: 768px) {
+  .google-calendar-container {
+    padding: 0.5rem;
+    /* Reduz padding em telas menores */
+    max-width: 100%;
+    /* Usa toda a largura disponível */
+  }
+
+  .google-calendar-container iframe {
+    height: 500px;
+    /* Altura reduzida para mobile */
+    min-height: 400px;
+    /* Altura mínima para manter usabilidade */
+  }
+}
+
+/* Ajustes para dispositivos muito pequenos */
+@media (max-width: 480px) {
+  .google-calendar-container {
+    padding: 0.25rem;
+    /* Padding mínimo */
+  }
+
+  .google-calendar-container iframe {
+    height: 450px;
+    /* Altura ainda menor para telas pequenas */
+    border-radius: 4px;
+    /* Bordas menos arredondadas */
+  }
+}
+
+/* ========== ESTADO DE CARREGAMENTO ========== */
+/* Indicador visual durante carregamento do calendário */
+.calendar-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  color: var(--color-gray-dark);
+  font-style: italic;
+}
+
+/* ========== FALLBACK PARA ERRO ========== */
+/* Mensagem de erro caso o calendário não carregue */
+.calendar-error {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--color-gray-light);
+  border-radius: 8px;
+  color: var(--color-gray-dark);
+  border: 1px solid #e0e0e0;
+}
+
+.calendar-error h3 {
+  margin-bottom: 1rem;
+  color: #d73027;
+}
+
+.calendar-error p {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
 }

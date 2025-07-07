@@ -1,228 +1,310 @@
 /* src/pages/Home.css */
 
+/**
+ * Estilos para a página inicial (Home)
+ * Inclui seção hero, conteúdo em destaque e chamadas para ação
+ */
+
+/* ========== CONTAINER PRINCIPAL ========== */
 .home-container {
-  /* Deixe vazio se não houver estilos específicos */
-}
-
-/* --- Hero Section --- */
-.hero-section {
-  background-color: var(--color-gray-medium);
-  padding: 2rem 2rem;
-  margin-bottom: 3rem;
-  border-radius: 0 0 15px 15px;
-}
-
-.hero-content {
-  max-width: 1100px;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ========== SEÇÃO HERO ========== */
+/* Seção principal de apresentação */
+.hero-section {
+  padding: 3rem 0;
+  margin-bottom: 4rem;
+  background-color: var(--color-gray-medium);
+  /* Adiciona fundo cinza médio */
+  border-radius: 12px;
+  /* Opcional: adiciona bordas arredondadas */
+}
+
+/* Layout flexível para texto e imagem */
+.hero-content {
   display: flex;
   align-items: center;
   gap: 3rem;
-  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  /* Adiciona padding interno para não colar nas bordas */
 }
 
+/* Container do texto de apresentação */
 .hero-text {
-  flex: 1;
-  min-width: 300px;
+  flex: 2;
+  min-width: 0;
 }
 
+/* Título principal da página */
 .hero-text h1 {
-  font-size: 2.8rem;
+  font-size: 3rem;
+  font-weight: bold;
   color: var(--color-green-ipb);
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-}
-
-.hero-subtitle {
-  font-size: 1.4rem;
-  color: var(--color-gray-dark);
   margin-bottom: 1.5rem;
-  font-weight: 400;
+  line-height: 1.2;
 }
 
-.hero-text p {
+/* Subtítulo com informações principais */
+.hero-subtitle {
+  font-size: 1.2rem;
   line-height: 1.7;
   margin-bottom: 1.5rem;
+  color: var(--color-gray-dark);
 }
 
+/* Parágrafo de descrição */
+.hero-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: var(--color-gray-dark);
+}
+
+/* Botão principal da seção hero */
+.hero-button {
+  display: inline-block;
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  padding: 1rem 2rem;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.hero-button:hover {
+  background-color: #004a3d;
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: var(--color-white);
+}
+
+/* Container da imagem do pastor */
 .hero-image-container {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Foto do pastor na seção hero */
 .hero-photo {
-  width: 250px;
-  height: 250px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid var(--color-white);
-  box-shadow: 0 6px 15px rgba(0, 106, 78, 0.2);
+  border: 6px solid var(--color-white);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.hero-button {
-  display: inline-block;
-  background-color: var(--color-gray-light);
-  color: var(--color-green-ipb);
-  padding: 0.8rem 1.8rem;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hero-button:hover {
-  text-decoration: none;
-  background-color: var(--color-green-ipb);
-  color: var(--color-white);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-/* --- Featured Section --- */
+/* ========== SEÇÃO DE CONTEÚDO EM DESTAQUE ========== */
 .featured-section {
-  max-width: 1200px;
-  margin: 3rem auto;
-  padding: 0 2rem;
+  margin-bottom: 4rem;
 }
 
+/* Título da seção de destaque */
 .featured-section h2 {
   text-align: center;
+  font-size: 2.5rem;
+  color: var(--color-green-ipb);
   margin-bottom: 2rem;
-  font-size: 2rem;
-  color: var(--color-gray-dark);
+  font-weight: bold;
 }
 
+/* Grid dos itens em destaque */
 .featured-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-}
-.featured-list .content-card {
-  margin-bottom: 0;
+  margin-top: 2rem;
 }
 
-/* --- CTA Section --- */
+/* ========== SEÇÃO CHAMADA PARA AÇÃO ========== */
 .cta-section {
-  background-color: var(--color-green-ipb);
-  color: var(--color-white);
   text-align: center;
   padding: 3rem 2rem;
-  margin-top: 3rem;
+  background-color: var(--color-gray-light);
+  border-radius: 12px;
+  margin-bottom: 3rem;
 }
 
+/* Título da seção CTA */
 .cta-section h2 {
-  color: var(--color-white);
-  font-size: 2rem;
-  margin-top: 0;
+  font-size: 2.2rem;
+  color: var(--color-green-ipb);
   margin-bottom: 1rem;
+  font-weight: bold;
 }
 
+/* Descrição da seção CTA */
 .cta-section p {
+  font-size: 1.1rem;
+  color: var(--color-gray-dark);
   margin-bottom: 2rem;
-  opacity: 0.9;
+  line-height: 1.6;
 }
 
+/* Container dos botões CTA */
 .cta-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
+/* Botões individuais de CTA */
 .cta-button {
-  background-color: var(--color-gray-light);
+  background-color: var(--color-white);
   color: var(--color-green-ipb);
-  padding: 0.8rem 1.8rem;
-  border-radius: 5px;
+  padding: 1rem 2rem;
   text-decoration: none;
+  border-radius: 8px;
   font-weight: bold;
-  border: 2px solid var(--color-white);
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1rem;
+  border: 2px solid var(--color-green-ipb);
+  transition: all 0.3s ease;
+  min-width: 150px;
+  text-align: center;
 }
 
 .cta-button:hover {
-  text-decoration: none;
   background-color: var(--color-green-ipb);
   color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 106, 78, 0.3);
+  text-decoration: none;
 }
 
-/* --- Agenda Widget Section (Opcional) --- */
-.agenda-widget-section {
-  max-width: 1100px;
-  margin: 3rem auto;
-  padding: 2rem;
-  background-color: var(--color-gray-light);
-  border-radius: 8px;
-}
-.agenda-widget-section h2 {
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: var(--color-gray-dark);
-}
-.agenda-widget-section p {
-  text-align: center;
-  color: var(--color-gray-medium);
-  margin-bottom: 1.5rem;
-}
-.agenda-widget-section ul {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-}
-.agenda-widget-section li {
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-.widget-link {
-  display: block;
-  text-align: center;
-  font-weight: bold;
-  color: var(--color-green-ipb);
-}
-.widget-link:hover {
-  text-decoration: underline;
-}
-
-/* --- Responsividade --- */
+/* ========== RESPONSIVIDADE ========== */
+/* Tablets */
 @media (max-width: 768px) {
+
+  /* Hero section responsiva */
   .hero-content {
-    flex-direction: column-reverse;
+    flex-direction: column;
     text-align: center;
-    max-width: 100%;
-    padding: 0;
-    box-sizing: border-box;
+    gap: 2rem;
   }
-  .hero-text {
-    min-width: 0;
+
+  .hero-text h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .hero-photo {
+    width: 220px;
+    height: 220px;
+  }
+
+  /* Featured section responsiva */
+  .featured-section h2 {
+    font-size: 2rem;
+  }
+
+  .featured-list {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* CTA section responsiva */
+  .cta-section {
+    padding: 2rem 1rem;
+  }
+
+  .cta-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-button {
     width: 100%;
-    margin: 0 auto;
-    box-sizing: border-box;
+    max-width: 250px;
+  }
+}
+
+/* Dispositivos móveis */
+@media (max-width: 480px) {
+  .home-container {
     padding: 0 0.5rem;
   }
-  .hero-subtitle {
-    font-size: 1.2rem;
+
+  .hero-section {
+    padding: 2rem 0;
+    margin-bottom: 3rem;
   }
+
+  .hero-text h1 {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle,
+  .hero-text p {
+    font-size: 1rem;
+  }
+
   .hero-photo {
     width: 180px;
     height: 180px;
-    margin-bottom: 1.5rem;
   }
-  .featured-section h2, .cta-section h2 {
+
+  .hero-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .featured-section h2 {
     font-size: 1.8rem;
   }
-  .featured-list {
-    grid-template-columns: 1fr;
+
+  .cta-section h2 {
+    font-size: 1.6rem;
+  }
+
+  .cta-section p {
+    font-size: 1rem;
   }
 }
 
+/* ========== ANIMAÇÕES ========== */
+/* Efeito de fade-in para carregamento suave */
 .fade-in-on-load {
   animation: fadeIn 0.8s ease-out forwards;
   opacity: 0;
 }
+
 @keyframes fadeIn {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animação sutil para os cards em destaque */
+.featured-list>* {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

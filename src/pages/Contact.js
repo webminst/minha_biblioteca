@@ -3,35 +3,39 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import './Contact.css';
 
-// Todas as importações acima são utilizadas no componente Contact.
-// --- Estados para o Formulário de Contato ---
-// login?: webgigio@gmail.com - Senha: Giggio57#
+/**
+ * Componente Contact - Página de contato
+ * Inclui formulário de contato geral e formulário específico para pedidos de oração
+ * Utiliza Formspree para processamento dos formulários
+ */
 const Contact = () => {
-  // --- Estados para o Formulário de Contato ---
+  // Estados para o formulário de contato geral
   const [contactFormData, setContactFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: '',
   });
+
   const [contactStatus, setContactStatus] = useState({
     submitting: false,
     succeeded: false,
     error: null,
   });
 
-  // --- Estados para o Formulário de Pedido de Oração ---
+  // Estados para o formulário de pedido de oração
   const [prayerFormData, setPrayerFormData] = useState({
     name: '',
     request: '',
   });
+
   const [prayerStatus, setPrayerStatus] = useState({
     submitting: false,
     succeeded: false,
     error: null,
   });
 
-  // --- Handlers para o Formulário de Contato ---
+  // Handler para mudanças no formulário de contato
   const handleContactChange = (e) => {
     const { name, value } = e.target;
     setContactFormData((prevData) => ({
@@ -40,11 +44,12 @@ const Contact = () => {
     }));
   };
 
+  // Handler para envio do formulário de contato
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     setContactStatus({ submitting: true, succeeded: false, error: null });
 
-    // !!!!! IMPORTANTE: Substitua pelo SEU endpoint do Formspree para CONTATO !!!!!
+    // Endpoint do Formspree para formulário de contato
     const contactFormEndpoint = 'https://formspree.io/f/mnnddjyk';
 
     try {
@@ -67,11 +72,15 @@ const Contact = () => {
       }
     } catch (error) {
       console.error('Erro no envio do formulário de contato:', error);
-      setContactStatus({ submitting: false, succeeded: false, error: 'Não foi possível conectar ao servidor. Tente novamente.' });
+      setContactStatus({
+        submitting: false,
+        succeeded: false,
+        error: 'Não foi possível conectar ao servidor. Tente novamente.'
+      });
     }
   };
 
-  // --- Handlers para o Formulário de Pedido de Oração ---
+  // Handler para mudanças no formulário de oração
   const handlePrayerChange = (e) => {
     const { name, value } = e.target;
     setPrayerFormData((prevData) => ({
@@ -80,11 +89,12 @@ const Contact = () => {
     }));
   };
 
+  // Handler para envio do formulário de oração
   const handlePrayerSubmit = async (e) => {
     e.preventDefault();
     setPrayerStatus({ submitting: true, succeeded: false, error: null });
 
-    // !!!!! IMPORTANTE: Substitua pelo SEU endpoint do Formspree para ORAÇÃO !!!!!
+    // Endpoint do Formspree para pedidos de oração
     const prayerFormEndpoint = 'https://formspree.io/f/xqaqqeva';
 
     try {
@@ -110,7 +120,11 @@ const Contact = () => {
       }
     } catch (error) {
       console.error('Erro no envio do formulário de oração:', error);
-      setPrayerStatus({ submitting: false, succeeded: false, error: 'Não foi possível conectar ao servidor. Tente novamente.' });
+      setPrayerStatus({
+        submitting: false,
+        succeeded: false,
+        error: 'Não foi possível conectar ao servidor. Tente novamente.'
+      });
     }
   };
 
@@ -118,6 +132,7 @@ const Contact = () => {
     <div className="contact-container">
       <h1>Contato</h1>
 
+      {/* Seção de informações de contato direto */}
       <section className="contact-info">
         <h2>Informações</h2>
         <p>
@@ -128,10 +143,11 @@ const Contact = () => {
 
       <hr className="section-divider" />
 
-      {/* --- Formulário de Contato --- */}
+      {/* Formulário de contato geral */}
       <section className="form-section">
         <h2>Envie sua Mensagem</h2>
         <form onSubmit={handleContactSubmit}>
+          {/* Campo Nome */}
           <div className="form-group">
             <label htmlFor="contact-name" className="form-label">Nome:</label>
             <input
@@ -145,6 +161,8 @@ const Contact = () => {
               disabled={contactStatus.submitting}
             />
           </div>
+
+          {/* Campo E-mail */}
           <div className="form-group">
             <label htmlFor="contact-email" className="form-label">E-mail:</label>
             <input
@@ -158,6 +176,8 @@ const Contact = () => {
               disabled={contactStatus.submitting}
             />
           </div>
+
+          {/* Campo Assunto */}
           <div className="form-group">
             <label htmlFor="contact-subject" className="form-label">Assunto:</label>
             <input
@@ -171,6 +191,8 @@ const Contact = () => {
               disabled={contactStatus.submitting}
             />
           </div>
+
+          {/* Campo Mensagem */}
           <div className="form-group">
             <label htmlFor="contact-message" className="form-label">Mensagem:</label>
             <textarea
@@ -182,10 +204,10 @@ const Contact = () => {
               onChange={handleContactChange}
               required
               disabled={contactStatus.submitting}
-            ></textarea>
+            />
           </div>
 
-          {/* --- Mensagens de Status (Contato) --- */}
+          {/* Mensagens de status do formulário de contato */}
           {contactStatus.succeeded && (
             <p className="form-status success">Mensagem enviada com sucesso! Obrigado.</p>
           )}
@@ -193,6 +215,7 @@ const Contact = () => {
             <p className="form-status error">Erro: {contactStatus.error}</p>
           )}
 
+          {/* Botão de envio */}
           <button type="submit" className="form-button" disabled={contactStatus.submitting}>
             {contactStatus.submitting ? 'Enviando...' : (
               <>
@@ -205,14 +228,16 @@ const Contact = () => {
 
       <hr className="section-divider" />
 
-      {/* --- Formulário de Pedido de Oração --- */}
+      {/* Formulário de pedido de oração */}
       <section className="form-section">
         <h2>Pedido de Oração</h2>
         <p className="prayer-note">
           Seu pedido será tratado com respeito e confidencialidade pela equipe pastoral.
           Deixar o nome é opcional.
         </p>
+
         <form onSubmit={handlePrayerSubmit}>
+          {/* Campo Nome (opcional) */}
           <div className="form-group">
             <label htmlFor="prayer-name" className="form-label">Nome (Opcional):</label>
             <input
@@ -225,6 +250,8 @@ const Contact = () => {
               disabled={prayerStatus.submitting}
             />
           </div>
+
+          {/* Campo Pedido de Oração */}
           <div className="form-group">
             <label htmlFor="prayer-request" className="form-label">Seu Pedido:</label>
             <textarea
@@ -236,10 +263,10 @@ const Contact = () => {
               onChange={handlePrayerChange}
               required
               disabled={prayerStatus.submitting}
-            ></textarea>
+            />
           </div>
 
-          {/* --- Mensagens de Status (Oração) --- */}
+          {/* Mensagens de status do formulário de oração */}
           {prayerStatus.succeeded && (
             <p className="form-status success">Pedido de oração enviado com sucesso.</p>
           )}
@@ -247,6 +274,7 @@ const Contact = () => {
             <p className="form-status error">Erro: {prayerStatus.error}</p>
           )}
 
+          {/* Botão de envio */}
           <button type="submit" className="form-button" disabled={prayerStatus.submitting}>
             {prayerStatus.submitting ? 'Enviando...' : (
               <>

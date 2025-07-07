@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Para links e botões
-import ContentCard from '../components/ContentCard/ContentCard'; // Importa o card reutilizável
-import axios from 'axios'; // Para fazer requisições à API
-import './Home.css'; // Importaremos o CSS para estilização
+import { Link } from 'react-router-dom';
+import ContentCard from '../components/ContentCard/ContentCard';
+import axios from 'axios';
+import './Home.css';
 
-
+/**
+ * Componente Home - Página inicial do portfólio pastoral
+ * Exibe seção hero com apresentação, conteúdo em destaque e chamadas para ação
+ * Busca automaticamente os últimos sermões, estudos e livros da API
+ */
 const Home = () => {
-  // Estados para gerenciar os dados
+  // Estados para gerenciar os dados dos últimos conteúdos
   const [latestSermon, setLatestSermon] = useState(null);
   const [latestStudy, setLatestStudy] = useState(null);
   const [latestBook, setLatestBook] = useState(null);
@@ -14,8 +18,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Caminho da imagem (o mesmo de About.js ou outra foto)
-  const profileImageUrl = '/images/pastor-foto.jpeg'; // Verifique se está em public/images/
+  // Caminho da imagem do perfil
+  const profileImageUrl = '/images/pastor-foto.jpeg';
 
   // Função para buscar o último sermão da API
   const fetchLatestSermon = async () => {
@@ -50,18 +54,20 @@ const Home = () => {
     }
   };
 
-  // useEffect para carregar dados ao montar o componente
+  // Carrega dados ao montar o componente
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
+        // Busca os últimos conteúdos de cada tipo
         const sermon = await fetchLatestSermon();
         const study = await fetchLatestStudy();
         const book = await fetchLatestBook();
 
-        // Monta os itens em destaque com os últimos conteúdos se existirem
+        // Monta os itens em destaque com os últimos conteúdos
         const items = [];
 
+        // Adiciona último sermão se existir
         if (sermon) {
           items.push({
             id: sermon._id,
@@ -72,11 +78,12 @@ const Home = () => {
             description: sermon.description,
             detailsUrl: `/sermoes/${sermon._id}`,
             pdfUrl: sermon.pdfUrl,
-            sermon: sermon // Passa o objeto completo
+            sermon: sermon
           });
           setLatestSermon(sermon);
         }
 
+        // Adiciona último estudo se existir
         if (study) {
           items.push({
             id: study._id,
@@ -87,12 +94,13 @@ const Home = () => {
             description: study.description,
             detailsUrl: `/estudos/${study._id}`,
             pdfUrl: study.pdfUrl,
-            speaker: study.speaker, // Adiciona o speaker
-            study: study // Passa o objeto completo
+            speaker: study.speaker,
+            study: study
           });
           setLatestStudy(study);
         }
 
+        // Adiciona último livro se existir
         if (book) {
           items.push({
             id: book._id,
@@ -103,12 +111,12 @@ const Home = () => {
             description: book.description,
             detailsUrl: `/livros/${book._id}`,
             pdfUrl: book.pdfUrl,
-            book: book // Passa o objeto completo
+            book: book
           });
           setLatestBook(book);
         }
 
-        // Se não houver conteúdo dinâmico, adiciona itens estáticos como fallback
+        // Fallback: adiciona itens estáticos se não houver conteúdo dinâmico
         if (items.length === 0) {
           items.push(
             {
@@ -116,9 +124,6 @@ const Home = () => {
               title: "Redes Sociais: Perigos e Oportunidades para a Família.",
               type: "Estudo Bíblico",
               reference: "Ef 4:29, 1 Coríntios 10:31, Romanos 12:2",
-              bookLink: "Família da Aliança",
-              theme: "Vida Cristã",
-              format: "Congresso",
               description: "Uma reflexão sobre o uso das redes sociais à luz da fé cristã.",
               detailsUrl: "/estudos/redes-sociais-familia-alianca",
               pdfUrl: "/estudos/redes-sociais-familia-alianca.pdf"
@@ -128,7 +133,7 @@ const Home = () => {
               title: "Institutas da Religião Cristã - Volume 1",
               type: "Resumo de Livro",
               author: "João Calvino",
-              description: "Um resumo estruturado da obra monumental...",
+              description: "Um resumo estruturado da obra monumental de Calvino.",
               detailsUrl: "livros/institutas-calvino-resumo",
               pdfUrl: "/path/to/book-summary-001.pdf"
             }
@@ -150,7 +155,7 @@ const Home = () => {
   return (
     <div className="home-container">
 
-      {/* --- Seção Hero (Apresentação) --- */}
+      {/* Seção Hero - Apresentação principal */}
       <section className="hero-section">
         <div className="hero-content">
           <div className="hero-text">
@@ -158,48 +163,49 @@ const Home = () => {
             <p className="hero-subtitle">
               Sou <b>Giovanni Moreira Guimarães</b>, pastor presbiteriano e entusiasta do ensino bíblico.
               Minha Jornada de Fé é um testemunho da graça de Deus, de um encontro transformador com Cristo
-              que me conduziu à Igreja.
-              Marcada por um profundo aprendizado e desafios, essa caminhada culminou no chamado ao
-              ministério pastoral. Hoje, com 25 anos de experiência pastoral e sólida formação teológica,
-              minha paixão é o ensino expositivo da Palavra, fundamentado na fé reformada e com um coração
-              missionário, buscando edificar a Igreja e proclamar o Evangelho.
+              que me conduziu à Igreja. Marcada por um profundo aprendizado e desafios, essa caminhada
+              culminou no chamado ao ministério pastoral. Hoje, com 25 anos de experiência pastoral e
+              sólida formação teológica, minha paixão é o ensino expositivo da Palavra, fundamentado na
+              fé reformada e com um coração missionário, buscando edificar a Igreja e proclamar o Evangelho.
             </p>
             <p>
-              Este espaço é dedicado ao compartilhamento de sermões, estudos,
-              análises de livros e outros recursos para edificar sua fé e
-              aprofundar seu conhecimento da Palavra de Deus. Aproveite ao máximo!
+              Este espaço é dedicado ao compartilhamento de sermões, estudos, análises de livros e outros
+              recursos para edificar sua fé e aprofundar seu conhecimento da Palavra de Deus. Aproveite ao máximo!
             </p>
             <Link to="/sobre" className="hero-button">Saiba Mais Sobre Mim</Link>
           </div>
+
+          {/* Foto do pastor */}
           <div className="hero-image-container">
             <img
               src={profileImageUrl}
-              alt="Foto do Pastor [Seu Nome]"
+              alt="Foto do Pastor Giovanni Moreira Guimarães"
               className="hero-photo"
             />
           </div>
         </div>
       </section>
 
-      {/* --- Seção de Destaques --- */}
+      {/* Seção de Conteúdo em Destaque */}
       <section className="featured-section">
         <h2>Conteúdo em Destaque</h2>
+
+        {/* Estados de carregamento e erro */}
         {loading && <p>Carregando conteúdo em destaque...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
+
+        {/* Lista de itens em destaque */}
         <div className="featured-list">
           {featuredItems.map((item) => (
-            // Renderiza os cards de destaque
             <ContentCard
               key={item.id}
               title={item.title}
               type={item.type}
               date={item.date}
-              // Adaptar a referência se for livro (mostrar autor talvez?)
               reference={item.type === 'Resumo de Livro' ? `Por ${item.author}` : item.reference}
               description={item.description}
               detailsUrl={item.detailsUrl}
               pdfUrl={item.pdfUrl}
-              // Passa os objetos completos para o card
               sermon={item.sermon}
               study={item.study}
               book={item.book}

@@ -1,0 +1,137 @@
+/**
+ * Estilos para a página 404 (NotFound)
+ * Layout centralizado com mensagem de erro amigável
+ */
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ========== ÍCONE DE ERRO ========== */
+.error-icon {
+    margin-bottom: 2rem;
+}
+
+.error-number {
+    font-size: 6rem;
+    font-weight: bold;
+    color: var(--color-green-ipb);
+    opacity: 0.8;
+}
+
+/* ========== TÍTULO E MENSAGENS ========== */
+.error-title {
+    font-size: 2.5rem;
+    color: var(--color-gray-dark);
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    font-size: 1.2rem;
+    color: var(--color-gray-medium);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* ========== SUGESTÕES ========== */
+.error-suggestions {
+    text-align: left;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--color-gray-light);
+    border-radius: 8px;
+    width: 100%;
+}
+
+.error-suggestions p {
+    margin-bottom: 1rem;
+    color: var(--color-gray-dark);
+    font-weight: 500;
+}
+
+.error-suggestions ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    color: var(--color-gray-medium);
+}
+
+.error-suggestions li {
+    margin-bottom: 0.5rem;
+}
+
+/* ========== BOTÕES DE AÇÃO ========== */
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.primary-button {
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.primary-button:hover {
+    background-color: #004a3d;
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: var(--color-white);
+}
+
+.secondary-button {
+    background-color: var(--color-white);
+    color: var(--color-green-ipb);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 2px solid var(--color-green-ipb);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background-color: var(--color-green-ipb);
+    color: var(--color-white);
+    text-decoration: none;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media (max-width: 600px) {
+    .error-number {
+        font-size: 4rem;
+    }
+
+    .error-title {
+        font-size: 2rem;
+    }
+
+    .error-message {
+        font-size: 1.1rem;
+    }
+
+    .error-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+        text-align: center;
+    }
+}

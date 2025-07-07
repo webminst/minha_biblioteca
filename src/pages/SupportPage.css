@@ -1,5 +1,11 @@
 /* src/pages/SupportPage.css */
 
+/**
+ * Estilos para a página de apoio ao ministério
+ * Layout claro com seções organizadas e destaque para informações de PIX
+ */
+
+/* ========== CONTAINER PRINCIPAL ========== */
 .support-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -7,6 +13,7 @@
   color: var(--color-gray-dark);
 }
 
+/* Título principal com ícone */
 .support-container h1 {
   text-align: center;
   color: var(--color-green-ipb);
@@ -17,6 +24,8 @@
   font-size: 2.2rem;
 }
 
+/* ========== ESTILO BASE PARA SEÇÕES ========== */
+/* Todas as seções principais da página */
 .support-intro,
 .pix-donation-section,
 .alternative-support,
@@ -26,9 +35,10 @@
   margin-bottom: 2rem;
   border-radius: 8px;
   border: 1px solid var(--color-gray-light);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* Parágrafos dentro das seções */
 .support-intro p,
 .pix-donation-section p,
 .alternative-support p,
@@ -36,6 +46,8 @@
   line-height: 1.7;
   margin-bottom: 1em;
 }
+
+/* Remove margem inferior do último parágrafo de cada seção */
 .support-intro p:last-child,
 .pix-donation-section p:last-child,
 .alternative-support p:last-child,
@@ -43,6 +55,7 @@
   margin-bottom: 0;
 }
 
+/* ========== TÍTULOS DAS SEÇÕES ========== */
 .pix-donation-section h2,
 .alternative-support h2 {
   color: var(--color-gray-dark);
@@ -52,6 +65,8 @@
   text-align: center;
 }
 
+/* ========== SEÇÃO PIX ========== */
+/* Container da chave PIX */
 .pix-key-container {
   background-color: var(--color-gray-light);
   padding: 1rem 1.5rem;
@@ -60,12 +75,14 @@
   text-align: center;
 }
 
+/* Label da chave PIX */
 .pix-label {
   font-size: 0.9rem;
   color: var(--color-gray-medium);
   margin-bottom: 0.5rem !important;
 }
 
+/* Wrapper da chave PIX com botão de copiar */
 .pix-key-value-wrapper {
   display: flex;
   align-items: center;
@@ -74,6 +91,7 @@
   flex-wrap: wrap;
 }
 
+/* Valor da chave PIX */
 .pix-key-value {
   font-size: 1.4rem;
   font-weight: bold;
@@ -81,6 +99,7 @@
   word-break: break-all;
 }
 
+/* Botão de copiar chave PIX */
 .copy-pix-button {
   background-color: var(--color-green-ipb);
   color: var(--color-white);
@@ -94,19 +113,23 @@
   align-items: center;
   gap: 0.5em;
 }
+
 .copy-pix-button:hover {
   background-color: #004a38;
 }
 
+/* Detalhes da conta PIX */
 .pix-details {
   margin-top: 1rem;
   text-align: center;
   font-size: 0.9rem;
 }
+
 .pix-details p {
   margin-bottom: 0.3em !important;
 }
 
+/* Instruções de segurança para PIX */
 .pix-instructions {
   font-size: 0.9rem;
   color: var(--color-gray-medium);
@@ -114,6 +137,7 @@
   text-align: center;
 }
 
+/* QR Code do PIX */
 .pix-qrcode {
   display: block;
   margin: 1.5rem auto 0 auto;
@@ -122,39 +146,55 @@
   padding: 5px;
 }
 
+/* ========== FORMAS ALTERNATIVAS DE APOIO ========== */
 .alternative-support ul {
   list-style: disc;
   padding-left: 20px;
 }
+
 .alternative-support li {
   margin-bottom: 0.75em;
 }
 
+/* ========== MENSAGEM DE AGRADECIMENTO ========== */
 .thank-you-note {
   text-align: center;
   background-color: var(--color-green-ipb);
   color: var(--color-white);
   border-color: var(--color-green-ipb);
 }
+
+/* Versículo bíblico na mensagem de agradecimento */
 .thank-you-note p em {
   font-size: 0.9rem;
   opacity: 0.9;
 }
+
+/* Texto em destaque na mensagem de agradecimento */
 .thank-you-note strong {
   font-size: 1.1rem;
 }
 
-/* Responsividade */
+/* ========== RESPONSIVIDADE ========== */
+/* Dispositivos móveis */
 @media (max-width: 600px) {
   .support-container {
     padding: 1rem;
   }
+
   .support-container h1 {
     font-size: 1.8rem;
   }
-  .support-intro, .pix-donation-section, .alternative-support, .thank-you-note {
+
+  /* Ajuste de padding para seções em mobile */
+  .support-intro,
+  .pix-donation-section,
+  .alternative-support,
+  .thank-you-note {
     padding: 1rem 1.5rem;
   }
+
+  /* Tamanho da chave PIX em mobile */
   .pix-key-value {
     font-size: 1.2rem;
   }

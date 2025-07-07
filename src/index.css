@@ -1,22 +1,38 @@
 /* src/index.css */
+/**
+ * Estilos base da aplicação (index.css)
+ * Define variáveis fundamentais, reset básico e estilos de entrada
+ * Complementa o App.css com configurações específicas do tema
+ */
+
+/* ========== VARIÁVEIS ESPECÍFICAS DO TEMA ========== */
 :root {
+  /* Cores do tema */
   --color-white: #FFFFFF;
   --color-gray-light: #f0f0f0;
   --color-gray-medium: #a9a9a9;
   --color-gray-dark: #333333;
   --color-green-ipb: #006A4E;
+
+  /* Fontes específicas do projeto */
   --font-primary: 'Open Sans', sans-serif;
   --font-headings: 'Montserrat', sans-serif;
 }
 
+/* ========== CONFIGURAÇÃO BASE DO BODY ========== */
 body {
   margin: 0;
   font-family: var(--font-primary);
   background-color: var(--color-white);
   color: var(--color-gray-dark);
-  line-height: 1.2;
+  line-height: 1.6;
+  /* Melhorada para melhor legibilidade */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ========== TIPOGRAFIA DE TÍTULOS ========== */
+/* Configuração específica para títulos com fonte Montserrat */
 h1,
 h2,
 h3,
@@ -25,19 +41,26 @@ h5,
 h6 {
   font-family: var(--font-headings);
   color: var(--color-green-ipb);
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
+/* ========== LINKS GLOBAIS ========== */
 a {
   color: var(--color-green-ipb);
   text-decoration: none;
+  transition: all 0.2s ease-in-out;
 }
 
 a:hover {
   text-decoration: underline;
+  opacity: 0.8;
 }
 
+/* ========== ESTADO VAZIO GLOBAL ========== */
+/* Container para páginas sem conteúdo */
 .empty-state-container {
   display: flex;
   flex-direction: column;
@@ -45,15 +68,130 @@ a:hover {
   justify-content: center;
   text-align: center;
   min-height: 60vh;
-  padding: 20px;
+  padding: 2rem;
+  color: var(--color-gray-medium);
 }
 
+/* Título do estado vazio */
+.empty-state-container h2 {
+  color: var(--color-gray-dark);
+  margin-bottom: 1rem;
+}
+
+/* Imagem ou ícone do estado vazio */
 .empty-state-image {
-  margin-bottom: 8px;
+  margin-bottom: 1rem;
+  opacity: 0.6;
 }
 
+/* Container dos botões de ação no estado vazio */
 .empty-state-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Botões do estado vazio */
+.empty-state-button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-white);
+  color: var(--color-green-ipb);
+  border: 2px solid var(--color-green-ipb);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.empty-state-button:hover {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+/* ========== UTILITÁRIOS ESPECÍFICOS ========== */
+/* Classe para texto destacado */
+.text-highlight {
+  color: var(--color-green-ipb);
+  font-weight: 600;
+}
+
+/* Classe para texto secundário */
+.text-muted {
+  color: var(--color-gray-medium);
+  font-size: 0.9em;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+/* Ajustes para dispositivos móveis */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .empty-state-container {
+    padding: 1rem;
+    min-height: 50vh;
+  }
+
+  .empty-state-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .empty-state-button {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+/* ========== CARREGAMENTO E TRANSIÇÕES ========== */
+/* Efeito suave para carregamento inicial */
+#root {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ========== SCROLLBAR PERSONALIZADA ========== */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-medium);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-green-ipb);
+}
+
+/* ========== SELEÇÃO DE TEXTO ========== */
+/* Cor personalizada para texto selecionado */
+::selection {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+}
+
+::-moz-selection {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
 }

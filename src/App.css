@@ -1,0 +1,368 @@
+/**
+ * Estilos globais da aplicação
+ * Define variáveis CSS, reset básico e estilos compartilhados
+ */
+
+/* ========== VARIÁVEIS CSS GLOBAIS ========== */
+:root {
+    /* Paleta de cores principal */
+    --color-green-ipb: #006a4e;
+    --color-green-dark: #004a38;
+    --color-green-light: #e8f5f0;
+
+    /* Escala de cinzas */
+    --color-gray-dark: #2c3e50;
+    --color-gray-medium: #7f8c8d;
+    --color-gray-light: #ecf0f1;
+    --color-gray-lighter: #f8f9fa;
+
+    /* Cores básicas */
+    --color-white: #ffffff;
+    --color-black: #000000;
+
+    /* Cores de status */
+    --color-success: #27ae60;
+    --color-error: #e74c3c;
+    --color-warning: #f39c12;
+    --color-info: #3498db;
+
+    /* Tipografia */
+    --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    --font-family-mono: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+
+    /* Tamanhos de fonte */
+    --font-size-small: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-large: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+
+    /* Espaçamentos */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    /* Bordas e sombras */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 0.75rem;
+    --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+    /* Transições */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+}
+
+/* ========== RESET E ESTILOS BASE ========== */
+/* Box-sizing universal */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Reset de margens e padding */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Configuração base do HTML */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+/* Configuração base do body */
+body {
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-gray-dark);
+    background-color: var(--color-white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Configuração para código */
+code {
+    font-family: var(--font-family-mono);
+    background-color: var(--color-gray-lighter);
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.875em;
+}
+
+/* ========== TIPOGRAFIA GLOBAL ========== */
+/* Hierarquia de títulos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--color-gray-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+h1 {
+    font-size: var(--font-size-3xl);
+}
+
+h2 {
+    font-size: var(--font-size-2xl);
+}
+
+h3 {
+    font-size: var(--font-size-xl);
+}
+
+h4 {
+    font-size: var(--font-size-large);
+}
+
+h5 {
+    font-size: var(--font-size-base);
+}
+
+h6 {
+    font-size: var(--font-size-small);
+}
+
+/* Parágrafos */
+p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.6;
+}
+
+/* Links */
+a {
+    color: var(--color-green-ipb);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-green-dark);
+    text-decoration: underline;
+}
+
+/* ========== LISTAS ========== */
+ul,
+ol {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-xl);
+}
+
+li {
+    margin-bottom: var(--spacing-xs);
+}
+
+/* ========== ELEMENTOS DE FORMULÁRIO ========== */
+/* Inputs, textareas e selects */
+input,
+textarea,
+select {
+    font-family: inherit;
+    font-size: inherit;
+    border: 1px solid var(--color-gray-medium);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--color-green-ipb);
+    box-shadow: 0 0 0 3px rgba(0, 106, 78, 0.1);
+}
+
+/* Botões */
+button {
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: all var(--transition-fast);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ========== UTILITÁRIOS ========== */
+/* Classes de espaçamento */
+.mt-0 {
+    margin-top: 0;
+}
+
+.mt-1 {
+    margin-top: var(--spacing-xs);
+}
+
+.mt-2 {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-3 {
+    margin-top: var(--spacing-md);
+}
+
+.mt-4 {
+    margin-top: var(--spacing-lg);
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-xs);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-4 {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Classes de alinhamento */
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Classes de display */
+.d-none {
+    display: none;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-grid {
+    display: grid;
+}
+
+/* Classes de visibilidade */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ========== CONTAINER RESPONSIVO ========== */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* ========== RESPONSIVIDADE ========== */
+/* Breakpoints para dispositivos móveis */
+@media (max-width: 768px) {
+    :root {
+        --font-size-3xl: 1.5rem;
+        --font-size-2xl: 1.25rem;
+    }
+
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-3xl: 1.25rem;
+        --font-size-2xl: 1.125rem;
+    }
+
+    html {
+        font-size: 14px;
+    }
+}
+
+/* ========== ACESSIBILIDADE ========== */
+/* Respeita preferência do usuário por movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Melhora contraste para modo escuro */
+@media (prefers-color-scheme: dark) {
+    /* Futuro: implementar tema escuro */
+}
+
+/* ========== ESTADOS DE FOCO ========== */
+/* Melhora visibilidade do foco para navegação por teclado */
+:focus-visible {
+    outline: 2px solid var(--color-green-ipb);
+    outline-offset: 2px;
+}
+
+/* ========== LOADING E ESTADOS ========== */
+/* Classe para elementos em carregamento */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Classe para elementos com erro */
+.error {
+    color: var(--color-error);
+}
+
+/* Classe para elementos com sucesso */
+.success {
+    color: var(--color-success);
+}

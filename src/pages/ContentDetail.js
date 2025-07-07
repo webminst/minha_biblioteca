@@ -21,17 +21,27 @@ import {
   EmailIcon,
 } from 'react-share';
 
+/**
+ * Componente ContentDetail - Página de detalhes de conteúdo
+ * Exibe detalhes completos de sermões, estudos e resumos de livros
+ * Inclui funcionalidades de compartilhamento e download de PDF
+ */
 const ContentDetail = () => {
   const { contentId } = useParams();
   const navigate = useNavigate();
+
+  // Estados para controle dos dados e carregamento
   const [sermon, setSermon] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Busca o conteúdo baseado na rota atual
   useEffect(() => {
     const fetchContent = async () => {
       try {
         let response;
+
+        // Determina qual API chamar baseado na URL
         if (window.location.pathname.startsWith('/sermoes')) {
           response = await axios.get(`http://localhost:3001/api/sermons/${contentId}`);
         } else if (window.location.pathname.startsWith('/estudos')) {
@@ -39,6 +49,7 @@ const ContentDetail = () => {
         } else if (window.location.pathname.startsWith('/livros')) {
           response = await axios.get(`http://localhost:3001/api/books/${contentId}`);
         }
+
         setSermon(response.data);
       } catch (err) {
         setError('Conteúdo não encontrado.');
@@ -46,25 +57,29 @@ const ContentDetail = () => {
         setLoading(false);
       }
     };
+
     fetchContent();
   }, [contentId]);
 
+  // Estados de carregamento e erro
   if (loading) return <p>Carregando...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
   if (!sermon) return <NotFound />;
 
-  // URL atual da página para compartilhamento
+  // Dados para compartilhamento
   const shareUrl = window.location.href;
-  const shareTitle = sermon.title; // Título para compartilhar
+  const shareTitle = sermon.title;
 
   return (
     <div className="content-detail-container">
+      {/* Botão de voltar */}
       <button onClick={() => navigate(-1)} className="back-button">
-        <FontAwesomeIcon icon={faArrowLeft} /> Voltar {/* ÍCONE AQUI */}
+        <FontAwesomeIcon icon={faArrowLeft} /> Voltar
       </button>
 
-      <div className="content-header-wrapper"> {/* Wrapper para título e capa */}
-        {/* Exibir Capa do Livro */}
+      {/* Cabeçalho com título e capa (para livros) */}
+      <div className="content-header-wrapper">
+        {/* Capa do livro - só aparece para resumos de livros */}
         {sermon.type === 'Resumo de Livro' && sermon.coverImageUrl && (
           <div className="book-cover-container">
             <img
@@ -75,22 +90,22 @@ const ContentDetail = () => {
           </div>
         )}
 
-        <div className="title-and-meta-container"> {/* Para alinhar título e meta */}
+        {/* Container para título e metadados */}
+        <div className="title-and-meta-container">
           <div className="content-meta">
             <span className="content-type-badge">{sermon.type}</span>
+
+            {/* Metadados específicos para livros */}
             {sermon.type === 'Resumo de Livro' && sermon.author && (
               <span className="meta-item">Autor: {sermon.author}</span>
             )}
             {sermon.publisher && <span className="meta-item">Editora: {sermon.publisher}</span>}
             {sermon.area && <span className="meta-item">Área: {sermon.area}</span>}
           </div>
-
         </div>
-      </div> {/* Fim de .content-header-wrapper */}
+      </div>
 
-
-
-      {/* ... Metadados e Título ... */}
+      {/* Metadados para sermões e estudos - aparecem acima do título */}
       {(['Sermão', 'Estudo', 'sermão', 'estudo'].includes(sermon.type)) && (
         <div className="content-meta-above-title">
           {(sermon.author || sermon.speaker) && (
@@ -105,9 +120,11 @@ const ContentDetail = () => {
           )}
         </div>
       )}
+
+      {/* Título principal do conteúdo */}
       <h1 className="content-title">{sermon.title}</h1>
 
-      {/* ... Player de Áudio e Texto Completo ... */}
+      {/* Conteúdo principal em Markdown */}
       {sermon.content && (
         <div className="content-full-text">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -116,40 +133,59 @@ const ContentDetail = () => {
         </div>
       )}
 
-
-      {/* --- Ações (Download, Compartilhamento) --- */}
+      {/* Seção de ações: download e compartilhamento */}
       <div className="content-actions">
+        {/* Botão de download do PDF - só aparece se houver PDF */}
         {sermon.pdfUrl && (
-          <a href={sermon.pdfUrl} target="_blank" rel="noopener noreferrer" className="action-button download-button">
-            <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF {/* ÍCONE AQUI */}
+          <a
+            href={sermon.pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="action-button download-button"
+          >
+            <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF
           </a>
         )}
 
-        {/* Botões de Compartilhamento Reais */}
+        {/* Botões de compartilhamento em redes sociais */}
         <div className="share-buttons-container">
           <span className="share-label">Compartilhar:</span>
-          <FacebookShareButton url={shareUrl} quote={shareTitle} hashtag="#SermoesOnline"> {/* Adicione hashtags relevantes */}
+
+          {/* Facebook */}
+          <FacebookShareButton url={shareUrl} quote={shareTitle} hashtag="#SermoesOnline">
             <FacebookIcon size={32} round />
           </FacebookShareButton>
 
-          <TwitterShareButton url={shareUrl} title={shareTitle} hashtags={["Biblia", "EstudoBiblico"]}> {/* Ajuste hashtags */}
+          {/* Twitter */}
+          <TwitterShareButton url={shareUrl} title={shareTitle} hashtags={["Biblia", "EstudoBiblico"]}>
             <TwitterIcon size={32} round />
           </TwitterShareButton>
 
+          {/* WhatsApp */}
           <WhatsappShareButton url={shareUrl} title={shareTitle} separator=":: ">
             <WhatsappIcon size={32} round />
           </WhatsappShareButton>
 
-          <LinkedinShareButton url={shareUrl} title={shareTitle} summary={sermon.description} source="Seu Nome - Site Pastoral">
+          {/* LinkedIn */}
+          <LinkedinShareButton
+            url={shareUrl}
+            title={shareTitle}
+            summary={sermon.description}
+            source="Pastor Giovanni - Portfólio Pastoral"
+          >
             <LinkedinIcon size={32} round />
           </LinkedinShareButton>
 
-          <EmailShareButton url={shareUrl} subject={`Confira: ${shareTitle}`} body={`Olá,\n\nAcho que você gostaria de ler este material: ${shareTitle}\n\n${shareUrl}\n\nAtenciosamente,\n[Seu Nome (opcional)]`}>
+          {/* E-mail */}
+          <EmailShareButton
+            url={shareUrl}
+            subject={`Confira: ${shareTitle}`}
+            body={`Olá,\n\nAcho que você gostaria de ler este material: ${shareTitle}\n\n${shareUrl}\n\nBênçãos!`}
+          >
             <EmailIcon size={32} round />
           </EmailShareButton>
         </div>
       </div>
-      {/* ... */}
     </div>
   );
 };
