@@ -34,7 +34,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "cd backend && npm run dev"
+    "dev": "concurrently \"cd backend && npm run dev\" \"npm start\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "npm start"
   },
   "browserslist": {
     "production": [
@@ -51,9 +53,6 @@
   "devDependencies": {
     "babel-loader": "^10.0.0",
     "concurrently": "^9.2.0",
-    "file-loader": "^6.2.0",
-    "webpack": "^5.99.9",
-    "webpack-dev-server": "^5.2.1",
-    "webpack-merge": "^6.0.1"
+    "file-loader": "^6.2.0"
   }
 }
