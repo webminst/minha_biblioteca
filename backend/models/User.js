@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Middleware do Mongoose: executa ANTES de salvar o usuário
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   // Apenas hash a senha se ela foi modificada (ou é um novo usuário)
   if (!this.isModified('password')) {
     return next();
@@ -35,7 +35,7 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Método para comparar a senha fornecida com a senha hasheada
-UserSchema.methods.matchPassword = async function(enteredPassword) {
+UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

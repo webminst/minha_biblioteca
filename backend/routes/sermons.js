@@ -1,72 +1,227 @@
 // routes/sermons.js
 const express = require('express');
 const router = express.Router();
-const Sermon = require('../models/Sermon'); // Importa o modelo Sermon
-const { protect, authorizeRoles } = require('../middleware/authMiddleware'); // Adicione esta linha
+const Sermon = require('../models/Sermon');
+const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
-// Rota para CRIAR um novo sermão (POST)
-// Rota para CRIAR um novo sermão (POST) - PROTEGIDA
-router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
-  try {
-    const newSermon = new Sermon({ ...req.body, createdBy: req.user._id }); // Opcional: registrar quem criou
-    const savedSermon = await newSermon.save();
-    res.status(201).json(savedSermon);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+/**
+ * Rotas para gerenciamento de sermões
+ * CRUD completo para sermões e esboços bíblicos
+ */
 
-// Rota para LER todos os sermões (GET)
+// ========== ROTAS PÚBLICAS ==========
+// GET /api/sermons - Lista todos os sermões
 router.get('/', async (req, res) => {
   try {
-    const sermons = await Sermon.find();
-    res.status(200).json(sermons); // 200 OK
+    const sermons = await Sermon.find()
+      .sort({ date: -1 }) // Por data, mais recentes primeiro
+      .select('title bibleReference series description tags date createdAt updatedAt');
+
+    res.json(sermons);
   } catch (error) {
-    res.status(500).json({ message: error.message }); // 500 Internal Server Error
+    console.error('Erro ao buscar sermões:', error);
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
   }
 });
 
-// Rota para LER o último sermão (GET)
+// GET /api/sermons/latest - Busca o sermão mais recente
 router.get('/latest', async (req, res) => {
   try {
-    const latestSermon = await Sermon.findOne().sort({ createdAt: -1 }); // Ordena por data de criação descrescente
-    if (!latestSermon) return res.status(404).json({ message: 'Nenhum sermão encontrado' });
-    res.status(200).json(latestSermon);
+    const latestSermon = await Sermon.findOne()
+      .sort({ createdAt: -1 }) // Mais recente por data de criação
+      .select('title bibleReference series description date');
+
+    if (!latestSermon) {
+      return res.status(404).json({
+        message: 'Nenhum sermão encontrado'
+      });
+    }
+
+    res.json(latestSermon);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Erro ao buscar último sermão:', error);
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
   }
 });
 
-// Rota para LER um sermão específico pelo ID (GET)
+// GET /api/sermons/:id - Busca sermão específico por ID
 router.get('/:id', async (req, res) => {
   try {
     const sermon = await Sermon.findById(req.params.id);
-    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado' });
+
+    if (!sermon) {
+      return res.status(404).json({
+        message: 'Sermão não encontrado'
+      });
+    }
+
     res.json(sermon);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.error('Erro ao buscar sermão:', error);
+
+    // Erro de ID inválido
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        message: 'ID de sermão inválido'
+      });
+    }
+
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
   }
 });
 
-// Rota para ATUALIZAR um sermão pelo ID (PATCH/PUT) - PROTEGIDA
+// ========== ROTAS PROTEGIDAS (ADMIN/EDITOR) ==========
+// POST /api/sermons - Criar novo sermão
+router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
+  try {
+    const newSermon = new Sermon({
+      ...req.body,
+      createdBy: req.user._id // Registra quem criou o sermão
+    });
+
+    const savedSermon = await newSermon.save();
+
+    res.status(201).json({
+      ...savedSermon.toObject(),
+      message: 'Sermão criado com sucesso'
+    });
+  } catch (error) {
+    console.error('Erro ao criar sermão:', error);
+
+    // Erro de validação
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        message: 'Dados inválidos',
+        errors: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message
+        }))
+      });
+    }
+
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+// PATCH /api/sermons/:id - Atualizar sermão existente
 router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
   try {
-    const updatedSermon = await Sermon.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedSermon) return res.status(404).json({ message: 'Sermão não encontrado.' });
-    res.status(200).json(updatedSermon);
+    const updatedSermon = await Sermon.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        updatedBy: req.user._id, // Registra quem atualizou
+        updatedAt: new Date()
+      },
+      {
+        new: true, // Retorna documento atualizado
+        runValidators: true // Executa validações do schema
+      }
+    );
+
+    if (!updatedSermon) {
+      return res.status(404).json({
+        message: 'Sermão não encontrado'
+      });
+    }
+
+    res.json({
+      ...updatedSermon.toObject(),
+      message: 'Sermão atualizado com sucesso'
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Erro ao atualizar sermão:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        message: 'ID de sermão inválido'
+      });
+    }
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        message: 'Dados inválidos',
+        errors: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message
+        }))
+      });
+    }
+
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
   }
 });
 
-// Rota para DELETAR um sermão pelo ID (DELETE) - PROTEGIDA
-router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => { // Apenas admin pode deletar
+// ========== ROTAS PROTEGIDAS (APENAS ADMIN) ==========
+// DELETE /api/sermons/:id - Deletar sermão
+router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => {
   try {
     const deletedSermon = await Sermon.findByIdAndDelete(req.params.id);
-    if (!deletedSermon) return res.status(404).json({ message: 'Sermão não encontrado.' });
-    res.status(200).json({ message: 'Sermão excluído com sucesso.' });
+
+    if (!deletedSermon) {
+      return res.status(404).json({
+        message: 'Sermão não encontrado'
+      });
+    }
+
+    res.json({
+      message: 'Sermão excluído com sucesso',
+      deletedSermon: {
+        _id: deletedSermon._id,
+        title: deletedSermon.title
+      }
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Erro ao deletar sermão:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        message: 'ID de sermão inválido'
+      });
+    }
+
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+// ========== ROTA DE BUSCA ==========
+// GET /api/sermons/search/:term - Buscar sermões por termo
+router.get('/search/:term', async (req, res) => {
+  try {
+    const searchTerm = req.params.term;
+    const sermons = await Sermon.find({
+      $or: [
+        { title: { $regex: searchTerm, $options: 'i' } },
+        { bibleReference: { $regex: searchTerm, $options: 'i' } },
+        { series: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } }
+      ]
+    })
+      .sort({ date: -1 })
+      .select('title bibleReference series description tags date createdAt');
+
+    res.json({
+      searchTerm,
+      count: sermons.length,
+      sermons
+    });
+  } catch (error) {
+    console.error('Erro na busca de sermões:', error);
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
   }
 });
 

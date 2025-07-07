@@ -1,3 +1,10 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Páginas que não devem ser indexadas
+Disallow: /admin/
+Disallow: /login
+
+# Localização do sitemap (quando disponível)
+# Sitemap: https://seudominio.com/sitemap.xml

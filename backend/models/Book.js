@@ -1,71 +1,148 @@
 // models/Sermon.js
 const mongoose = require('mongoose');
 
+/**
+ * Schema para modelo de Livros/Resumos
+ * Representa resumos de livros teológicos e cristãos
+ */
+
 const BookSchema = new mongoose.Schema({
+  // ========== INFORMAÇÕES BÁSICAS ==========
   title: {
     type: String,
-    required: true,
-    trim: true // Remove espaços em branco do início e fim
+    required: [true, 'Título do livro é obrigatório'],
+    trim: true,
+    maxlength: [200, 'Título não pode exceder 200 caracteres']
   },
-  series: {
-    type: String, // Nome da série de sermões, se aplicável 
-    required: false, // Opcional, se o sermão fizer parte de uma série
-    trim: true // Remove espaços em branco do início e fim
-  },
-  tags: {// Opcional, se o sermão tiver tags
-    type: [String], // Array de strings para tags (ex: "Fé", "Graça")
-    required: false, 
-    trim: true // Remove espaços em branco do início e fim de cada tag
-  },
-  author: {// Quem pregou, se houver múltiplos
-    type: String, 
-    required: false, // Opcional, se o sermão tiver um pregador específico
-    trim: true 
-  },
-  date: {
-    type: Date,
-    default: Date.now // Define a data atual por padrão
-  },
-  local: {
+
+  author: {
     type: String,
-    required: false, // Local onde o sermão foi pregado
-    trim: true // Remove espaços em branco do início e fim
+    required: [true, 'Autor do livro é obrigatório'],
+    trim: true,
+    maxlength: [100, 'Nome do autor não pode exceder 100 caracteres']
   },
-    area: {
+
+  publisher: {
     type: String,
-    required: false, // Local onde o sermão foi pregado
-    trim: true // Remove espaços em branco do início e fim
+    required: false,
+    trim: true,
+    maxlength: [100, 'Nome da editora não pode exceder 100 caracteres']
   },
+
+  // ========== CATEGORIZAÇÃO ==========
+  area: {
+    type: String,
+    required: false,
+    trim: true,
+    enum: [
+      'Teologia Sistemática',
+      'Teologia Bíblica',
+      'Comentários Bíblicos',
+      'Vida Cristã',
+      'Apologética',
+      'História da Igreja',
+      'Biografias',
+      'Devocionais',
+      'Outros'
+    ]
+  },
+
+  tags: {
+    type: [String],
+    required: false,
+    validate: [arrayLimit, 'Máximo 10 tags permitidas']
+  },
+
+  // ========== CONTEÚDO ==========
   description: {
     type: String,
-    required: false // Descrição pode ser opcional
+    required: false,
+    maxlength: [500, 'Descrição não pode exceder 500 caracteres']
   },
+
   content: {
-    type: String, // Usar String para armazenar o texto completo
-    required: false // Ou 'true' se todo sermão deve ter conteúdo textual
-  },
-  audioUrl: {
     type: String,
-    required: false // Opcional, se o sermão tiver áudio
+    required: [true, 'Resumo do livro é obrigatório'],
+    minlength: [100, 'Resumo deve ter pelo menos 100 caracteres']
   },
-  videoUrl: {
+
+  // ========== RECURSOS VISUAIS ==========
+  coverImageUrl: {
     type: String,
-    required: false // Opcional, se o sermão tiver vídeo
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(v);
+      },
+      message: 'URL da capa deve ser uma URL válida de imagem'
+    }
   },
-    imageUrl: {
-    type: String,
-    required: false // Opcional, se o sermão tiver vídeo
-  },
+
+  // ========== ARQUIVOS ==========
   pdfUrl: {
     type: String,
-    required: false // Opcional, se houver um PDF do sermão
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.pdf$/i.test(v);
+      },
+      message: 'URL deve apontar para um arquivo PDF válido'
+    }
   },
+
+  // ========== METADADOS ==========
   type: {
     type: String,
     default: 'Resumo de Livro',
     required: true
-  }
-}, { timestamps: true });
+  },
 
-//module.exports = mongoose.model('Book', BookSchema);
+  // Campos de auditoria (preenchidos automaticamente)
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
+
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  }
+}, {
+  timestamps: true // Adiciona createdAt e updatedAt automaticamente
+});
+
+// ========== VALIDAÇÕES CUSTOMIZADAS ==========
+// Limita o número de tags
+function arrayLimit(val) {
+  return val.length <= 10;
+}
+
+// ========== ÍNDICES PARA PERFORMANCE ==========
+BookSchema.index({ title: 'text', author: 'text', content: 'text' });
+BookSchema.index({ area: 1 });
+BookSchema.index({ createdAt: -1 });
+
+// ========== MÉTODOS DO SCHEMA ==========
+// Método para obter resumo curto
+BookSchema.methods.getShortSummary = function () {
+  return this.description || this.content.substring(0, 150) + '...';
+};
+
+// Método estático para buscar por área
+BookSchema.statics.findByArea = function (area) {
+  return this.find({ area: area }).sort({ createdAt: -1 });
+};
+
+// ========== MIDDLEWARE ==========
+// Remove campos vazios antes de salvar
+BookSchema.pre('save', function (next) {
+  // Remove tags vazias
+  if (this.tags) {
+    this.tags = this.tags.filter(tag => tag && tag.trim() !== '');
+  }
+  next();
+});
+
 module.exports = mongoose.models.Book || mongoose.model('Book', BookSchema);

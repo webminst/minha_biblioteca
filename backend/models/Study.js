@@ -1,73 +1,207 @@
 // models/Study.js
 const mongoose = require('mongoose');
 
+/**
+ * Schema para modelo de Estudos Bíblicos
+ * Representa estudos, materiais didáticos e recursos de ensino bíblico
+ */
+
 const StudySchema = new mongoose.Schema({
+  // ========== INFORMAÇÕES BÁSICAS ==========
   title: {
     type: String,
-    required: true,
-    trim: true // Remove espaços em branco do início e fim
+    required: [true, 'Título do estudo é obrigatório'],
+    trim: true,
+    maxlength: [200, 'Título não pode exceder 200 caracteres']
   },
-    theme: {
+
+  reference: {
     type: String,
-    required: true,
-    trim: true // Remove espaços em branco do início e fim
+    required: [true, 'Referência bíblica é obrigatória'],
+    trim: true,
+    maxlength: [100, 'Referência bíblica não pode exceder 100 caracteres']
   },
-    format: { // Formato do estudo (ex: "Congresso", "Palestra", "Estudo")
+
+  // ========== CATEGORIZAÇÃO ==========
+  theme: {
     type: String,
-    required: true,
-    trim: true // Remove espaços em branco do início e fim
+    required: false,
+    trim: true,
+    enum: [
+      'Doutrina',
+      'Vida Cristã',
+      'Evangelismo',
+      'Discipulado',
+      'Família',
+      'Oração',
+      'Estudo de Livro',
+      'Estudo de Personagem',
+      'Profecia',
+      'Apologética',
+      'Outros'
+    ]
   },
-  bibleReference: {
+
+  format: {
     type: String,
-    required: true,
-    trim: true
+    required: false,
+    trim: true,
+    enum: [
+      'Estudo Indutivo',
+      'Expositivo',
+      'Temático',
+      'Devocional',
+      'Pequeno Grupo',
+      'EBD',
+      'Conferência',
+      'Outros'
+    ]
   },
-  series: {
-    type: String, // Nome da série de sermões, se aplicável 
-    required: false, // Opcional, se o sermão fizer parte de uma série
-    trim: true // Remove espaços em branco do início e fim
+
+  tags: {
+    type: [String],
+    required: false,
+    validate: [arrayLimit, 'Máximo 10 tags permitidas']
   },
-  tags: {// Opcional, se o sermão tiver tags
-    type: [String], // Array de strings para tags (ex: "Fé", "Graça")
-    required: false, 
-    trim: true // Remove espaços em branco do início e fim de cada tag
-  },
-  speaker: {// Quem ministrou o estudo
-    type: String, 
-    required: true, // Opcional, se o sermão tiver um pregador específico
-    default: 'Giovanni Guimarães', // Valor padrão se não for fornecido
-    trim: false 
-  },
-  date: {
-    type: Date, // Data do estudo
-    default: Date.now // Define a data atual por padrão
-  },
-  local: {
-    type: String,
-    required: false, // Local onde o sermão foi pregado
-    trim: true // Remove espaços em branco do início e fim
-  },
+
+  // ========== CONTEÚDO ==========
   description: {
-    type: String, // resumo para apresentração do estudo 
-    trim: false, // Remove espaços em branco do início e fim
-    required: false // Descrição pode ser opcional
+    type: String,
+    required: false,
+    maxlength: [500, 'Descrição não pode exceder 500 caracteres']
   },
+
   content: {
-    type: String, // Usar String para armazenar o texto completo
-    required: true // Ou 'true' se todo sermão deve ter conteúdo textual
-  },
-  audioUrl: {
     type: String,
-    required: false // Opcional, se o sermão tiver áudio
+    required: [true, 'Conteúdo do estudo é obrigatório'],
+    minlength: [100, 'Conteúdo deve ter pelo menos 100 caracteres']
   },
-  videoUrl: {
+
+  // ========== ESTRUTURA DO ESTUDO ==========
+  outline: {
     type: String,
-    required: false // Opcional, se o sermão tiver vídeo
+    required: false,
+    maxlength: [1000, 'Esboço não pode exceder 1000 caracteres']
   },
+
+  questions: {
+    type: [String],
+    required: false,
+    validate: [questionsLimit, 'Máximo 20 perguntas permitidas']
+  },
+
+  // ========== RECURSOS ==========
+  imageUrl: {
+    type: String,
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(v);
+      },
+      message: 'URL da imagem deve ser uma URL válida'
+    }
+  },
+
   pdfUrl: {
     type: String,
-    required: false // Opcional, se houver um PDF do sermão
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.pdf$/i.test(v);
+      },
+      message: 'URL deve apontar para um arquivo PDF válido'
+    }
   },
-}, { timestamps: true });
+
+  // ========== METADADOS ==========
+  type: {
+    type: String,
+    default: 'Estudo Bíblico',
+    required: true
+  },
+
+  difficulty: {
+    type: String,
+    enum: ['Iniciante', 'Intermediário', 'Avançado'],
+    default: 'Intermediário'
+  },
+
+  duration: {
+    type: Number, // Duração em minutos
+    required: false,
+    min: [10, 'Duração mínima de 10 minutos'],
+    max: [300, 'Duração máxima de 5 horas']
+  },
+
+  // Campos de auditoria (preenchidos automaticamente)
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
+
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  }
+}, {
+  timestamps: true // Adiciona createdAt e updatedAt automaticamente
+});
+
+// ========== VALIDAÇÕES CUSTOMIZADAS ==========
+// Limita o número de tags
+function arrayLimit(val) {
+  return val.length <= 10;
+}
+
+// Limita o número de perguntas
+function questionsLimit(val) {
+  return val.length <= 20;
+}
+
+// ========== ÍNDICES PARA PERFORMANCE ==========
+StudySchema.index({ title: 'text', reference: 'text', content: 'text' });
+StudySchema.index({ theme: 1 });
+StudySchema.index({ format: 1 });
+StudySchema.index({ difficulty: 1 });
+StudySchema.index({ createdAt: -1 });
+
+// ========== MÉTODOS DO SCHEMA ==========
+// Método para obter resumo curto
+StudySchema.methods.getShortSummary = function () {
+  return this.description || this.content.substring(0, 150) + '...';
+};
+
+// Método para contar perguntas
+StudySchema.methods.getQuestionsCount = function () {
+  return this.questions ? this.questions.length : 0;
+};
+
+// Método estático para buscar por tema
+StudySchema.statics.findByTheme = function (theme) {
+  return this.find({ theme: theme }).sort({ createdAt: -1 });
+};
+
+// Método estático para buscar por dificuldade
+StudySchema.statics.findByDifficulty = function (difficulty) {
+  return this.find({ difficulty: difficulty }).sort({ createdAt: -1 });
+};
+
+// ========== MIDDLEWARE ==========
+// Remove campos vazios antes de salvar
+StudySchema.pre('save', function (next) {
+  // Remove tags vazias
+  if (this.tags) {
+    this.tags = this.tags.filter(tag => tag && tag.trim() !== '');
+  }
+
+  // Remove perguntas vazias
+  if (this.questions) {
+    this.questions = this.questions.filter(question => question && question.trim() !== '');
+  }
+
+  next();
+});
 
 module.exports = mongoose.models.Study || mongoose.model('Study', StudySchema);

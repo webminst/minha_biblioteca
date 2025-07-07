@@ -1,63 +1,183 @@
 // models/Sermon.js
 const mongoose = require('mongoose');
 
+/**
+ * Schema para modelo de Sermões
+ * Representa sermões pregados, esboços e materiais homiléticos
+ */
+
 const SermonSchema = new mongoose.Schema({
+  // ========== INFORMAÇÕES BÁSICAS ==========
   title: {
     type: String,
-    required: true,
-    trim: true // Remove espaços em branco do início e fim
+    required: [true, 'Título do sermão é obrigatório'],
+    trim: true,
+    maxlength: [200, 'Título não pode exceder 200 caracteres']
   },
+
   bibleReference: {
     type: String,
-    required: true,
-    trim: true
+    required: [true, 'Referência bíblica é obrigatória'],
+    trim: true,
+    maxlength: [100, 'Referência bíblica não pode exceder 100 caracteres']
   },
+
+  // ========== CATEGORIZAÇÃO ==========
   series: {
-    type: String, // Nome da série de sermões, se aplicável 
-    required: false, // Opcional, se o sermão fizer parte de uma série
-    trim: true // Remove espaços em branco do início e fim
+    type: String,
+    required: false,
+    trim: true,
+    maxlength: [100, 'Nome da série não pode exceder 100 caracteres']
   },
-  tags: {// Opcional, se o sermão tiver tags
-    type: [String], // Array de strings para tags (ex: "Fé", "Graça")
-    required: false, 
-    trim: true // Remove espaços em branco do início e fim de cada tag
+
+  tags: {
+    type: [String],
+    required: false,
+    validate: [arrayLimit, 'Máximo 10 tags permitidas']
   },
-  speaker: {// Quem pregou, se houver múltiplos
-    type: String, 
-    required: true, // Opcional, se o sermão tiver um pregador específico
-    default: 'Giovanni Guimarães', // Valor padrão se não for fornecido
-    trim: false 
+
+  // ========== INFORMAÇÕES DO EVENTO ==========
+  speaker: {
+    type: String,
+    required: true,
+    default: 'Giovanni Guimarães',
+    trim: true,
+    maxlength: [100, 'Nome do pregador não pode exceder 100 caracteres']
   },
+
   date: {
     type: Date,
-    default: Date.now // Define a data atual por padrão
+    default: Date.now,
+    required: true
   },
+
   local: {
     type: String,
-    required: false, // Local onde o sermão foi pregado
-    trim: true // Remove espaços em branco do início e fim
+    required: false,
+    trim: true,
+    maxlength: [150, 'Local não pode exceder 150 caracteres']
   },
+
+  // ========== CONTEÚDO ==========
   description: {
     type: String,
-    required: false // Descrição pode ser opcional
+    required: false,
+    maxlength: [500, 'Descrição não pode exceder 500 caracteres']
   },
+
   content: {
-    type: String, // Usar String para armazenar o texto completo
-    required: true // Ou 'true' se todo sermão deve ter conteúdo textual
+    type: String,
+    required: [true, 'Conteúdo do sermão é obrigatório'],
+    minlength: [100, 'Conteúdo deve ter pelo menos 100 caracteres']
   },
+
+  // ========== RECURSOS MULTIMÍDIA ==========
   audioUrl: {
     type: String,
-    required: false // Opcional, se o sermão tiver áudio
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.(mp3|wav|m4a)$/i.test(v);
+      },
+      message: 'URL deve apontar para um arquivo de áudio válido'
+    }
   },
+
   videoUrl: {
     type: String,
-    required: false // Opcional, se o sermão tiver vídeo
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.(mp4|avi|mov|youtube\.com|youtu\.be)/.test(v);
+      },
+      message: 'URL deve apontar para um vídeo válido ou YouTube'
+    }
   },
+
   pdfUrl: {
     type: String,
-    required: false // Opcional, se houver um PDF do sermão
-  }
-}, { timestamps: true });
+    required: false,
+    validate: {
+      validator: function (v) {
+        return !v || /^https?:\/\/.+\.pdf$/i.test(v);
+      },
+      message: 'URL deve apontar para um arquivo PDF válido'
+    }
+  },
 
-//module.exports = mongoose.model('Sermon', SermonSchema);
+  // ========== METADADOS ==========
+  type: {
+    type: String,
+    default: 'Sermão',
+    required: true
+  },
+
+  duration: {
+    type: Number, // Duração em minutos
+    required: false,
+    min: [5, 'Duração mínima de 5 minutos'],
+    max: [180, 'Duração máxima de 3 horas']
+  },
+
+  // Campos de auditoria (preenchidos automaticamente)
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
+
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  }
+}, {
+  timestamps: true // Adiciona createdAt e updatedAt automaticamente
+});
+
+// ========== VALIDAÇÕES CUSTOMIZADAS ==========
+// Limita o número de tags
+function arrayLimit(val) {
+  return val.length <= 10;
+}
+
+// ========== ÍNDICES PARA PERFORMANCE ==========
+SermonSchema.index({ title: 'text', bibleReference: 'text', content: 'text' });
+SermonSchema.index({ series: 1 });
+SermonSchema.index({ speaker: 1 });
+SermonSchema.index({ date: -1 });
+SermonSchema.index({ createdAt: -1 });
+
+// ========== MÉTODOS DO SCHEMA ==========
+// Método para obter resumo curto
+SermonSchema.methods.getShortSummary = function () {
+  return this.description || this.content.substring(0, 150) + '...';
+};
+
+// Método para verificar se tem recursos multimídia
+SermonSchema.methods.hasMultimedia = function () {
+  return !!(this.audioUrl || this.videoUrl || this.pdfUrl);
+};
+
+// Método estático para buscar por série
+SermonSchema.statics.findBySeries = function (series) {
+  return this.find({ series: series }).sort({ date: -1 });
+};
+
+// Método estático para buscar por pregador
+SermonSchema.statics.findBySpeaker = function (speaker) {
+  return this.find({ speaker: speaker }).sort({ date: -1 });
+};
+
+// ========== MIDDLEWARE ==========
+// Remove campos vazios antes de salvar
+SermonSchema.pre('save', function (next) {
+  // Remove tags vazias
+  if (this.tags) {
+    this.tags = this.tags.filter(tag => tag && tag.trim() !== '');
+  }
+
+  next();
+});
+
 module.exports = mongoose.models.Sermon || mongoose.model('Sermon', SermonSchema);
