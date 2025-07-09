@@ -26,6 +26,8 @@ Este é um site desenvolvido em React + Node.js para apresentar o ministério do
 - **Banco de Dados:** MongoDB com Mongoose ODM
 - **Autenticação:** JWT + bcrypt para segurança
 - **Middlewares:** Validação e tratamento de erros
+- **Upload de PDFs:** Suporte para Google Drive, Dropbox e OneDrive
+- **Logs Detalhados:** Sistema de debug e monitoramento
 
 ## 🚀 Tecnologias
 
@@ -99,10 +101,94 @@ npm start
 
 ### 4. Acesse o Sistema
 - **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:3001
+- **Backend API:** http://localhost:3002
 - **Admin:** http://localhost:3000/admin
 
-## 📖 Documentação
+> **Importante:** O backend agora roda na porta 3002 para evitar conflitos.
+
+## � Últimas Correções e Melhorias
+
+### 🛠️ **Problemas Corrigidos (Versão 2.1.0)**
+
+#### Autenticação e JWT
+- ✅ **Erro de Login:** Corrigido problema "Falha no login. Verifique suas credenciais"
+- ✅ **Token JWT:** Ajustado campo `id` no token e middleware de autenticação
+- ✅ **Usuário Inativo:** Removida verificação de campo `isActive` inexistente
+
+#### Configuração de Portas
+- ✅ **Conflito de Portas:** Backend movido da porta 3001 para 3002
+- ✅ **URLs Frontend:** Atualizadas todas as chamadas de API para porta 3002
+- ✅ **Documentação:** README atualizado com nova configuração
+
+#### Validação de Dados
+- ✅ **Upload de PDFs:** Expandida validação para aceitar:
+  - Google Drive (`drive.google.com`)
+  - Dropbox (`dropbox.com`)
+  - OneDrive (`1drv.ms`, `onedrive.live.com`)
+- ✅ **Campos de Data:** Corrigido uso de `date` para `createdAt` nos modelos
+- ✅ **Erro "Invalid Date":** Solucionado em listas de estudos e livros
+
+#### Sistema de Debug
+- ✅ **Logs Detalhados:** Adicionados em rotas de criação e atualização
+- ✅ **Testes Automatizados:** Scripts para validação de URLs e criação de conteúdo
+- ✅ **Monitoramento:** Logs de debug para facilitar manutenção
+
+### 🧪 **Testes Implementados**
+- **test-sermon-creation.js:** Teste de criação de sermão com diferentes URLs
+- **test-google-drive-url.js:** Validação específica de URLs do Google Drive
+- **Teste de APIs:** Confirmação de funcionamento de todas as rotas protegidas
+
+## 🛠️ Comandos de Desenvolvimento
+
+### Scripts NPM Disponíveis
+```bash
+# Desenvolvimento
+npm run dev                 # Inicia frontend + backend simultaneamente
+npm run dev:frontend        # Inicia apenas o frontend (porta 3000)
+npm run dev:backend         # Inicia apenas o backend (porta 3002)
+
+# Produção
+npm run build               # Build do frontend para produção
+npm start                   # Inicia servidor de produção
+
+# Utilitários
+npm install                 # Instala todas as dependências
+npm test                    # Executa testes automatizados
+```
+
+### Scripts de Teste
+```bash
+# Testar criação de sermão
+node test-sermon-creation.js
+
+# Testar validação de URLs do Google Drive
+node test-google-drive-url.js
+
+# Testar conexão com banco de dados
+node test-db.js
+```
+
+### Comandos MongoDB Úteis
+```bash
+# Conectar ao banco local
+mongo pastor-portfolio
+
+# Visualizar coleções
+show collections
+
+# Contar documentos
+db.sermons.countDocuments()
+db.studies.countDocuments()
+db.books.countDocuments()
+db.users.countDocuments()
+
+# Limpar dados (CUIDADO!)
+db.sermons.deleteMany({})
+db.studies.deleteMany({})
+db.books.deleteMany({})
+```
+
+## �📖 Documentação
 
 A documentação completa está disponível em [`docs/README.md`](./docs/README.md), incluindo:
 
@@ -114,25 +200,79 @@ A documentação completa está disponível em [`docs/README.md`](./docs/README.
 
 ### Variáveis de Ambiente (Backend)
 ```env
-PORT=3001
+PORT=3002
 MONGODB_URI=mongodb://localhost:27017/pastor-portfolio
 JWT_SECRET=sua_chave_secreta_muito_segura
 NODE_ENV=development
 ```
+
+> **Atenção:** A porta padrão do backend foi alterada de 3001 para 3002.
 
 ### Primeiro Acesso Admin
 1. Acesse `/admin`
 2. Crie sua conta de administrador
 3. Faça login e comece a gerenciar o conteúdo
 
+## 🔍 Resolução de Problemas
+
+### Problemas Comuns e Soluções
+
+#### Backend não inicia
+```bash
+# Verifique se a porta 3002 está livre
+netstat -ano | findstr :3002
+
+# Se ocupada, altere a porta no .env ou finalize o processo
+```
+
+#### Erro de autenticação
+```bash
+# Limpe o localStorage do navegador
+localStorage.clear()
+
+# Ou acesse Ferramentas do Desenvolvedor > Application > Local Storage > Clear All
+```
+
+#### URLs de PDF não aceitas
+- ✅ **Google Drive:** `https://drive.google.com/file/d/ID/view`
+- ✅ **Dropbox:** `https://www.dropbox.com/s/ID/file.pdf`
+- ✅ **OneDrive:** `https://1drv.ms/b/s!ID`
+- ❌ **Não suportado:** URLs diretas de arquivos locais
+
+#### Erro "Invalid Date"
+- Verifique se os documentos no MongoDB têm o campo `createdAt`
+- Execute uma migração se necessário:
+```javascript
+// No MongoDB
+db.sermons.updateMany({}, {$set: {createdAt: new Date()}})
+db.studies.updateMany({}, {$set: {createdAt: new Date()}})
+db.books.updateMany({}, {$set: {createdAt: new Date()}})
+```
+
 ## 📊 Status do Projeto
 
+### ✅ **Versão 2.1.0 - Estável**
 - ✅ **Sistema Completo** - Frontend + Backend funcional
-- ✅ **Banco de Dados** - MongoDB configurado
-- ✅ **Autenticação** - Sistema seguro implementado
-- ✅ **Responsividade** - Design adaptativo
-- ✅ **Documentação** - Guides e docs técnicos
+- ✅ **Banco de Dados** - MongoDB configurado e otimizado
+- ✅ **Autenticação** - Sistema JWT seguro e corrigido
+- ✅ **Responsividade** - Design adaptativo em todos os dispositivos
+- ✅ **Upload de Arquivos** - Suporte a múltiplas plataformas de armazenamento
+- ✅ **Validação de Dados** - Sistema robusto de validação
+- ✅ **Logs e Debug** - Monitoramento completo implementado
+- ✅ **Testes** - Scripts de teste automatizados
+- ✅ **Documentação** - Guides e docs técnicos atualizados
 - ✅ **Build Otimizado** - Pronto para produção
+
+### 🐛 **Bugs Conhecidos**
+- Nenhum bug crítico identificado na versão atual
+- Sistema totalmente funcional e testado
+
+### 📋 **Roadmap Futuro**
+- [ ] Sistema de notificações push
+- [ ] Cache Redis para melhor performance
+- [ ] Backup automático do banco de dados
+- [ ] Dashboard de analytics
+- [ ] API de integração com redes sociais
 
 ## 🤝 Contribuição
 
@@ -148,4 +288,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
+**🚀 Pastor Portfolio v2.1.0 - Sistema Completo e Otimizado**
 **Desenvolvido com ❤️ para o ministério do Pastor Giovanni Moreira Guimarães**
+
+*Última atualização: Janeiro 2025 - Todos os problemas de autenticação, validação e configuração foram corrigidos.*
