@@ -22,7 +22,7 @@ function AdminSermonsList() {
         },
       };
       // Faz a requisição GET para buscar os sermões
-      const response = await axios.get('http://localhost:3001/api/sermons', config);
+      const response = await axios.get('http://localhost:3002/api/sermons', config);
       setSermons(response.data);
     } catch (err) {
       setError('Erro ao carregar sermões: ' + (err.response?.data?.message || err.message));
@@ -45,7 +45,7 @@ function AdminSermonsList() {
             Authorization: `Bearer ${token}`,
           },
         };
-        await axios.delete(`http://localhost:3001/api/sermons/${id}`, config);
+        await axios.delete(`http://localhost:3002/api/sermons/${id}`, config);
         // Atualiza a lista removendo o sermão excluído
         const updatedSermons = sermons.filter((sermon) => sermon._id !== id);
         setSermons(updatedSermons);

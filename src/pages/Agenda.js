@@ -1,5 +1,7 @@
 import React from 'react';
 import './Agenda.css';
+import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
+import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente Agenda - Página de calendário pastoral
@@ -42,6 +44,9 @@ const Agenda = () => {
           Para participar de algum evento ou obter mais informações, entre em contato.
         </p>
       </footer>
+
+      <NewsletterSection />
+      <SupportSection />
     </div>
   );
 };

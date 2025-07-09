@@ -40,9 +40,9 @@ const SearchResults = () => {
 
         // Busca paralela de todas as coleções
         const [sermonsResponse, studiesResponse, booksResponse] = await Promise.all([
-          axios.get('http://localhost:3001/api/sermons'),
-          axios.get('http://localhost:3001/api/studies'),
-          axios.get('http://localhost:3001/api/books')
+          axios.get('http://localhost:3002/api/sermons'),
+          axios.get('http://localhost:3002/api/studies'),
+          axios.get('http://localhost:3002/api/books')
         ]);
 
         setSermons(sermonsResponse.data);

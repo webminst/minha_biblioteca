@@ -43,11 +43,11 @@ const ContentDetail = () => {
 
         // Determina qual API chamar baseado na URL
         if (window.location.pathname.startsWith('/sermoes')) {
-          response = await axios.get(`http://localhost:3001/api/sermons/${contentId}`);
+          response = await axios.get(`http://localhost:3002/api/sermons/${contentId}`);
         } else if (window.location.pathname.startsWith('/estudos')) {
-          response = await axios.get(`http://localhost:3001/api/studies/${contentId}`);
+          response = await axios.get(`http://localhost:3002/api/studies/${contentId}`);
         } else if (window.location.pathname.startsWith('/livros')) {
-          response = await axios.get(`http://localhost:3001/api/books/${contentId}`);
+          response = await axios.get(`http://localhost:3002/api/books/${contentId}`);
         }
 
         setSermon(response.data);

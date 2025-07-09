@@ -99,9 +99,23 @@ const SermonSchema = new mongoose.Schema({
     required: false,
     validate: {
       validator: function (v) {
-        return !v || /^https?:\/\/.+\.pdf$/i.test(v);
+        if (!v) return true; // Allow empty values
+
+        // Accept direct PDF URLs
+        if (/^https?:\/\/.+\.pdf$/i.test(v)) return true;
+
+        // Accept Google Drive URLs
+        if (/^https?:\/\/(drive\.google\.com|docs\.google\.com)/.test(v)) return true;
+
+        // Accept Dropbox URLs
+        if (/^https?:\/\/(www\.)?dropbox\.com/.test(v)) return true;
+
+        // Accept OneDrive URLs
+        if (/^https?:\/\/[^.]*\.sharepoint\.com/.test(v)) return true;
+
+        return false;
       },
-      message: 'URL deve apontar para um arquivo PDF válido'
+      message: 'URL deve apontar para um arquivo PDF válido ou serviço de compartilhamento (Google Drive, Dropbox, OneDrive)'
     }
   },
 

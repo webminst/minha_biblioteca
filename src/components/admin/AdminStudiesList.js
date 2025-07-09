@@ -22,7 +22,7 @@ function AdminStudiesList() {
                 },
             };
             // Faz a requisição GET para buscar os estudos
-            const response = await axios.get('http://localhost:3001/api/studies', config);
+            const response = await axios.get('http://localhost:3002/api/studies', config);
             setStudies(response.data);
         } catch (err) {
             setError('Erro ao carregar estudos: ' + (err.response?.data?.message || err.message));
@@ -45,7 +45,7 @@ function AdminStudiesList() {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                await axios.delete(`http://localhost:3001/api/studies/${id}`, config);
+                await axios.delete(`http://localhost:3002/api/studies/${id}`, config);
                 // Atualiza a lista removendo o estudo excluído
                 const updatedStudies = studies.filter((study) => study._id !== id);
                 setStudies(updatedStudies);
@@ -141,7 +141,7 @@ function AdminStudiesList() {
                                 <td>{study.theme}</td>
                                 <td>{study.format}</td>
                                 <td>{study.bibleReference}</td>
-                                <td>{new Date(study.date).toLocaleDateString()}</td>
+                                <td>{new Date(study.createdAt).toLocaleDateString()}</td>
                                 <td className="actions">
                                     <Link to={`/admin/estudos/editar/${study._id}`} className="btn-edit">Editar</Link>
                                     <button onClick={() => handleDelete(study._id)} className="btn-delete">Excluir</button>

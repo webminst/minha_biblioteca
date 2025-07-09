@@ -19,16 +19,21 @@ const protect = async (req, res, next) => {
 
       // Verifica e decodifica o token JWT
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('🔑 Token decodificado:', { id: decoded.id, role: decoded.role });
 
       // Busca o usuário e anexa à requisição (sem a senha)
       req.user = await User.findById(decoded.id).select('-password');
+      console.log('👤 Usuário encontrado:', req.user ? { id: req.user._id, username: req.user.username } : 'null');
 
-      // Verifica se usuário ainda existe e está ativo
-      if (!req.user || !req.user.isActive) {
+      // Verifica se usuário ainda existe
+      if (!req.user) {
+        console.log('❌ Usuário não encontrado no banco de dados');
         return res.status(401).json({
-          message: 'Token válido, mas usuário não encontrado ou inativo'
+          message: 'Token válido, mas usuário não encontrado'
         });
       }
+
+      console.log('✅ Autenticação bem-sucedida');
 
       next(); // Prossegue para próximo middleware/rota
     } catch (error) {

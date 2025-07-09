@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
+import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
+import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente Studies - Página de estudos bíblicos
@@ -34,7 +36,7 @@ function Studies() {
   useEffect(() => {
     const fetchStudies = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/studies');
+        const response = await axios.get('http://localhost:3002/api/studies');
         setStudies(response.data);
       } catch (err) {
         setError('Erro ao carregar os estudos. Por favor, tente novamente mais tarde.');
@@ -200,6 +202,9 @@ function Studies() {
           </button>
         </div>
       )}
+
+      <NewsletterSection />
+      <SupportSection />
     </div>
   );
 }

@@ -43,7 +43,7 @@ function StudyForm() {
                             Authorization: `Bearer ${token}`,
                         },
                     };
-                    const response = await axios.get(`http://localhost:3001/api/studies/${id}`, config);
+                    const response = await axios.get(`http://localhost:3002/api/studies/${id}`, config);
                     const studyData = response.data;
 
                     // Preenche os estados com os dados do estudo
@@ -108,10 +108,10 @@ function StudyForm() {
             };
 
             if (isEditing) {
-                await axios.patch(`http://localhost:3001/api/studies/${id}`, studyData, config);
+                await axios.patch(`http://localhost:3002/api/studies/${id}`, studyData, config);
                 setSuccess('Estudo atualizado com sucesso!');
             } else {
-                await axios.post('http://localhost:3001/api/studies', studyData, config);
+                await axios.post('http://localhost:3002/api/studies', studyData, config);
                 setSuccess('Estudo criado com sucesso!');
                 // Limpa o formulário após a criação
                 setTitle('');

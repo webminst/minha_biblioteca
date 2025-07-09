@@ -1,5 +1,7 @@
 import React from 'react';
 import './About.css';
+import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
+import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente About - Página "Sobre Mim" do portfólio do pastor
@@ -269,6 +271,9 @@ const About = () => {
           continuar fiel a este chamado até o fim.
         </p>
       </section>
+
+      <NewsletterSection />
+      <SupportSection />
     </div>
   );
 };

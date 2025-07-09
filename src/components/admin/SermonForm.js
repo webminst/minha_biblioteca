@@ -40,7 +40,7 @@ function SermonForm() {
                             Authorization: `Bearer ${token}`,
                         },
                     };
-                    const response = await axios.get(`http://localhost:3001/api/sermons/${id}`, config);
+                    const response = await axios.get(`http://localhost:3002/api/sermons/${id}`, config);
                     const sermonData = response.data;
 
                     setTitle(sermonData.title || '');
@@ -100,10 +100,10 @@ function SermonForm() {
             };
 
             if (isEditing) {
-                await axios.patch(`http://localhost:3001/api/sermons/${id}`, sermonData, config);
+                await axios.patch(`http://localhost:3002/api/sermons/${id}`, sermonData, config);
                 setSuccess('Sermão atualizado com sucesso!');
             } else {
-                await axios.post('http://localhost:3001/api/sermons', sermonData, config);
+                await axios.post('http://localhost:3002/api/sermons', sermonData, config);
                 setSuccess('Sermão criado com sucesso!');
                 // Limpa o formulário após a criação
                 setTitle('');

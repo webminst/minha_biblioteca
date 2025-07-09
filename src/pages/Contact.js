@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import './Contact.css';
+import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
+import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente Contact - Página de contato
@@ -284,6 +286,9 @@ const Contact = () => {
           </button>
         </form>
       </section>
+
+      <NewsletterSection />
+      <SupportSection />
     </div>
   );
 };

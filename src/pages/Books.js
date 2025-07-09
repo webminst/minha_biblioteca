@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
+import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
+import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente Books - Página de resumos de livros
@@ -34,7 +36,7 @@ function Books() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/books');
+        const response = await axios.get('http://localhost:3002/api/books');
         setBooks(response.data);
       } catch (err) {
         setError('Erro ao carregar os livros.');
@@ -197,6 +199,9 @@ function Books() {
           </button>
         </div>
       )}
+
+      <NewsletterSection />
+      <SupportSection />
     </div>
   );
 }

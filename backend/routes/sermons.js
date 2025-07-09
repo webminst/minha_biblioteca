@@ -93,9 +93,11 @@ router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res) =>
     });
   } catch (error) {
     console.error('Erro ao criar sermão:', error);
+    console.log('📝 Dados recebidos:', JSON.stringify(req.body, null, 2));
 
     // Erro de validação
     if (error.name === 'ValidationError') {
+      console.log('❌ Erros de validação:', error.errors);
       return res.status(400).json({
         message: 'Dados inválidos',
         errors: Object.keys(error.errors).map(key => ({
@@ -139,6 +141,7 @@ router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res
     });
   } catch (error) {
     console.error('Erro ao atualizar sermão:', error);
+    console.log('📝 Dados de atualização recebidos:', JSON.stringify(req.body, null, 2));
 
     if (error.name === 'CastError') {
       return res.status(400).json({
@@ -147,6 +150,7 @@ router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res
     }
 
     if (error.name === 'ValidationError') {
+      console.log('❌ Erros de validação na atualização:', error.errors);
       return res.status(400).json({
         message: 'Dados inválidos',
         errors: Object.keys(error.errors).map(key => ({

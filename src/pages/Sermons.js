@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
+import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
+import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente Sermons - Página de sermões
@@ -35,7 +37,7 @@ function Sermons() {
   useEffect(() => {
     const fetchSermons = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/sermons');
+        const response = await axios.get('http://localhost:3002/api/sermons');
         setSermons(response.data);
       } catch (err) {
         setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
@@ -209,6 +211,9 @@ function Sermons() {
           </button>
         </div>
       )}
+
+      <NewsletterSection />
+      <SupportSection />
     </div>
   );
 }

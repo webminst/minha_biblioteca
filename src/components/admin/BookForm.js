@@ -42,7 +42,7 @@ function BookForm() {
                             Authorization: `Bearer ${token}`,
                         },
                     };
-                    const response = await axios.get(`http://localhost:3001/api/books/${id}`, config);
+                    const response = await axios.get(`http://localhost:3002/api/books/${id}`, config);
                     const bookData = response.data;
 
                     // Preenche os estados com os dados do livro
@@ -105,10 +105,10 @@ function BookForm() {
             };
 
             if (isEditing) {
-                await axios.patch(`http://localhost:3001/api/books/${id}`, bookData, config);
+                await axios.patch(`http://localhost:3002/api/books/${id}`, bookData, config);
                 setSuccess('Livro atualizado com sucesso!');
             } else {
-                await axios.post('http://localhost:3001/api/books', bookData, config);
+                await axios.post('http://localhost:3002/api/books', bookData, config);
                 setSuccess('Livro criado com sucesso!');
                 // Limpa o formulário após a criação
                 setTitle('');

@@ -22,7 +22,7 @@ function AdminBooksList() {
                 },
             };
             // Faz a requisição GET para buscar os livros
-            const response = await axios.get('http://localhost:3001/api/books', config);
+            const response = await axios.get('http://localhost:3002/api/books', config);
             setBooks(response.data);
         } catch (err) {
             setError('Erro ao carregar livros: ' + (err.response?.data?.message || err.message));
@@ -45,7 +45,7 @@ function AdminBooksList() {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                await axios.delete(`http://localhost:3001/api/books/${id}`, config);
+                await axios.delete(`http://localhost:3002/api/books/${id}`, config);
                 // Atualiza a lista removendo o livro excluído
                 const updatedBooks = books.filter((book) => book._id !== id);
                 setBooks(updatedBooks);
@@ -145,7 +145,7 @@ function AdminBooksList() {
                                 <td>{book.title}</td>
                                 <td>{book.author}</td>
                                 <td>{book.series}</td>
-                                <td>{new Date(book.date).toLocaleDateString()}</td>
+                                <td>{new Date(book.createdAt).toLocaleDateString()}</td>
                                 <td className="actions">
                                     <Link to={`/admin/livros/editar/${book._id}`} className="btn-edit">Editar</Link>
                                     <button onClick={() => handleDelete(book._id)} className="btn-delete">Excluir</button>
