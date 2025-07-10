@@ -9,10 +9,10 @@ function StudyForm() {
     const [title, setTitle] = useState('');
     const [theme, setTheme] = useState('');
     const [format, setFormat] = useState('');
-    const [bibleReference, setBibleReference] = useState('');
+    const [reference, setReference] = useState('');
     const [series, setSeries] = useState('');
     const [tags, setTags] = useState(''); // Armazenado como string e convertido para array
-    const [speaker, setSpeaker] = useState('');
+    const [speaker, setSpeaker] = useState('Giovanni Guimarães');
     const [date, setDate] = useState('');
     const [local, setLocal] = useState('');
     const [description, setDescription] = useState('');
@@ -50,7 +50,7 @@ function StudyForm() {
                     setTitle(studyData.title || '');
                     setTheme(studyData.theme || '');
                     setFormat(studyData.format || '');
-                    setBibleReference(studyData.bibleReference || '');
+                    setReference(studyData.reference || '');
                     setSeries(studyData.series || '');
                     setTags(studyData.tags ? studyData.tags.join(', ') : ''); // Converte array para string para o input
                     setSpeaker(studyData.speaker || '');
@@ -85,7 +85,7 @@ function StudyForm() {
             title,
             theme,
             format,
-            bibleReference,
+            reference,
             series,
             tags: tagsArray, // Envia como array
             speaker,
@@ -117,7 +117,7 @@ function StudyForm() {
                 setTitle('');
                 setTheme('');
                 setFormat('');
-                setBibleReference('');
+                setReference('');
                 setSeries('');
                 setTags('');
                 setSpeaker('');
@@ -148,66 +148,76 @@ function StudyForm() {
                 {error && <p className="error-message">{error}</p>}
                 {success && <p className="success-message">{success}</p>}
 
-                {/* Campos obrigatórios */}
                 <div className="form-group">
                     <label htmlFor="title">Título:</label>
                     <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required disabled={loading} />
                 </div>
+
+                <div className="form-group">
+                    <label htmlFor="reference">Referência Bíblica:</label>
+                    <input type="text" id="reference" value={reference} onChange={(e) => setReference(e.target.value)} required disabled={loading} />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="series">Série (opcional):</label>
+                    <input type="text" id="series" value={series} onChange={(e) => setSeries(e.target.value)} disabled={loading} />
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="theme">Tema:</label>
                     <input type="text" id="theme" value={theme} onChange={(e) => setTheme(e.target.value)} required disabled={loading} />
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="format">Formato:</label>
-                    <input type="text" id="format" value={format} onChange={(e) => setFormat(e.target.value)} required disabled={loading} />
+                    <label htmlFor="description">Descrição/Resumo (opcional):</label>
+                    <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows="3" disabled={loading}></textarea>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="bibleReference">Referência Bíblica:</label>
-                    <input type="text" id="bibleReference" value={bibleReference} onChange={(e) => setBibleReference(e.target.value)} required disabled={loading} />
-                </div>
+
                 <div className="form-group">
                     <label htmlFor="content">Conteúdo (Markdown):</label>
                     <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows="10" required disabled={loading}></textarea>
                     <small>Use sintaxe Markdown para formatação.</small>
                 </div>
 
-                {/* Campos opcionais */}
                 <div className="form-group">
-                    <label htmlFor="series">Série (opcional):</label>
-                    <input type="text" id="series" value={series} onChange={(e) => setSeries(e.target.value)} disabled={loading} />
+                    <label htmlFor="pdfUrl">URL do PDF (opcional):</label>
+                    <input type="url" id="pdfUrl" value={pdfUrl} onChange={(e) => setPdfUrl(e.target.value)} disabled={loading} />
                 </div>
+
+                <div className="form-group">
+                    <label htmlFor="audioUrl">URL do Áudio (opcional):</label>
+                    <input type="url" id="audioUrl" value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} disabled={loading} />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="videoUrl">URL do Vídeo (opcional):</label>
+                    <input type="url" id="videoUrl" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} disabled={loading} />
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="tags">Tags (separar por vírgula, opcional):</label>
                     <input type="text" id="tags" value={tags} onChange={(e) => setTags(e.target.value)} disabled={loading} />
                     <small>Ex: "oração, fé, discipulado"</small>
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="speaker">Ministrante (opcional, padrão: 'Giovanni Guimarães'):</label>
                     <input type="text" id="speaker" value={speaker} onChange={(e) => setSpeaker(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="date">Data (opcional):</label>
                     <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="local">Local (opcional):</label>
                     <input type="text" id="local" value={local} onChange={(e) => setLocal(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="description">Descrição/Resumo (opcional):</label>
-                    <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows="3" disabled={loading}></textarea>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="audioUrl">URL do Áudio (opcional):</label>
-                    <input type="url" id="audioUrl" value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} disabled={loading} />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="videoUrl">URL do Vídeo (opcional):</label>
-                    <input type="url" id="videoUrl" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} disabled={loading} />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="pdfUrl">URL do PDF (opcional):</label>
-                    <input type="url" id="pdfUrl" value={pdfUrl} onChange={(e) => setPdfUrl(e.target.value)} disabled={loading} />
+                    <label htmlFor="format">Formato:</label>
+                    <input type="text" id="format" value={format} onChange={(e) => setFormat(e.target.value)} required disabled={loading} />
                 </div>
 
                 <button type="submit" disabled={loading}>

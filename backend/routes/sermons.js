@@ -10,6 +10,17 @@ const { protect, authorizeRoles } = require('../middleware/authMiddleware');
  */
 
 // ========== ROTAS PÚBLICAS ==========
+// GET /api/sermons/count - Conta total de sermões
+router.get('/count', async (req, res) => {
+  try {
+    const count = await Sermon.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error('Erro ao contar sermões:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
 // GET /api/sermons - Lista todos os sermões
 router.get('/', async (req, res) => {
   try {

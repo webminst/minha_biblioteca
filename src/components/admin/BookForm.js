@@ -144,62 +144,71 @@ function BookForm() {
                 {error && <p className="error-message">{error}</p>}
                 {success && <p className="success-message">{success}</p>}
 
-                {/* Campo obrigatório */}
                 <div className="form-group">
                     <label htmlFor="title">Título:</label>
                     <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required disabled={loading} />
                 </div>
 
-                {/* Campos opcionais */}
-                <div className="form-group">
-                    <label htmlFor="series">Série (opcional):</label>
-                    <input type="text" id="series" value={series} onChange={(e) => setSeries(e.target.value)} disabled={loading} />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="tags">Tags (separar por vírgula, opcional):</label>
-                    <input type="text" id="tags" value={tags} onChange={(e) => setTags(e.target.value)} disabled={loading} />
-                    <small>Ex: "ficção, teologia, biografia"</small>
-                </div>
                 <div className="form-group">
                     <label htmlFor="author">Autor (opcional):</label>
                     <input type="text" id="author" value={author} onChange={(e) => setAuthor(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="date">Data de Publicação (opcional):</label>
-                    <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={loading} />
+                    <label htmlFor="series">Série (opcional):</label>
+                    <input type="text" id="series" value={series} onChange={(e) => setSeries(e.target.value)} disabled={loading} />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="local">Local de Publicação (opcional):</label>
-                    <input type="text" id="local" value={local} onChange={(e) => setLocal(e.target.value)} disabled={loading} />
-                </div>
+
                 <div className="form-group">
                     <label htmlFor="area">Área (opcional):</label>
                     <input type="text" id="area" value={area} onChange={(e) => setArea(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="description">Descrição/Sinopse (opcional):</label>
                     <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows="3" disabled={loading}></textarea>
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="content">Conteúdo (resumo/trecho em Markdown, opcional):</label>
                     <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows="10" disabled={loading}></textarea>
                     <small>Use sintaxe Markdown para formatação.</small>
                 </div>
+
+                <div className="form-group">
+                    <label htmlFor="pdfUrl">URL do PDF (e-book, opcional):</label>
+                    <input type="url" id="pdfUrl" value={pdfUrl} onChange={(e) => setPdfUrl(e.target.value)} disabled={loading} />
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="audioUrl">URL do Áudio Livro (opcional):</label>
                     <input type="url" id="audioUrl" value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="videoUrl">URL do Vídeo (resenha/trailer, opcional):</label>
                     <input type="url" id="videoUrl" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="imageUrl">URL da Imagem da Capa (opcional):</label>
                     <input type="url" id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} disabled={loading} />
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="pdfUrl">URL do PDF (e-book, opcional):</label>
-                    <input type="url" id="pdfUrl" value={pdfUrl} onChange={(e) => setPdfUrl(e.target.value)} disabled={loading} />
+                    <label htmlFor="tags">Tags (separar por vírgula, opcional):</label>
+                    <input type="text" id="tags" value={tags} onChange={(e) => setTags(e.target.value)} disabled={loading} />
+                    <small>Ex: "ficção, teologia, biografia"</small>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="date">Data de Publicação (opcional):</label>
+                    <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={loading} />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="local">Local de Publicação (opcional):</label>
+                    <input type="text" id="local" value={local} onChange={(e) => setLocal(e.target.value)} disabled={loading} />
                 </div>
 
                 <button type="submit" disabled={loading}>

@@ -10,6 +10,17 @@ const { protect, authorizeRoles } = require('../middleware/authMiddleware');
  */
 
 // ========== ROTAS PÚBLICAS ==========
+// GET /api/studies/count - Conta total de estudos
+router.get('/count', async (req, res) => {
+  try {
+    const count = await Study.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error('Erro ao contar estudos:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
 // GET /api/studies - Lista todos os estudos
 router.get('/', async (req, res) => {
   try {

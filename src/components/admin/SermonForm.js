@@ -162,17 +162,6 @@ function SermonForm() {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="date">Data:</label>
-                    <input
-                        type="date"
-                        id="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        disabled={loading}
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="description">Descrição (Resumo):</label>
                     <textarea
                         id="description"
@@ -196,6 +185,17 @@ function SermonForm() {
                 </div>
 
                 <div className="form-group">
+                    <label htmlFor="pdfUrl">URL do PDF:</label>
+                    <input
+                        type="url"
+                        id="pdfUrl"
+                        value={pdfUrl}
+                        onChange={(e) => setPdfUrl(e.target.value)}
+                        disabled={loading}
+                    />
+                </div>
+
+                <div className="form-group">
                     <label htmlFor="audioUrl">URL do Áudio:</label>
                     <input
                         type="url"
@@ -213,17 +213,6 @@ function SermonForm() {
                         id="videoUrl"
                         value={videoUrl}
                         onChange={(e) => setVideoUrl(e.target.value)}
-                        disabled={loading}
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="pdfUrl">URL do PDF:</label>
-                    <input
-                        type="url"
-                        id="pdfUrl"
-                        value={pdfUrl}
-                        onChange={(e) => setPdfUrl(e.target.value)}
                         disabled={loading}
                     />
                 </div>
@@ -261,6 +250,17 @@ function SermonForm() {
                         onChange={e => setLocal(e.target.value)}
                         disabled={loading}
                         placeholder="Local do sermão"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="date">Data:</label>
+                    <input
+                        type="date"
+                        id="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        disabled={loading}
                     />
                 </div>
 

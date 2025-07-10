@@ -9,6 +9,17 @@ const Book = require('../models/Book');
  */
 
 // ========== ROTAS PÚBLICAS ==========
+// GET /api/books/count - Conta total de livros
+router.get('/count', async (req, res) => {
+  try {
+    const count = await Book.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error('Erro ao contar livros:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
 // GET /api/books - Lista todos os livros
 router.get('/', async (req, res) => {
   try {
