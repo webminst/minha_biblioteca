@@ -10,7 +10,7 @@ const cors = require('cors');
 const sermonsRouter = require('./routes/sermons');
 const studiesRouter = require('./routes/studies');
 const booksRouter = require('./routes/books');
-const authRouter = require('./routes/auth'); 
+const authRouter = require('./routes/auth');
 
 
 const app = express();
@@ -18,7 +18,14 @@ const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // --- Middlewares ---
-app.use(cors());
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://seu-dominio.vercel.app', 'https://seu-dominio.netlify.app']
+    : 'http://localhost:3000',
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // --- Conexão com o MongoDB ---
