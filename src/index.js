@@ -39,6 +39,3 @@ root.render(
 
 // Inicia medição de performance (descomente para habilitar)
 // reportWebVitals(console.log);
-
-// Exporta função de métricas para uso opcional
-export { reportWebVitals };
