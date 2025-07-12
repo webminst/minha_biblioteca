@@ -76,7 +76,7 @@ const Home = () => {
             title: sermon.title,
             type: 'Sermão',
             date: sermon.date,
-            reference: sermon.bibleReference,
+            reference: sermon.bibleReference, // Manter como está para sermões
             description: sermon.description,
             detailsUrl: `/sermoes/${sermon._id}`,
             pdfUrl: sermon.pdfUrl,
