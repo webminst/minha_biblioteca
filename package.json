@@ -1,61 +1,32 @@
 {
   "name": "pastor-portfolio",
   "version": "2.3.1",
-  "private": true,
-  "dependencies": {
-    "@babel/runtime": "^7.27.6",
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.10.0",
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "eslint": "^9.29.0",
-    "express": "^5.1.0",
-    "gh-pages": "^6.3.0",
-    "jsonp": "^0.2.1",
-    "jsonwebtoken": "^9.0.2",
-    "lodash": "^4.17.21",
-    "mongoose": "^8.16.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-markdown": "^8.0.7",
-    "react-router-dom": "^6.8.1",
-    "react-scripts": "^5.0.1",
-    "react-share": "^5.2.2",
-    "remark-gfm": "^4.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "description": "Portfólio ministerial digital com sistema completo de gestão de conteúdo",
   "scripts": {
-    "start": "powershell -c \"$env:NODE_OPTIONS='--no-deprecation'; react-scripts start\"",
-    "start:react": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dev": "concurrently \"cd backend && npm run dev\" \"npm start\"",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm start",
     "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "npm start"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "build": "cd frontend && npm run build",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd frontend && serve -s build -l 3000",
+    "start:backend": "cd backend && npm start",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "clean:all": "cd frontend && npm run clean && cd ../backend && npm run clean",
+    "test": "cd frontend && npm test"
   },
   "devDependencies": {
-    "babel-loader": "^10.0.0",
-    "concurrently": "^9.2.0",
-    "file-loader": "^6.2.0"
-  }
+    "concurrently": "^7.6.0",
+    "serve": "^14.2.0"
+  },
+  "keywords": [
+    "react",
+    "nodejs",
+    "mongodb",
+    "pastor",
+    "portfolio",
+    "ministerial",
+    "fullstack"
+  ],
+  "author": "Pastor Giovanni Moreira Guimarães",
+  "license": "MIT"
 }

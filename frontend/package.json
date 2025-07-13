@@ -1,0 +1,58 @@
+{
+  "name": "pastor-portfolio-frontend",
+  "version": "2.3.1",
+  "private": true,
+  "proxy": "http://localhost:3001",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "^5.0.1",
+    "react-share": "^5.2.2",
+    "remark-gfm": "^4.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "clean": "rm -rf build node_modules",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^9.29.0"
+  },
+  "description": "Frontend React para o portfólio ministerial digital",
+  "keywords": [
+    "react",
+    "frontend",
+    "pastor",
+    "portfolio",
+    "ministerial"
+  ],
+  "author": "Pastor Giovanni Moreira Guimarães",
+  "license": "MIT"
+}
