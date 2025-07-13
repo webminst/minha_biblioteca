@@ -6,7 +6,7 @@ const SupportSection = () => {
   return (
     <section className="footer-support-cta">
       <p>Se este conteúdo tem sido uma bênção, considere apoiar este ministério:</p>
-      <Link to="/support" className="footer-support-button">
+      <Link to="/apoie" className="footer-support-button">
         Saiba como apoiar
       </Link>
     </section>

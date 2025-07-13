@@ -11,9 +11,9 @@ import './SupportPage.css';
  */
 const SupportPage = () => {
   // Dados para contribuição via PIX - obtidos de variáveis de ambiente
-  const pixKey = process.env.REACT_APP_PIX_KEY;
+  const pixKey = process.env.REACT_APP_PIX_KEY || "webgio@gmail.com";
   const bankName = process.env.REACT_APP_BANK_NAME || "Caixa Econômica Federal";
-  const accountHolderName = process.env.REACT_APP_ACCOUNT_HOLDER || "Pastor";
+  const accountHolderName = process.env.REACT_APP_ACCOUNT_HOLDER || "Pastor Giovanni Moreira Guimarães";
 
   // Verificação se as informações sensíveis estão configuradas
   const isPixConfigured = pixKey && pixKey !== "sua_chave_pix_aqui";
@@ -98,12 +98,17 @@ const SupportPage = () => {
           antes de confirmar. Deus o abençoe por sua generosidade!
         </p>
 
-        {/* QR Code para PIX */}
-        <img
-          src="/images/Chave PIX - E-mail.jpg"
-          alt="QR Code PIX para contribuição"
-          className="pix-qrcode"
-        />
+        {/* QR Code para PIX - exibe apenas se PIX estiver configurado */}
+        {isPixConfigured && (
+          <div style={{ textAlign: 'center', margin: '20px 0' }}>
+            <h3>QR Code PIX:</h3>
+            <img
+              src="/images/qrcode-pix.jpg"
+              alt="QR Code PIX para contribuição"
+              className="pix-qrcode"
+            />
+          </div>
+        )}
       </div>
 
       {/* Seção de formas alternativas de apoio */}

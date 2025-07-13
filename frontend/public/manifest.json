@@ -4,17 +4,17 @@
   "description": "Sermões, estudos bíblicos e recursos teológicos",
   "icons": [
     {
-      "src": "Minha biblioteca logo.png",
+      "src": "minha-biblioteca-logo.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "Minha biblioteca logo.png",
+      "src": "minha-biblioteca-logo.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "Minha biblioteca logo.png",
+      "src": "minha-biblioteca-logo.png",
       "type": "image/png",
       "sizes": "512x512"
     }
