@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 import NotFound from './NotFound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faInstagram } from '@fortawesome/free-brands-svg-icons';
 import './ContentDetail.css';
 import {
   FacebookShareButton,
@@ -70,6 +71,24 @@ const ContentDetail = () => {
   // Dados para compartilhamento
   const shareUrl = window.location.href;
   const shareTitle = sermon.title;
+
+  // Função para compartilhar no Instagram
+  const shareOnInstagram = () => {
+    // Copia a URL para clipboard e orienta o usuário
+    navigator.clipboard.writeText(`${shareTitle}\n\n${shareUrl}\n\n#SermoesOnline #Biblia #EstudoBiblico`)
+      .then(() => {
+        alert('Link copiado! Cole no Instagram Stories ou post para compartilhar.');
+        // Abre o Instagram (se estiver no mobile) ou Instagram Web
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+          window.open('instagram://story-camera', '_blank');
+        } else {
+          window.open('https://www.instagram.com/', '_blank');
+        }
+      })
+      .catch(() => {
+        alert('Erro ao copiar link. Copie manualmente e cole no Instagram.');
+      });
+  };
 
   return (
     <div className="content-detail-container">
@@ -166,6 +185,15 @@ const ContentDetail = () => {
           <WhatsappShareButton url={shareUrl} title={shareTitle} separator=":: ">
             <WhatsappIcon size={32} round />
           </WhatsappShareButton>
+
+          {/* Instagram */}
+          <button
+            onClick={shareOnInstagram}
+            className="instagram-share-button"
+            title="Compartilhar no Instagram"
+          >
+            <FontAwesomeIcon icon={faInstagram} />
+          </button>
 
           {/* LinkedIn */}
           <LinkedinShareButton
