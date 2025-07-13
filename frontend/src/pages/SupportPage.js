@@ -11,7 +11,7 @@ import './SupportPage.css';
  */
 const SupportPage = () => {
   // Dados para contribuição via PIX - obtidos de variáveis de ambiente
-  const pixKey = process.env.REACT_APP_PIX_KEY || "webgio@gmail.com";
+  const pixKey = process.env.REACT_APP_PIX_KEY || "webminst@hotmail.com";
   const bankName = process.env.REACT_APP_BANK_NAME || "Caixa Econômica Federal";
   const accountHolderName = process.env.REACT_APP_ACCOUNT_HOLDER || "Pastor Giovanni Moreira Guimarães";
 

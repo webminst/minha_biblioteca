@@ -38,62 +38,64 @@ const Header = () => {
 
   return (
     <header className="app-header">
-      <div className="logo-container">
-        <Link to="/">
-          <img
-            src="/images/minha-biblioteca-white.png"
-            alt="Logo Minha Biblioteca"
-            className="header-logo"
-          />
-        </Link>
-      </div>
-      <button className="mobile-menu-toggle" onClick={toggleMobileMenu} aria-label="Abrir menu" aria-expanded={isMobileMenuOpen}>
-        <span className="bar"></span>
-        <span className="bar"></span>
-        <span className="bar"></span>
-      </button>
+      <div className="header-content">
+        <div className="logo-container">
+          <Link to="/">
+            <img
+              src="/images/minha-biblioteca-white.png"
+              alt="Logo Minha Biblioteca"
+              className="header-logo"
+            />
+          </Link>
+        </div>
+        <button className="mobile-menu-toggle" onClick={toggleMobileMenu} aria-label="Abrir menu" aria-expanded={isMobileMenuOpen}>
+          <span className="bar"></span>
+          <span className="bar"></span>
+          <span className="bar"></span>
+        </button>
 
-      <nav className={`main-nav ${isMobileMenuOpen ? 'open' : ''}`}>
-        <ul>
-          <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink></li>
-          <li><NavLink to="/sermoes" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sermões</NavLink></li>
-          <li><NavLink to="/estudos" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Estudos</NavLink></li>
-          <li><NavLink to="/livros" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Livros</NavLink></li>
-          <li><NavLink to="/biblia" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Bíblia</NavLink></li>
-          <li><NavLink to="/agenda" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
-          <li><NavLink to="/sobre" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
-          <li><NavLink to="/contato" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
-          <li><NavLink to="/apoie" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Apoie</NavLink></li>
-          <li><NavLink to="/login" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Login</NavLink></li>
-        </ul>
-        <form onSubmit={handleSearchSubmit} className="search-form-mobile">
+        <nav className={`main-nav ${isMobileMenuOpen ? 'open' : ''}`}>
+          <ul>
+            <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink></li>
+            <li><NavLink to="/sermoes" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sermões</NavLink></li>
+            <li><NavLink to="/estudos" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Estudos</NavLink></li>
+            <li><NavLink to="/livros" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Livros</NavLink></li>
+            <li><NavLink to="/biblia" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Bíblia</NavLink></li>
+            <li><NavLink to="/agenda" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
+            <li><NavLink to="/sobre" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
+            <li><NavLink to="/contato" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
+            <li><NavLink to="/apoie" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Apoie</NavLink></li>
+            <li><NavLink to="/login" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Login</NavLink></li>
+          </ul>
+          <form onSubmit={handleSearchSubmit} className="search-form-mobile">
+            <input
+              type="search"
+              placeholder="Buscar..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="header-search-input"
+              aria-label="Buscar no site"
+            />
+            <button type="submit" className="header-search-button" aria-label="Buscar">
+              <FontAwesomeIcon icon={faSearch} />
+            </button>
+          </form>
+        </nav>
+
+        <form onSubmit={handleSearchSubmit} className="search-form desktop-search">
           <input
             type="search"
             placeholder="Buscar..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="search-input"
+            className="header-search-input"
             aria-label="Buscar no site"
           />
-          <button type="submit" className="search-button" aria-label="Buscar">
+          <button type="submit" className="header-search-button" aria-label="Buscar">
             <FontAwesomeIcon icon={faSearch} />
           </button>
         </form>
-      </nav>
-
-      <form onSubmit={handleSearchSubmit} className="search-form desktop-search">
-        <input
-          type="search"
-          placeholder="Buscar..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="search-input"
-          aria-label="Buscar no site"
-        />
-        <button type="submit" className="search-button" aria-label="Buscar">
-          <FontAwesomeIcon icon={faSearch} />
-        </button>
-      </form>
+      </div>
     </header>
   );
 };
