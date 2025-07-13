@@ -20,7 +20,7 @@ Site desenvolvido em React + Node.js para apresentar o ministério do Pastor Gio
 
 ## 🎯 Sobre o Projeto
 
-O Pastor Portfolio é uma plataforma web completa que permite ao Pastor Giovanni compartilhar seu ministério através de:
+O Pastor Portfolio é uma plataforma web completa que permite ao Pastor compartilhar seu ministério através de:
 
 - **Sermões**: Pregações organizadas por série e referência bíblica
 - **Estudos Bíblicos**: Material didático para grupos e EBD
