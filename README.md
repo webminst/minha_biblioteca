@@ -84,7 +84,7 @@ npm install
 
 # Configure as variáveis de ambiente
 cp .env.example .env
-# Edite o .env com suas configurações MongoDB
+# Edite o .env com suas configurações MongoDB e PIX
 
 # Inicie o servidor backend
 npm run dev
@@ -223,13 +223,21 @@ A documentação completa está disponível em [`docs/README.md`](./docs/README.
 
 ### Variáveis de Ambiente (Backend)
 ```env
-PORT=3002
+PORT=3001
 MONGODB_URI=mongodb://localhost:27017/pastor-portfolio
 JWT_SECRET=sua_chave_secreta_muito_segura
 NODE_ENV=development
 ```
 
-> **Atenção:** A porta padrão do backend foi alterada de 3001 para 3002.
+### Variáveis de Ambiente (Frontend)
+```env
+REACT_APP_API_URL=http://localhost:3001
+REACT_APP_PIX_KEY=sua_chave_pix_aqui
+REACT_APP_BANK_NAME=Nome_do_Banco
+REACT_APP_ACCOUNT_HOLDER=Nome_do_Titular
+```
+
+> **Segurança:** As informações de PIX são configuradas via variáveis de ambiente para proteger dados sensíveis.
 
 ### Primeiro Acesso Admin
 1. Acesse `/admin/dashboard`

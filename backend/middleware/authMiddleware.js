@@ -1,11 +1,15 @@
 // middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { verifySecureToken, applySecurityHeaders } = require('./jwtSecurity');
 
 /**
  * Middleware de autenticação e autorização
  * Protege rotas e verifica permissões de usuários
  */
+
+// Aplica headers de segurança automaticamente
+const addSecurityHeaders = applySecurityHeaders;
 
 // ========== MIDDLEWARE DE AUTENTICAÇÃO ==========
 const protect = async (req, res, next) => {
@@ -17,9 +21,9 @@ const protect = async (req, res, next) => {
       // Extrai o token (remove "Bearer " do início)
       token = req.headers.authorization.split(' ')[1];
 
-      // Verifica e decodifica o token JWT
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('🔑 Token decodificado:', { id: decoded.id, role: decoded.role });
+      // Verifica e decodifica o token JWT usando sistema seguro
+      const decoded = verifySecureToken(token, 'access');
+      console.log('🔑 Token decodificado:', { id: decoded.id, role: decoded.role, jti: decoded.jti?.substring(0, 8) + '...' });
 
       // Busca o usuário e anexa à requisição (sem a senha)
       req.user = await User.findById(decoded.id).select('-password');
@@ -110,5 +114,6 @@ const optionalAuth = async (req, res, next) => {
 module.exports = {
   protect,
   authorizeRoles,
-  optionalAuth
+  optionalAuth,
+  addSecurityHeaders
 };

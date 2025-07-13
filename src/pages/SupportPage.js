@@ -10,13 +10,21 @@ import './SupportPage.css';
  * Inclui funcionalidade para copiar chave PIX para área de transferência
  */
 const SupportPage = () => {
-  // Dados para contribuição via PIX
-  const pixKey = "webminst@hotmail.com";
-  const bankName = "Caixa Econômica Federal";
-  const accountHolderName = "Giovanni Moreira Guimarães";
+  // Dados para contribuição via PIX - obtidos de variáveis de ambiente
+  const pixKey = process.env.REACT_APP_PIX_KEY;
+  const bankName = process.env.REACT_APP_BANK_NAME || "Caixa Econômica Federal";
+  const accountHolderName = process.env.REACT_APP_ACCOUNT_HOLDER || "Pastor";
+
+  // Verificação se as informações sensíveis estão configuradas
+  const isPixConfigured = pixKey && pixKey !== "sua_chave_pix_aqui";
 
   // Função para copiar chave PIX para área de transferência
   const copyToClipboard = () => {
+    if (!isPixConfigured) {
+      alert('Informações de PIX não configuradas. Entre em contato pelo formulário.');
+      return;
+    }
+
     navigator.clipboard.writeText(pixKey)
       .then(() => {
         alert(`Chave PIX "${pixKey}" copiada para a área de transferência!`);
@@ -64,9 +72,16 @@ const SupportPage = () => {
         <div className="pix-key-container">
           <p className="pix-label">Chave PIX (E-mail):</p>
           <div className="pix-key-value-wrapper">
-            <strong className="pix-key-value">{pixKey}</strong>
-            <button onClick={copyToClipboard} className="copy-pix-button" title="Copiar Chave PIX">
-              <FontAwesomeIcon icon={faCopy} /> Copiar
+            <strong className="pix-key-value">
+              {isPixConfigured ? pixKey : "Entre em contato para informações de PIX"}
+            </strong>
+            <button
+              onClick={copyToClipboard}
+              className={`copy-pix-button ${!isPixConfigured ? 'disabled' : ''}`}
+              title={isPixConfigured ? "Copiar Chave PIX" : "PIX não configurado"}
+              disabled={!isPixConfigured}
+            >
+              <FontAwesomeIcon icon={faCopy} /> {isPixConfigured ? 'Copiar' : 'N/A'}
             </button>
           </div>
         </div>

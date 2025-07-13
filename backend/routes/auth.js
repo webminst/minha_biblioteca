@@ -3,19 +3,20 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { generateSecureToken, verifySecureToken, authRateLimit } = require('../middleware/jwtSecurity');
 
 /**
  * Rotas de autenticação
  * Gerencia login e registro de usuários administrativos
  */
 
-// Função auxiliar para gerar JWT
+// Aplica rate limiting a todas as rotas de autenticação
+router.use(authRateLimit);
+
+// Função auxiliar para gerar JWT (DEPRECIADA - use generateSecureToken)
 const generateToken = (id, role) => {
-  return jwt.sign(
-    { id, role },
-    process.env.JWT_SECRET,
-    { expiresIn: '24h' } // Token válido por 24 horas
-  );
+  console.warn('⚠️  generateToken depreciada. Use generateSecureToken.');
+  return generateSecureToken({ id, role }, 'access');
 };
 
 // ========== ROTA DE REGISTRO ========== 
@@ -46,13 +47,19 @@ router.post('/register', async (req, res) => {
       role: role || 'admin'
     });
 
+    // Gera tokens seguros para o novo usuário
+    const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
+    const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
+
     // Retorna dados do usuário criado
     res.status(201).json({
       _id: user._id,
       username: user.username,
       role: user.role,
-      token: generateToken(user._id, user.role),
-      message: 'Usuário criado com sucesso'
+      token: accessToken,
+      refreshToken: refreshToken,
+      message: 'Usuário criado com sucesso',
+      expiresIn: '15m'
     });
 
   } catch (error) {
@@ -92,13 +99,18 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Login bem-sucedido
+    // Login bem-sucedido - gera tokens seguros
+    const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
+    const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
+
     res.json({
       _id: user._id,
       username: user.username,
       role: user.role,
-      token: generateToken(user._id, user.role),
-      message: 'Login realizado com sucesso'
+      token: accessToken,
+      refreshToken: refreshToken,
+      message: 'Login realizado com sucesso',
+      expiresIn: '15m' // Access token expira em 15 minutos
     });
 
   } catch (error) {
@@ -159,6 +171,53 @@ router.post('/verify', async (req, res) => {
     }
 
     console.error('Erro na verificação:', error);
+    res.status(500).json({
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+// ========== ROTA DE REFRESH TOKEN ==========
+// POST /api/auth/refresh - Renovar access token usando refresh token
+router.post('/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        message: 'Refresh token necessário'
+      });
+    }
+
+    // Verifica o refresh token
+    const decoded = verifySecureToken(refreshToken, 'refresh');
+
+    // Busca o usuário para verificar se ainda existe
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(401).json({
+        message: 'Usuário não encontrado'
+      });
+    }
+
+    // Gera novo access token
+    const newAccessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
+
+    res.json({
+      token: newAccessToken,
+      expiresIn: '15m',
+      message: 'Token renovado com sucesso'
+    });
+
+  } catch (error) {
+    console.error('Erro no refresh token:', error);
+
+    if (error.message.includes('Token')) {
+      return res.status(401).json({
+        message: 'Refresh token inválido ou expirado'
+      });
+    }
+
     res.status(500).json({
       message: 'Erro interno do servidor'
     });

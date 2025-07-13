@@ -23,8 +23,11 @@ Este projeto utiliza variáveis de ambiente para configurações sensíveis. **N
 # Copie o arquivo exemplo
 cp .env.local.example .env.local
 
-# Configure a URL da API
-REACT_APP_API_URL=http://localhost:3002
+# Configure as variáveis necessárias
+REACT_APP_API_URL=http://localhost:3001
+REACT_APP_PIX_KEY=sua_chave_pix_aqui
+REACT_APP_BANK_NAME=Nome_do_Banco
+REACT_APP_ACCOUNT_HOLDER=Nome_do_Titular
 ```
 
 ### 2. Backend (.env)
@@ -36,7 +39,7 @@ cd backend
 cp .env.example .env
 
 # Configure as variáveis:
-PORT=3002
+PORT=3001
 MONGODB_URI=sua_connection_string_mongodb
 JWT_SECRET=sua_chave_jwt_segura_de_64_caracteres
 NODE_ENV=development
@@ -73,6 +76,36 @@ Se credenciais foram expostas:
 - [ ] Credenciais de produção são diferentes das de desenvolvimento
 - [ ] JWT_SECRET é forte e único por ambiente
 - [ ] Connection strings usam usuários com permissões mínimas
+- [ ] Informações PIX configuradas via variáveis de ambiente
+- [ ] Nenhuma informação sensível hardcodada no código
+
+## ✅ Correções de Segurança Implementadas
+
+### Item 4 - Credenciais Expostas (RESOLVIDO)
+- ✅ Chave PIX removida do código fonte
+- ✅ Informações financeiras movidas para variáveis de ambiente
+- ✅ Interface adaptável baseada na configuração
+- ✅ Validação automática em desenvolvimento
+
+### Arquivos Afetados:
+- `src/pages/SupportPage.js` - Implementação segura
+- `src/utils/securityValidator.js` - Validação automática
+- `.env.example` / `.env.local.example` - Configuração documentada
+
+### Item 3 - JWT_SECRET Fraco (RESOLVIDO)
+- ✅ JWT_SECRET fortalecido (131 caracteres criptográficos)
+- ✅ Sistema de refresh tokens implementado
+- ✅ Access tokens com expiração curta (15 minutos)
+- ✅ Rate limiting para login (5 tentativas/15min)
+- ✅ Headers de segurança aplicados globalmente
+- ✅ Validação automática de configuração
+- ✅ Proteção contra replay attacks (JTI único)
+
+### Arquivos de Segurança JWT:
+- `backend/utils/jwtSecurityUtils.js` - Gerador e validador de chaves
+- `backend/middleware/jwtSecurity.js` - Sistema JWT aprimorado
+- `backend/routes/auth.js` - Autenticação com refresh tokens
+- `backend/middleware/authMiddleware.js` - Middleware seguro
 
 ## 🔗 Links Úteis
 

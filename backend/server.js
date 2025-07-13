@@ -10,7 +10,7 @@ const cors = require('cors');
 const sermonsRouter = require('./routes/sermons');
 const studiesRouter = require('./routes/studies');
 const booksRouter = require('./routes/books');
-const authRouter = require('./routes/auth'); 
+const authRouter = require('./routes/auth');
 
 
 const app = express();
@@ -20,6 +20,10 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // --- Middlewares ---
 app.use(cors());
 app.use(express.json());
+
+// Aplica headers de segurança globalmente
+const { applySecurityHeaders } = require('./middleware/jwtSecurity');
+app.use(applySecurityHeaders);
 
 // --- Conexão com o MongoDB ---
 mongoose.connect(MONGODB_URI)
