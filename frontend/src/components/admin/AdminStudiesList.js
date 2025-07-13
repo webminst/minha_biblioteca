@@ -27,7 +27,10 @@ function AdminStudiesList() {
             };
             // Faz a requisição GET para buscar os estudos
             const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, config);
-            setStudies(response.data);
+
+            // Verifica se a resposta tem a nova estrutura com studies
+            const studiesData = response.data.studies || response.data;
+            setStudies(Array.isArray(studiesData) ? studiesData : []);
         } catch (err) {
             setError('Erro ao carregar estudos: ' + (err.response?.data?.message || err.message));
             console.error('Erro ao buscar estudos:', err);

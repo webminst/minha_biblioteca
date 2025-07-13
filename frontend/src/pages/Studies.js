@@ -32,13 +32,38 @@ function Studies() {
   const [error, setError] = useState(null);
   const [selectedFormat, setSelectedFormat] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [uniqueFormats, setUniqueFormats] = useState([]);
+  const [uniqueThemes, setUniqueThemes] = useState([]);
 
-  // Busca dados dos estudos na API
+  // Busca dados dos estudos na API com filtros e paginação
   useEffect(() => {
     const fetchStudies = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.STUDIES.BASE);
-        setStudies(response.data);
+        setLoading(true);
+
+        // Constrói parâmetros da query
+        const params = {
+          page: pageFromUrl,
+          limit: ITEMS_PER_PAGE
+        };
+
+        if (selectedFormat) params.format = selectedFormat;
+        if (selectedTheme) params.theme = selectedTheme;
+        if (searchTerm) params.search = searchTerm;
+
+        const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, { params });
+
+        // Verifica se a resposta tem a nova estrutura com studies e pagination
+        if (response.data.studies) {
+          setStudies(response.data.studies);
+          setPagination(response.data.pagination);
+        } else {
+          // Compatibilidade com estrutura antiga (array direto)
+          setStudies(Array.isArray(response.data) ? response.data : []);
+        }
       } catch (err) {
         setError('Erro ao carregar os estudos. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar estudos:', err);
@@ -48,58 +73,72 @@ function Studies() {
     };
 
     fetchStudies();
+  }, [pageFromUrl, selectedFormat, selectedTheme, searchTerm]);
+
+  // Inicializa filtros a partir da URL
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    setSelectedFormat(query.get('format') || '');
+    setSelectedTheme(query.get('theme') || '');
+    setSearchTerm(query.get('search') || '');
+  }, [location.search]);
+
+  // Busca listas únicas para filtros via API
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const [formatsResponse, themesResponse] = await Promise.all([
+          axios.get(`${API_ENDPOINTS.STUDIES.BASE}/formats`),
+          axios.get(`${API_ENDPOINTS.STUDIES.BASE}/themes`)
+        ]);
+
+        setUniqueFormats(formatsResponse.data || []);
+        setUniqueThemes(themesResponse.data || []);
+      } catch (err) {
+        console.error('Erro ao buscar opções de filtro:', err);
+        // Em caso de erro, mantém arrays vazios
+      }
+    };
+
+    fetchFilterOptions();
   }, []);
 
   // Função para navegar entre páginas mantendo filtros
   const goToPage = (pageNumber) => {
-    navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}`);
+    navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
   // Handlers para mudança de filtros
   const handleFormatChange = (e) => {
     setSelectedFormat(e.target.value);
-    navigate(`${location.pathname}?page=1${e.target.value ? `&format=${e.target.value}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}`);
+    navigate(`${location.pathname}?page=1${e.target.value ? `&format=${e.target.value}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
   const handleThemeChange = (e) => {
     setSelectedTheme(e.target.value);
-    navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${e.target.value ? `&theme=${e.target.value}` : ''}`);
+    navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${e.target.value ? `&theme=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    // Aplica busca com debounce
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${e.target.value ? `&search=${e.target.value}` : ''}`);
+    }, 500);
+    setSearchTimeout(timeout);
   };
 
   // Limpar todos os filtros aplicados
   const clearFilters = () => {
     setSelectedFormat('');
     setSelectedTheme('');
+    setSearchTerm('');
     navigate(`${location.pathname}?page=1`);
   };
 
-  // Memoização para otimização de performance
-  // Lista única de formatos para o filtro
-  const uniqueFormats = useMemo(() => [...new Set(studies.map(s => s.format).filter(Boolean))].sort(), [studies]);
-
-  // Lista única de temas para o filtro
-  const uniqueThemes = useMemo(() => [...new Set(studies.map(s => s.theme).filter(Boolean))].sort(), [studies]);
-
-  // Aplicação dos filtros selecionados
-  const filteredStudies = useMemo(() => {
-    return studies.filter(study => {
-      const formatMatch = !selectedFormat || study.format === selectedFormat;
-      const themeMatch = !selectedTheme || study.theme === selectedTheme;
-      return formatMatch && themeMatch;
-    });
-  }, [selectedFormat, selectedTheme, studies]);
-
-  // Paginação dos estudos filtrados
-  const paginatedStudies = useMemo(() => {
-    const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredStudies.slice(startIndex, endIndex);
-  }, [filteredStudies, pageFromUrl]);
-
-  // Cálculo do total de páginas
-  const totalPages = Math.ceil(filteredStudies.length / ITEMS_PER_PAGE);
-
-  // Funções de navegação
+  // Funções de navegação baseadas na paginação da API
+  const totalPages = pagination?.totalPages || 1;
   const goToNextPage = () => goToPage(Math.min(pageFromUrl + 1, totalPages));
   const goToPreviousPage = () => goToPage(Math.max(pageFromUrl - 1, 1));
 
@@ -127,6 +166,19 @@ function Studies() {
 
       {/* Controles de filtro */}
       <div className="filter-controls">
+        {/* Campo de busca */}
+        <div className="filter-group">
+          <label htmlFor="search-filter">Buscar:</label>
+          <input
+            id="search-filter"
+            type="text"
+            placeholder="Buscar por título, tema, descrição..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+        </div>
+
         {/* Filtro por formato */}
         <div className="filter-group">
           <label htmlFor="format-filter">Formato:</label>
@@ -150,7 +202,7 @@ function Studies() {
         </div>
 
         {/* Botão para limpar filtros - só aparece se houver filtros ativos */}
-        {(selectedFormat || selectedTheme) && (
+        {(selectedFormat || selectedTheme || searchTerm) && (
           <button onClick={clearFilters} className="clear-filter-button">
             Limpar Filtros
           </button>
@@ -159,8 +211,8 @@ function Studies() {
 
       {/* Lista de estudos */}
       <div className="content-list">
-        {paginatedStudies.length > 0 ? (
-          paginatedStudies.map((study) => (
+        {studies.length > 0 ? (
+          studies.map((study) => (
             <ContentCard
               key={study._id}
               title={study.title}

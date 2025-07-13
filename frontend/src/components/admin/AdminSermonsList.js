@@ -27,7 +27,10 @@ function AdminSermonsList() {
       };
       // Faz a requisição GET para buscar os sermões
       const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, config);
-      setSermons(response.data);
+
+      // Verifica se a resposta tem a nova estrutura com sermons
+      const sermonsData = response.data.sermons || response.data;
+      setSermons(Array.isArray(sermonsData) ? sermonsData : []);
     } catch (err) {
       setError('Erro ao carregar sermões: ' + (err.response?.data?.message || err.message));
       console.error('Erro ao buscar sermões:', err);

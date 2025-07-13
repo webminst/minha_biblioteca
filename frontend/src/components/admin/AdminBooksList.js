@@ -27,7 +27,10 @@ function AdminBooksList() {
             };
             // Faz a requisição GET para buscar os livros
             const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, config);
-            setBooks(response.data);
+
+            // Verifica se a resposta tem a nova estrutura com books
+            const booksData = response.data.books || response.data;
+            setBooks(Array.isArray(booksData) ? booksData : []);
         } catch (err) {
             setError('Erro ao carregar livros: ' + (err.response?.data?.message || err.message));
             console.error('Erro ao buscar livros:', err);

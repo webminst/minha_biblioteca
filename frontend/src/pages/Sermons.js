@@ -33,13 +33,41 @@ function Sermons() {
   const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('');
   const [selectedSeries, setSelectedSeries] = useState('');
+  const [selectedSpeaker, setSelectedSpeaker] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [uniqueBooks, setUniqueBooks] = useState([]);
+  const [uniqueSeries, setUniqueSeries] = useState([]);
+  const [uniqueSpeakers, setUniqueSpeakers] = useState([]);
 
-  // Busca dados dos sermões na API
+  // Busca dados dos sermões na API com filtros e paginação
   useEffect(() => {
     const fetchSermons = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.SERMONS.BASE);
-        setSermons(response.data);
+        setLoading(true);
+
+        // Constrói parâmetros da query
+        const params = {
+          page: pageFromUrl,
+          limit: ITEMS_PER_PAGE
+        };
+
+        if (selectedBook) params.book = selectedBook;
+        if (selectedSeries) params.series = selectedSeries;
+        if (selectedSpeaker) params.speaker = selectedSpeaker;
+        if (searchTerm) params.search = searchTerm;
+
+        const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, { params });
+
+        // Verifica se a resposta tem a nova estrutura com sermons e pagination
+        if (response.data.sermons) {
+          setSermons(response.data.sermons);
+          setPagination(response.data.pagination);
+        } else {
+          // Compatibilidade com estrutura antiga (array direto)
+          setSermons(Array.isArray(response.data) ? response.data : []);
+        }
       } catch (err) {
         setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar sermões:', err);
@@ -49,65 +77,81 @@ function Sermons() {
     };
 
     fetchSermons();
-  }, []);
+  }, [pageFromUrl, selectedBook, selectedSeries, selectedSpeaker, searchTerm]);
+
+  // Inicializa filtros a partir da URL
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    setSelectedBook(query.get('book') || '');
+    setSelectedSeries(query.get('series') || '');
+    setSelectedSpeaker(query.get('speaker') || '');
+    setSearchTerm(query.get('search') || '');
+  }, [location.search]);
 
   // Função para navegar entre páginas mantendo filtros
   const goToPage = (pageNumber) => {
-    navigate(`${location.pathname}?page=${pageNumber}${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}`);
+    navigate(`${location.pathname}?page=${pageNumber}${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
   // Handlers para mudança de filtros
   const handleBookChange = (e) => {
     setSelectedBook(e.target.value);
-    navigate(`${location.pathname}?page=1${e.target.value ? `&book=${e.target.value}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}`);
+    navigate(`${location.pathname}?page=1${e.target.value ? `&book=${e.target.value}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
   const handleSeriesChange = (e) => {
     setSelectedSeries(e.target.value);
-    navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${e.target.value ? `&series=${e.target.value}` : ''}`);
+    navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${e.target.value ? `&series=${e.target.value}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  };
+
+  const handleSpeakerChange = (e) => {
+    setSelectedSpeaker(e.target.value);
+    navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${e.target.value ? `&speaker=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    // Aplica busca com debounce
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${e.target.value ? `&search=${e.target.value}` : ''}`);
+    }, 500);
+    setSearchTimeout(timeout);
   };
 
   // Limpar todos os filtros aplicados
   const clearFilters = () => {
     setSelectedBook('');
     setSelectedSeries('');
+    setSelectedSpeaker('');
+    setSearchTerm('');
     navigate(`${location.pathname}?page=1`);
   };
 
-  // Memoização para otimização de performance
-  // Extrai livros bíblicos únicos das referências bíblicas
-  const uniqueBooks = useMemo(() => {
-    const booksFromReferences = sermons
-      .map(s => s.bibleReference ? s.bibleReference.split(' ')[0].replace(':', '') : '')
-      .filter(Boolean);
-    return [...new Set(booksFromReferences)].sort();
-  }, [sermons]);
+  // Busca listas únicas para filtros via API
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const [booksResponse, seriesResponse, speakersResponse] = await Promise.all([
+          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/books`),
+          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/series`),
+          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/speakers`)
+        ]);
 
-  // Lista única de séries para o filtro
-  const uniqueSeries = useMemo(() => [...new Set(sermons.map(s => s.series).filter(Boolean))].sort(), [sermons]);
+        setUniqueBooks(booksResponse.data || []);
+        setUniqueSeries(seriesResponse.data || []);
+        setUniqueSpeakers(speakersResponse.data || []);
+      } catch (err) {
+        console.error('Erro ao buscar opções de filtro:', err);
+        // Em caso de erro, mantém arrays vazios
+      }
+    };
 
-  // Aplicação dos filtros selecionados
-  const filteredSermons = useMemo(() => {
-    return sermons.filter(sermon => {
-      // Extrai livro bíblico da referência
-      const sermonBook = sermon.bibleReference ? sermon.bibleReference.split(' ')[0].replace(':', '') : '';
-      const bookMatch = !selectedBook || sermonBook === selectedBook;
-      const seriesMatch = !selectedSeries || sermon.series === selectedSeries;
-      return bookMatch && seriesMatch;
-    });
-  }, [selectedBook, selectedSeries, sermons]);
+    fetchFilterOptions();
+  }, []);
 
-  // Paginação dos sermões filtrados
-  const paginatedSermons = useMemo(() => {
-    const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredSermons.slice(startIndex, endIndex);
-  }, [filteredSermons, pageFromUrl]);
-
-  // Cálculo do total de páginas
-  const totalPages = Math.ceil(filteredSermons.length / ITEMS_PER_PAGE);
-
-  // Funções de navegação
+  // Funções de navegação baseadas na paginação da API
+  const totalPages = pagination?.totalPages || 1;
   const goToNextPage = () => goToPage(Math.min(pageFromUrl + 1, totalPages));
   const goToPreviousPage = () => goToPage(Math.max(pageFromUrl - 1, 1));
 
@@ -136,6 +180,19 @@ function Sermons() {
 
       {/* Controles de filtro */}
       <div className="filter-controls">
+        {/* Campo de busca */}
+        <div className="filter-group">
+          <label htmlFor="search-filter">Buscar:</label>
+          <input
+            id="search-filter"
+            type="text"
+            placeholder="Buscar por título, pregador, descrição..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+        </div>
+
         {/* Filtro por livro bíblico */}
         <div className="filter-group">
           <label htmlFor="book-filter">Livro Bíblico:</label>
@@ -158,8 +215,19 @@ function Sermons() {
           </select>
         </div>
 
+        {/* Filtro por pregador */}
+        <div className="filter-group">
+          <label htmlFor="speaker-filter">Pregador:</label>
+          <select id="speaker-filter" value={selectedSpeaker} onChange={handleSpeakerChange}>
+            <option value="">Todos</option>
+            {uniqueSpeakers.map(speaker => (
+              <option key={speaker} value={speaker}>{speaker}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Botão para limpar filtros - só aparece se houver filtros ativos */}
-        {(selectedBook || selectedSeries) && (
+        {(selectedBook || selectedSeries || selectedSpeaker || searchTerm) && (
           <button onClick={clearFilters} className="clear-filter-button">
             Limpar Filtros
           </button>
@@ -168,8 +236,8 @@ function Sermons() {
 
       {/* Lista de sermões */}
       <div className="content-list">
-        {paginatedSermons.length > 0 ? (
-          paginatedSermons.map((sermon) => (
+        {sermons.length > 0 ? (
+          sermons.map((sermon) => (
             <ContentCard
               key={sermon._id}
               title={sermon.title}

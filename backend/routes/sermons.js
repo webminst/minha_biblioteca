@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Sermon = require('../models/Sermon');
+const SermonService = require('../services/SermonService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 /**
@@ -11,232 +12,168 @@ const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 // ========== ROTAS PÚBLICAS ==========
 // GET /api/sermons/count - Conta total de sermões
-router.get('/count', async (req, res) => {
+router.get('/count', async (req, res, next) => {
   try {
-    const count = await Sermon.countDocuments();
-    res.json({ count });
+    const stats = await SermonService.getStats();
+    res.json({ count: stats.totalSermons });
   } catch (error) {
-    console.error('Erro ao contar sermões:', error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    next(error);
   }
 });
 
 // GET /api/sermons - Lista todos os sermões
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
-    const sermons = await Sermon.find()
-      .sort({ date: -1 }) // Por data, mais recentes primeiro
-      .select('title bibleReference series description tags date createdAt updatedAt');
+    const options = {
+      page: req.query.page,
+      limit: req.query.limit,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder,
+      book: req.query.book,
+      series: req.query.series,
+      speaker: req.query.speaker,
+      search: req.query.search
+    };
 
-    res.json(sermons);
+    const result = await SermonService.findAll(options);
+    res.json(result);
   } catch (error) {
-    console.error('Erro ao buscar sermões:', error);
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
   }
 });
 
 // GET /api/sermons/latest - Busca o sermão mais recente
-router.get('/latest', async (req, res) => {
+router.get('/latest', async (req, res, next) => {
   try {
-    const latestSermon = await Sermon.findOne()
-      .sort({ createdAt: -1 }) // Mais recente por data de criação
-      .select('title bibleReference series description date');
-
-    if (!latestSermon) {
-      return res.status(404).json({
-        message: 'Nenhum sermão encontrado'
-      });
-    }
-
+    const latestSermon = await SermonService.findLatest();
     res.json(latestSermon);
   } catch (error) {
-    console.error('Erro ao buscar último sermão:', error);
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
+  }
+});
+
+// GET /api/sermons/stats - Estatísticas dos sermões
+router.get('/stats', async (req, res, next) => {
+  try {
+    const stats = await SermonService.getStats();
+    res.json(stats);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/series - Lista todas as séries
+router.get('/series', async (req, res, next) => {
+  try {
+    const series = await SermonService.getAllSeries();
+    res.json(series);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/speakers - Lista todos os pregadores
+router.get('/speakers', async (req, res, next) => {
+  try {
+    const speakers = await SermonService.getAllSpeakers();
+    res.json(speakers);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/books - Lista todos os livros bíblicos
+router.get('/books', async (req, res, next) => {
+  try {
+    const books = await SermonService.getAllBooks();
+    res.json(books);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/series/:name - Sermões por série específica
+router.get('/series/:name', async (req, res, next) => {
+  try {
+    const sermons = await SermonService.findBySeries(req.params.name);
+    res.json(sermons);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/speaker/:name - Sermões por pregador específico
+router.get('/speaker/:name', async (req, res, next) => {
+  try {
+    const sermons = await SermonService.findBySpeaker(req.params.name);
+    res.json(sermons);
+  } catch (error) {
+    next(error);
   }
 });
 
 // GET /api/sermons/:id - Busca sermão específico por ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
-    const sermon = await Sermon.findById(req.params.id);
-
-    if (!sermon) {
-      return res.status(404).json({
-        message: 'Sermão não encontrado'
-      });
-    }
-
+    const sermon = await SermonService.findById(req.params.id);
     res.json(sermon);
   } catch (error) {
-    console.error('Erro ao buscar sermão:', error);
-
-    // Erro de ID inválido
-    if (error.name === 'CastError') {
-      return res.status(400).json({
-        message: 'ID de sermão inválido'
-      });
-    }
-
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
   }
 });
 
 // ========== ROTAS PROTEGIDAS (ADMIN/EDITOR) ==========
 // POST /api/sermons - Criar novo sermão
-router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
+router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
   try {
-    const newSermon = new Sermon({
-      ...req.body,
-      createdBy: req.user._id // Registra quem criou o sermão
-    });
-
-    const savedSermon = await newSermon.save();
-
+    const savedSermon = await SermonService.create(req.body, req.user._id);
     res.status(201).json({
       ...savedSermon.toObject(),
       message: 'Sermão criado com sucesso'
     });
   } catch (error) {
-    console.error('Erro ao criar sermão:', error);
-    console.log('📝 Dados recebidos:', JSON.stringify(req.body, null, 2));
-
-    // Erro de validação
-    if (error.name === 'ValidationError') {
-      console.log('❌ Erros de validação:', error.errors);
-      return res.status(400).json({
-        message: 'Dados inválidos',
-        errors: Object.keys(error.errors).map(key => ({
-          field: key,
-          message: error.errors[key].message
-        }))
-      });
-    }
-
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
   }
 });
 
 // PATCH /api/sermons/:id - Atualizar sermão existente
-router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res) => {
+router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
   try {
-    const updatedSermon = await Sermon.findByIdAndUpdate(
-      req.params.id,
-      {
-        ...req.body,
-        updatedBy: req.user._id, // Registra quem atualizou
-        updatedAt: new Date()
-      },
-      {
-        new: true, // Retorna documento atualizado
-        runValidators: true // Executa validações do schema
-      }
-    );
-
-    if (!updatedSermon) {
-      return res.status(404).json({
-        message: 'Sermão não encontrado'
-      });
-    }
-
+    const updatedSermon = await SermonService.update(req.params.id, req.body, req.user._id);
     res.json({
       ...updatedSermon.toObject(),
       message: 'Sermão atualizado com sucesso'
     });
   } catch (error) {
-    console.error('Erro ao atualizar sermão:', error);
-    console.log('📝 Dados de atualização recebidos:', JSON.stringify(req.body, null, 2));
-
-    if (error.name === 'CastError') {
-      return res.status(400).json({
-        message: 'ID de sermão inválido'
-      });
-    }
-
-    if (error.name === 'ValidationError') {
-      console.log('❌ Erros de validação na atualização:', error.errors);
-      return res.status(400).json({
-        message: 'Dados inválidos',
-        errors: Object.keys(error.errors).map(key => ({
-          field: key,
-          message: error.errors[key].message
-        }))
-      });
-    }
-
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
   }
 });
 
 // ========== ROTAS PROTEGIDAS (APENAS ADMIN) ==========
 // DELETE /api/sermons/:id - Deletar sermão
-router.delete('/:id', protect, authorizeRoles('admin'), async (req, res) => {
+router.delete('/:id', protect, authorizeRoles('admin'), async (req, res, next) => {
   try {
-    const deletedSermon = await Sermon.findByIdAndDelete(req.params.id);
-
-    if (!deletedSermon) {
-      return res.status(404).json({
-        message: 'Sermão não encontrado'
-      });
-    }
-
-    res.json({
-      message: 'Sermão excluído com sucesso',
-      deletedSermon: {
-        _id: deletedSermon._id,
-        title: deletedSermon.title
-      }
-    });
+    const result = await SermonService.delete(req.params.id);
+    res.json(result);
   } catch (error) {
-    console.error('Erro ao deletar sermão:', error);
-
-    if (error.name === 'CastError') {
-      return res.status(400).json({
-        message: 'ID de sermão inválido'
-      });
-    }
-
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
   }
 });
 
 // ========== ROTA DE BUSCA ==========
 // GET /api/sermons/search/:term - Buscar sermões por termo
-router.get('/search/:term', async (req, res) => {
+router.get('/search/:term', async (req, res, next) => {
   try {
     const searchTerm = req.params.term;
-    const sermons = await Sermon.find({
-      $or: [
-        { title: { $regex: searchTerm, $options: 'i' } },
-        { bibleReference: { $regex: searchTerm, $options: 'i' } },
-        { series: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } }
-      ]
-    })
-      .sort({ date: -1 })
-      .select('title bibleReference series description tags date createdAt');
+    const result = await SermonService.findAll({ search: searchTerm });
 
     res.json({
       searchTerm,
-      count: sermons.length,
-      sermons
+      count: result.sermons.length,
+      ...result
     });
   } catch (error) {
-    console.error('Erro na busca de sermões:', error);
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
+    next(error);
   }
 });
 

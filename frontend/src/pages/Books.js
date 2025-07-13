@@ -32,70 +32,112 @@ function Books() {
   const [error, setError] = useState(null);
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedAuthor, setSelectedAuthor] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [uniqueAreas, setUniqueAreas] = useState([]);
+  const [uniqueAuthors, setUniqueAuthors] = useState([]);
 
-  // Busca dados dos livros na API
+  // Busca dados dos livros na API com filtros e paginação
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.BOOKS.BASE);
-        setBooks(response.data);
+        setLoading(true);
+
+        // Constrói parâmetros da query
+        const params = {
+          page: pageFromUrl,
+          limit: ITEMS_PER_PAGE
+        };
+
+        if (selectedArea) params.area = selectedArea;
+        if (selectedAuthor) params.author = selectedAuthor;
+        if (searchTerm) params.search = searchTerm;
+
+        const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
+
+        // Verifica se a resposta tem a nova estrutura com books e pagination
+        if (response.data.books) {
+          setBooks(response.data.books);
+          setPagination(response.data.pagination);
+        } else {
+          // Compatibilidade com estrutura antiga (array direto)
+          setBooks(Array.isArray(response.data) ? response.data : []);
+        }
       } catch (err) {
-        setError('Erro ao carregar os livros.');
+        setError('Erro ao carregar os livros. Por favor, tente novamente mais tarde.');
+        console.error('Erro ao buscar livros:', err);
       } finally {
         setLoading(false);
       }
     };
     fetchBooks();
+  }, [pageFromUrl, selectedArea, selectedAuthor, searchTerm]);
+
+  // Inicializa filtros a partir da URL
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    setSelectedArea(query.get('area') || '');
+    setSelectedAuthor(query.get('author') || '');
+    setSearchTerm(query.get('search') || '');
+  }, [location.search]);
+
+  // Busca listas únicas para filtros via API
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const [areasResponse, authorsResponse] = await Promise.all([
+          axios.get(`${API_ENDPOINTS.BOOKS.BASE}/areas`),
+          axios.get(`${API_ENDPOINTS.BOOKS.BASE}/authors`)
+        ]);
+
+        setUniqueAreas(areasResponse.data || []);
+        setUniqueAuthors(authorsResponse.data || []);
+      } catch (err) {
+        console.error('Erro ao buscar opções de filtro:', err);
+        // Em caso de erro, mantém arrays vazios
+      }
+    };
+
+    fetchFilterOptions();
   }, []);
 
   // Função para navegar entre páginas mantendo filtros
   const goToPage = (pageNumber) => {
-    navigate(`${location.pathname}?page=${pageNumber}${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}`);
+    navigate(`${location.pathname}?page=${pageNumber}${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
   // Handlers para mudança de filtros
   const handleAreaChange = (e) => {
     setSelectedArea(e.target.value);
-    navigate(`${location.pathname}?page=1${e.target.value ? `&area=${e.target.value}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}`);
+    navigate(`${location.pathname}?page=1${e.target.value ? `&area=${e.target.value}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
   const handleAuthorChange = (e) => {
     setSelectedAuthor(e.target.value);
-    navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${e.target.value ? `&author=${e.target.value}` : ''}`);
+    navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${e.target.value ? `&author=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    // Aplica busca com debounce
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}${e.target.value ? `&search=${e.target.value}` : ''}`);
+    }, 500);
+    setSearchTimeout(timeout);
   };
 
   // Limpar todos os filtros aplicados
   const clearFilters = () => {
     setSelectedArea('');
     setSelectedAuthor('');
+    setSearchTerm('');
     navigate(`${location.pathname}?page=1`);
   };
 
-  // Memoização para otimização de performance
-  // Lista únicas de áreas e autores para os filtros
-  const uniqueAreas = useMemo(() => [...new Set(books.map(b => b.area).filter(Boolean))].sort(), [books]);
-  const uniqueAuthors = useMemo(() => [...new Set(books.map(b => b.author).filter(Boolean))].sort(), [books]);
-
-  // Aplicação dos filtros selecionados
-  const filteredBooks = useMemo(() => {
-    return books.filter(book => {
-      const areaMatch = !selectedArea || book.area === selectedArea;
-      const authorMatch = !selectedAuthor || book.author === selectedAuthor;
-      return areaMatch && authorMatch;
-    });
-  }, [selectedArea, selectedAuthor, books]);
-
-  // Paginação dos livros filtrados
-  const paginatedBooks = useMemo(() => {
-    const startIndex = (pageFromUrl - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredBooks.slice(startIndex, endIndex);
-  }, [filteredBooks, pageFromUrl]);
-
-  // Cálculo do total de páginas
-  const totalPages = Math.ceil(filteredBooks.length / ITEMS_PER_PAGE);
-
-  // Funções de navegação
+  // Funções de navegação baseadas na paginação da API
+  const totalPages = pagination?.totalPages || 1;
   const goToNextPage = () => goToPage(Math.min(pageFromUrl + 1, totalPages));
   const goToPreviousPage = () => goToPage(Math.max(pageFromUrl - 1, 1));
 
@@ -123,6 +165,19 @@ function Books() {
 
       {/* Controles de filtro */}
       <div className="filter-controls">
+        {/* Campo de busca */}
+        <div className="filter-group">
+          <label htmlFor="search-filter">Buscar:</label>
+          <input
+            id="search-filter"
+            type="text"
+            placeholder="Buscar por título, autor, descrição..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+        </div>
+
         {/* Filtro por área */}
         <div className="filter-group">
           <label htmlFor="area-filter">Área:</label>
@@ -146,7 +201,7 @@ function Books() {
         </div>
 
         {/* Botão para limpar filtros - só aparece se houver filtros ativos */}
-        {(selectedArea || selectedAuthor) && (
+        {(selectedArea || selectedAuthor || searchTerm) && (
           <button onClick={clearFilters} className="clear-filter-button">
             Limpar Filtros
           </button>
@@ -155,8 +210,8 @@ function Books() {
 
       {/* Lista de livros */}
       <div className="content-list">
-        {paginatedBooks.length > 0 ? (
-          paginatedBooks.map((book) => (
+        {books.length > 0 ? (
+          books.map((book) => (
             <ContentCard
               key={book._id}
               title={book.title}

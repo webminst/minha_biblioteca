@@ -59,8 +59,20 @@
   background-color: var(--color-white);
 }
 
-/* Foco nos selects */
-.filter-group select:focus {
+/* Input de busca */
+.filter-group .search-input {
+  padding: 0.7rem;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--color-white);
+  min-width: 250px;
+}
+
+/* Foco nos selects e inputs */
+.filter-group select:focus,
+.filter-group .search-input:focus {
   outline: none;
   border-color: var(--color-green-ipb);
   box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2);

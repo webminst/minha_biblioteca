@@ -46,9 +46,14 @@ const SearchResults = () => {
           axios.get(API_ENDPOINTS.BOOKS.BASE)
         ]);
 
-        setSermons(sermonsResponse.data);
-        setStudies(studiesResponse.data);
-        setBooks(booksResponse.data);
+        // Extrai dados considerando nova estrutura da API
+        const sermonsData = sermonsResponse.data.sermons || sermonsResponse.data;
+        const studiesData = studiesResponse.data.studies || studiesResponse.data;
+        const booksData = booksResponse.data.books || booksResponse.data;
+
+        setSermons(Array.isArray(sermonsData) ? sermonsData : []);
+        setStudies(Array.isArray(studiesData) ? studiesData : []);
+        setBooks(Array.isArray(booksData) ? booksData : []);
       } catch (err) {
         setError('Erro ao carregar dados para busca. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar dados:', err);
