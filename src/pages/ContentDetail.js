@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import NotFound from './NotFound';
@@ -43,11 +44,11 @@ const ContentDetail = () => {
 
         // Determina qual API chamar baseado na URL
         if (window.location.pathname.startsWith('/sermoes')) {
-          response = await axios.get(`http://localhost:3002/api/sermons/${contentId}`);
+          response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(contentId));
         } else if (window.location.pathname.startsWith('/estudos')) {
-          response = await axios.get(`http://localhost:3002/api/studies/${contentId}`);
+          response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(contentId));
         } else if (window.location.pathname.startsWith('/livros')) {
-          response = await axios.get(`http://localhost:3002/api/books/${contentId}`);
+          response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(contentId));
         }
 
         setSermon(response.data);

@@ -1,6 +1,7 @@
 // src/components/admin/StudyForm.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './Form.css'; // Reutiliza o CSS geral de formulários admin
 
@@ -43,7 +44,7 @@ function StudyForm() {
                             Authorization: `Bearer ${token}`,
                         },
                     };
-                    const response = await axios.get(`http://localhost:3002/api/studies/${id}`, config);
+                    const response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(id), config);
                     const studyData = response.data;
 
                     // Preenche os estados com os dados do estudo
@@ -108,10 +109,10 @@ function StudyForm() {
             };
 
             if (isEditing) {
-                await axios.patch(`http://localhost:3002/api/studies/${id}`, studyData, config);
+                await axios.patch(API_ENDPOINTS.STUDIES.BY_ID(id), studyData, config);
                 setSuccess('Estudo atualizado com sucesso!');
             } else {
-                await axios.post('http://localhost:3002/api/studies', studyData, config);
+                await axios.post(API_ENDPOINTS.STUDIES.BASE, studyData, config);
                 setSuccess('Estudo criado com sucesso!');
                 // Limpa o formulário após a criação
                 setTitle('');

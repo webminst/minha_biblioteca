@@ -1,6 +1,7 @@
 // src/components/admin/AdminSermonsList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
 import './AdminList.css'; // CSS geral para listas admin
 
@@ -25,7 +26,7 @@ function AdminSermonsList() {
         },
       };
       // Faz a requisição GET para buscar os sermões
-      const response = await axios.get('http://localhost:3002/api/sermons', config);
+      const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, config);
       setSermons(response.data);
     } catch (err) {
       setError('Erro ao carregar sermões: ' + (err.response?.data?.message || err.message));
@@ -48,7 +49,7 @@ function AdminSermonsList() {
             Authorization: `Bearer ${token}`,
           },
         };
-        await axios.delete(`http://localhost:3002/api/sermons/${id}`, config);
+        await axios.delete(API_ENDPOINTS.SERMONS.BY_ID(id), config);
         // Atualiza a lista removendo o sermão excluído
         const updatedSermons = sermons.filter((sermon) => sermon._id !== id);
         setSermons(updatedSermons);

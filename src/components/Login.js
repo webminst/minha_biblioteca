@@ -1,6 +1,7 @@
 // src/components/Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import { useNavigate } from 'react-router-dom'; // Para redirecionar após o login
 import './Login.css'; // Vamos criar este CSS em seguida
 
@@ -17,7 +18,7 @@ function Login({ onLoginSuccess }) {
     setError(''); // Limpa erros anteriores
 
     try {
-      const response = await axios.post('http://localhost:3002/api/auth/login', {
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, {
         username,
         password,
       });

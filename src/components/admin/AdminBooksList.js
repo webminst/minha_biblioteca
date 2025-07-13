@@ -1,6 +1,7 @@
 // src/components/admin/AdminBooksList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
 import './AdminList.css'; // Reutiliza o CSS geral de listas admin
 
@@ -25,7 +26,7 @@ function AdminBooksList() {
                 },
             };
             // Faz a requisição GET para buscar os livros
-            const response = await axios.get('http://localhost:3002/api/books', config);
+            const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, config);
             setBooks(response.data);
         } catch (err) {
             setError('Erro ao carregar livros: ' + (err.response?.data?.message || err.message));
@@ -48,7 +49,7 @@ function AdminBooksList() {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                await axios.delete(`http://localhost:3002/api/books/${id}`, config);
+                await axios.delete(API_ENDPOINTS.BOOKS.BY_ID(id), config);
                 // Atualiza a lista removendo o livro excluído
                 const updatedBooks = books.filter((book) => book._id !== id);
                 setBooks(updatedBooks);

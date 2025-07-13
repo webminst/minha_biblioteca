@@ -1,6 +1,7 @@
 // src/components/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 import './Dashboard.css';
 
 function Dashboard({ user }) {
@@ -20,9 +21,9 @@ function Dashboard({ user }) {
             setLoading(true);
 
             const [sermonsRes, studiesRes, booksRes] = await Promise.all([
-                fetch('http://localhost:3002/api/sermons/count'),
-                fetch('http://localhost:3002/api/studies/count'),
-                fetch('http://localhost:3002/api/books/count')
+                fetch(`${API_ENDPOINTS.SERMONS.BASE}/count`),
+                fetch(`${API_ENDPOINTS.STUDIES.BASE}/count`),
+                fetch(`${API_ENDPOINTS.BOOKS.BASE}/count`)
             ]);
 
             const [sermonsData, studiesData, booksData] = await Promise.all([

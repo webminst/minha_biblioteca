@@ -1,6 +1,7 @@
 // src/components/admin/SermonForm.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './Form.css'; // CSS geral para formulários admin
 
@@ -40,7 +41,7 @@ function SermonForm() {
                             Authorization: `Bearer ${token}`,
                         },
                     };
-                    const response = await axios.get(`http://localhost:3002/api/sermons/${id}`, config);
+                    const response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(id), config);
                     const sermonData = response.data;
 
                     setTitle(sermonData.title || '');
@@ -100,10 +101,10 @@ function SermonForm() {
             };
 
             if (isEditing) {
-                await axios.patch(`http://localhost:3002/api/sermons/${id}`, sermonData, config);
+                await axios.patch(API_ENDPOINTS.SERMONS.BY_ID(id), sermonData, config);
                 setSuccess('Sermão atualizado com sucesso!');
             } else {
-                await axios.post('http://localhost:3002/api/sermons', sermonData, config);
+                await axios.post(API_ENDPOINTS.SERMONS.BASE, sermonData, config);
                 setSuccess('Sermão criado com sucesso!');
                 // Limpa o formulário após a criação
                 setTitle('');

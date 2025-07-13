@@ -1,7 +1,7 @@
 // src/config/api.js
 // Configuração centralizada para URLs da API
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 export const API_ENDPOINTS = {
     // Base URL

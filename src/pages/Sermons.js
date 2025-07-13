@@ -1,6 +1,7 @@
 // src/components/Sermons.js
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -37,7 +38,7 @@ function Sermons() {
   useEffect(() => {
     const fetchSermons = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/sermons');
+        const response = await axios.get(API_ENDPOINTS.SERMONS.BASE);
         setSermons(response.data);
       } catch (err) {
         setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');

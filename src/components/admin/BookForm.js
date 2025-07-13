@@ -1,6 +1,7 @@
 // src/components/admin/BookForm.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './Form.css'; // Reutiliza o CSS geral de formulários admin
 
@@ -42,7 +43,7 @@ function BookForm() {
                             Authorization: `Bearer ${token}`,
                         },
                     };
-                    const response = await axios.get(`http://localhost:3002/api/books/${id}`, config);
+                    const response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(id), config);
                     const bookData = response.data;
 
                     // Preenche os estados com os dados do livro
@@ -105,10 +106,10 @@ function BookForm() {
             };
 
             if (isEditing) {
-                await axios.patch(`http://localhost:3002/api/books/${id}`, bookData, config);
+                await axios.patch(API_ENDPOINTS.BOOKS.BY_ID(id), bookData, config);
                 setSuccess('Livro atualizado com sucesso!');
             } else {
-                await axios.post('http://localhost:3002/api/books', bookData, config);
+                await axios.post(API_ENDPOINTS.BOOKS.BASE, bookData, config);
                 setSuccess('Livro criado com sucesso!');
                 // Limpa o formulário após a criação
                 setTitle('');

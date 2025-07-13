@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
 import './ListPage.css';
 
@@ -40,9 +41,9 @@ const SearchResults = () => {
 
         // Busca paralela de todas as coleções
         const [sermonsResponse, studiesResponse, booksResponse] = await Promise.all([
-          axios.get('http://localhost:3002/api/sermons'),
-          axios.get('http://localhost:3002/api/studies'),
-          axios.get('http://localhost:3002/api/books')
+          axios.get(API_ENDPOINTS.SERMONS.BASE),
+          axios.get(API_ENDPOINTS.STUDIES.BASE),
+          axios.get(API_ENDPOINTS.BOOKS.BASE)
         ]);
 
         setSermons(sermonsResponse.data);

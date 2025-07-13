@@ -1,6 +1,7 @@
 // src/components/admin/AdminStudiesList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
 import './AdminList.css'; // Reutiliza o CSS geral de listas admin
 
@@ -25,7 +26,7 @@ function AdminStudiesList() {
                 },
             };
             // Faz a requisição GET para buscar os estudos
-            const response = await axios.get('http://localhost:3002/api/studies', config);
+            const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, config);
             setStudies(response.data);
         } catch (err) {
             setError('Erro ao carregar estudos: ' + (err.response?.data?.message || err.message));
@@ -48,7 +49,7 @@ function AdminStudiesList() {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                await axios.delete(`http://localhost:3002/api/studies/${id}`, config);
+                await axios.delete(API_ENDPOINTS.STUDIES.BY_ID(id), config);
                 // Atualiza a lista removendo o estudo excluído
                 const updatedStudies = studies.filter((study) => study._id !== id);
                 setStudies(updatedStudies);

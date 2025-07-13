@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ContentCard from '../components/ContentCard/ContentCard';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import './Home.css';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
@@ -26,7 +27,7 @@ const Home = () => {
   // Função para buscar o último sermão da API
   const fetchLatestSermon = async () => {
     try {
-      const response = await axios.get('http://localhost:3002/api/sermons/latest');
+      const response = await axios.get(API_ENDPOINTS.SERMONS.LATEST);
       return response.data;
     } catch (err) {
       console.error('Erro ao buscar último sermão:', err);
@@ -37,7 +38,7 @@ const Home = () => {
   // Função para buscar o último estudo da API
   const fetchLatestStudy = async () => {
     try {
-      const response = await axios.get('http://localhost:3002/api/studies/latest');
+      const response = await axios.get(API_ENDPOINTS.STUDIES.LATEST);
       return response.data;
     } catch (err) {
       console.error('Erro ao buscar último estudo:', err);
@@ -48,7 +49,7 @@ const Home = () => {
   // Função para buscar o último livro da API
   const fetchLatestBook = async () => {
     try {
-      const response = await axios.get('http://localhost:3002/api/books/latest');
+      const response = await axios.get(API_ENDPOINTS.BOOKS.LATEST);
       return response.data;
     } catch (err) {
       console.error('Erro ao buscar último livro:', err);
