@@ -217,14 +217,14 @@
 }
 
 /* Garantir alinhamento uniforme de todos os botões de compartilhamento */
-.share-buttons-container > * {
+.share-buttons-container>* {
   vertical-align: middle;
   flex-shrink: 0;
 }
 
 /* Forçar alinhamento específico para todos os botões de compartilhamento */
 .share-buttons-container button,
-.share-buttons-container > div {
+.share-buttons-container>div {
   display: inline-flex;
   align-items: center;
   justify-content: center;
