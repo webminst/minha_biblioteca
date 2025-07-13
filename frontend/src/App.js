@@ -6,6 +6,8 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ToastProvider } from './components/Toast/ToastContainer';
 
 // Páginas públicas
 import Home from './pages/Home';
@@ -85,67 +87,69 @@ function App() {
   };
 
   return (
-    <>
-      {/* Componente para scroll automático ao navegar */}
-      <ScrollToTop />
+    <ToastProvider>
+      <ErrorBoundary>
+        {/* Componente para scroll automático ao navegar */}
+        <ScrollToTop />
 
-      <Routes>
-        {/* Layout principal com header, footer e navegação */}
-        <Route path="/" element={<Layout />}>
+        <Routes>
+          {/* Layout principal com header, footer e navegação */}
+          <Route path="/" element={<Layout />}>
 
-          {/* ========== ROTAS PÚBLICAS ========== */}
-          {/* Página inicial */}
-          <Route index element={<Home />} />
+            {/* ========== ROTAS PÚBLICAS ========== */}
+            {/* Página inicial */}
+            <Route index element={<Home />} />
 
-          {/* Páginas de listagem de conteúdo */}
-          <Route path="sermoes" element={<Sermons />} />
-          <Route path="estudos" element={<Studies />} />
-          <Route path="livros" element={<Books />} />
+            {/* Páginas de listagem de conteúdo */}
+            <Route path="sermoes" element={<Sermons />} />
+            <Route path="estudos" element={<Studies />} />
+            <Route path="livros" element={<Books />} />
 
-          {/* Páginas de detalhes de conteúdo */}
-          <Route path="sermoes/:contentId" element={<ContentDetail />} />
-          <Route path="estudos/:contentId" element={<ContentDetail />} />
-          <Route path="livros/:contentId" element={<ContentDetail />} />
+            {/* Páginas de detalhes de conteúdo */}
+            <Route path="sermoes/:contentId" element={<ContentDetail />} />
+            <Route path="estudos/:contentId" element={<ContentDetail />} />
+            <Route path="livros/:contentId" element={<ContentDetail />} />
 
-          {/* Páginas institucionais */}
-          <Route path="agenda" element={<Agenda />} />
-          <Route path="sobre" element={<About />} />
-          <Route path="contato" element={<Contact />} />
-          <Route path="apoie" element={<SupportPage />} />
+            {/* Páginas institucionais */}
+            <Route path="agenda" element={<Agenda />} />
+            <Route path="sobre" element={<About />} />
+            <Route path="contato" element={<Contact />} />
+            <Route path="apoie" element={<SupportPage />} />
 
-          {/* Páginas de funcionalidades */}
-          <Route path="busca" element={<SearchResults />} />
-          <Route path="login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+            {/* Páginas de funcionalidades */}
+            <Route path="busca" element={<SearchResults />} />
+            <Route path="login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
 
-          {/* ========== ROTAS PROTEGIDAS (ADMIN) ========== */}
-          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+            {/* ========== ROTAS PROTEGIDAS (ADMIN) ========== */}
+            <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
 
-            {/* Dashboard administrativo */}
-            <Route path="admin/dashboard" element={<Dashboard user={user} onLogout={handleLogout} />} />
+              {/* Dashboard administrativo */}
+              <Route path="admin/dashboard" element={<Dashboard user={user} onLogout={handleLogout} />} />
 
-            {/* CRUD de Sermões */}
-            <Route path="admin/sermoes" element={<AdminSermonsList />} />
-            <Route path="admin/sermoes/novo" element={<SermonForm />} />
-            <Route path="admin/sermoes/editar/:id" element={<SermonForm />} />
+              {/* CRUD de Sermões */}
+              <Route path="admin/sermoes" element={<AdminSermonsList />} />
+              <Route path="admin/sermoes/novo" element={<SermonForm />} />
+              <Route path="admin/sermoes/editar/:id" element={<SermonForm />} />
 
-            {/* CRUD de Estudos */}
-            <Route path="admin/estudos" element={<AdminStudiesList />} />
-            <Route path="admin/estudos/novo" element={<StudyForm />} />
-            <Route path="admin/estudos/editar/:id" element={<StudyForm />} />
+              {/* CRUD de Estudos */}
+              <Route path="admin/estudos" element={<AdminStudiesList />} />
+              <Route path="admin/estudos/novo" element={<StudyForm />} />
+              <Route path="admin/estudos/editar/:id" element={<StudyForm />} />
 
-            {/* CRUD de Livros */}
-            <Route path="admin/livros" element={<AdminBooksList />} />
-            <Route path="admin/livros/novo" element={<BookForm />} />
-            <Route path="admin/livros/editar/:id" element={<BookForm />} />
+              {/* CRUD de Livros */}
+              <Route path="admin/livros" element={<AdminBooksList />} />
+              <Route path="admin/livros/novo" element={<BookForm />} />
+              <Route path="admin/livros/editar/:id" element={<BookForm />} />
+
+            </Route>
+
+            {/* Página 404 - deve ser a última rota */}
+            <Route path="*" element={<NotFound />} />
 
           </Route>
-
-          {/* Página 404 - deve ser a última rota */}
-          <Route path="*" element={<NotFound />} />
-
-        </Route>
-      </Routes>
-    </>
+        </Routes>
+      </ErrorBoundary>
+    </ToastProvider>
   );
 }
 
