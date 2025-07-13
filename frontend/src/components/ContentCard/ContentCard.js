@@ -23,13 +23,21 @@ const ContentCard = ({
     } else if (type === 'Sermão') {
       return (
         <>
-          {reference && <div className="card-reference">{reference}</div>}
+          {reference && (
+            <div className="card-reference">
+              <span>{reference}</span>
+            </div>
+          )}
         </>
       );
     } else if (type === 'Estudo Bíblico' || type === 'Estudo') {
       return (
         <>
-          {reference && <div className="card-reference">{reference}</div>}
+          {reference && (
+            <div className="card-reference">
+              <span>{reference}</span>
+            </div>
+          )}
         </>
       );
     }
@@ -49,6 +57,7 @@ const ContentCard = ({
           <Link to={detailsUrl}>{title}</Link>
         </h3>
         {renderMetaInfo()} {/* Chama a função para renderizar a meta-informação */}
+
         <p className="card-description">{description}</p>
         <div className="card-actions">
           {(detailsUrl || (content && content._id)) && (

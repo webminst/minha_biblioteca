@@ -59,6 +59,7 @@ const Header = () => {
           <li><NavLink to="/sermoes" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sermões</NavLink></li>
           <li><NavLink to="/estudos" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Estudos</NavLink></li>
           <li><NavLink to="/livros" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Livros</NavLink></li>
+          <li><NavLink to="/biblia" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Bíblia</NavLink></li>
           <li><NavLink to="/agenda" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
           <li><NavLink to="/sobre" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
           <li><NavLink to="/contato" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
@@ -68,7 +69,7 @@ const Header = () => {
         <form onSubmit={handleSearchSubmit} className="search-form-mobile">
           <input
             type="search"
-            placeholder="Buscar no site..."
+            placeholder="Buscar..."
             value={searchTerm}
             onChange={handleSearchChange}
             className="search-input"
@@ -83,7 +84,7 @@ const Header = () => {
       <form onSubmit={handleSearchSubmit} className="search-form desktop-search">
         <input
           type="search"
-          placeholder="Buscar no site..."
+          placeholder="Buscar..."
           value={searchTerm}
           onChange={handleSearchChange}
           className="search-input"

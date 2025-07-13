@@ -218,3 +218,69 @@
   color: var(--color-gray-medium, #666);
   margin-bottom: 0.2rem;
 }
+
+/* Referência bíblica com botão de versículo */
+.card-reference {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+  color: var(--color-gray-dark);
+}
+
+.verse-toggle-button {
+  background: none;
+  border: 1px solid var(--color-green-ipb);
+  color: var(--color-green-ipb);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.verse-toggle-button:hover {
+  background-color: var(--color-green-ipb);
+  color: white;
+}
+
+/* Área do versículo no card */
+.card-verse {
+  margin: 1rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-gray-medium);
+}
+
+.card-verse .bible-verse {
+  margin: 0;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+  border-color: var(--color-green-ipb);
+}
+
+.card-verse .bible-verse.compact {
+  padding: 0.75rem;
+}
+
+.card-verse .verse-text {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-verse .verse-reference {
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.card-verse .verse-actions {
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.card-verse .verse-actions button {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}

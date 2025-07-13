@@ -18,6 +18,7 @@ import Agenda from './pages/Agenda';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import SupportPage from './pages/SupportPage';
+import BiblePage from './pages/BiblePage';
 import ContentDetail from './pages/ContentDetail';
 import SearchResults from './pages/SearchResults';
 import NotFound from './pages/NotFound';
@@ -115,6 +116,7 @@ function App() {
             <Route path="sobre" element={<About />} />
             <Route path="contato" element={<Contact />} />
             <Route path="apoie" element={<SupportPage />} />
+            <Route path="biblia" element={<BiblePage />} />
 
             {/* Páginas de funcionalidades */}
             <Route path="busca" element={<SearchResults />} />

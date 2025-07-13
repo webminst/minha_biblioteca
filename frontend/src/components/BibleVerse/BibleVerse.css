@@ -1,0 +1,382 @@
+/* Componente BibleVerse - Estilos para exibição de versículos bíblicos */
+
+.bible-verse {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.bible-verse:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Estado de carregamento */
+.bible-verse-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e9ecef;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estado de erro */
+.bible-verse-error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #f1aeb5;
+    color: #721c24;
+}
+
+.bible-verse-error .error-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.bible-verse-error .error-message {
+    text-align: center;
+}
+
+.bible-verse-error .error-message strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.retry-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+    background-color: #c82333;
+}
+
+/* Estado de carregamento manual */
+.bible-verse-manual {
+    background: linear-gradient(135deg, #e2e3e5 0%, #d3d3d4 100%);
+    border-color: #ced4da;
+    text-align: center;
+}
+
+.bible-verse-manual .bible-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.load-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.load-button:hover:not(:disabled) {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.load-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Seletor de tradução */
+.translation-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.translation-selector label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.translation-selector select {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background-color: white;
+    color: #495057;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.translation-selector select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Conteúdo do versículo */
+.verse-content {
+    margin: 1rem 0;
+}
+
+.verse-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #212529;
+    font-style: italic;
+    margin-bottom: 1rem;
+    text-align: justify;
+    position: relative;
+}
+
+.verse-text::before {
+    content: '"';
+    font-size: 3rem;
+    color: #007bff;
+    position: absolute;
+    left: -1rem;
+    top: -0.5rem;
+    font-family: Georgia, serif;
+    opacity: 0.3;
+}
+
+.verse-text::after {
+    content: '"';
+    font-size: 3rem;
+    color: #007bff;
+    position: absolute;
+    right: -0.5rem;
+    bottom: -1rem;
+    font-family: Georgia, serif;
+    opacity: 0.3;
+}
+
+.verse-reference {
+    text-align: right;
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+.verse-reference strong {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.translation-name {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Detalhes dos versículos (quando múltiplos) */
+.verse-details {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.individual-verse {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+}
+
+.verse-number {
+    background-color: #007bff;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.individual-verse .verse-text {
+    flex: 1;
+    font-size: 0.95rem;
+    margin: 0;
+    font-style: normal;
+}
+
+.individual-verse .verse-text::before,
+.individual-verse .verse-text::after {
+    display: none;
+}
+
+/* Ações */
+.verse-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.verse-actions button {
+    background: none;
+    border: 1px solid #ced4da;
+    color: #6c757d;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.verse-actions button:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #adb5bd;
+}
+
+.copy-button:hover {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.refresh-button:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Versão compacta */
+.bible-verse.compact {
+    padding: 1rem;
+    margin: 0.5rem 0;
+}
+
+.bible-verse.compact .verse-text {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.bible-verse.compact .verse-text::before,
+.bible-verse.compact .verse-text::after {
+    font-size: 2rem;
+}
+
+.bible-verse.compact .verse-actions {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .bible-verse {
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+
+    .verse-text {
+        font-size: 1rem;
+    }
+
+    .verse-text::before,
+    .verse-text::after {
+        font-size: 2rem;
+    }
+
+    .translation-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .verse-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .verse-actions button {
+        width: 100%;
+    }
+
+    .individual-verse {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .verse-number {
+        align-self: flex-start;
+    }
+}
+
+/* Modo escuro (opcional) */
+@media (prefers-color-scheme: dark) {
+    .bible-verse {
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+
+    .verse-text {
+        color: #e2e8f0;
+    }
+
+    .verse-reference strong {
+        color: #63b3ed;
+    }
+
+    .translation-name {
+        color: #a0aec0;
+    }
+
+    .individual-verse {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .verse-actions button {
+        border-color: #4a5568;
+        color: #a0aec0;
+    }
+
+    .verse-actions button:hover {
+        background-color: #2d3748;
+        color: #e2e8f0;
+    }
+}
