@@ -1,322 +1,328 @@
 # Pastor Portfolio
 
-> Site de portfólio ministerial com sistema de gestão de conteúdo dinâmico
+> Portfólio ministerial digital com sistema completo de gestão de conteúdo
 
-Este é um site desenvolvido em React + Node.js para apresentar o ministério do Pastor Giovanni Moreira Guimarães, com sistema completo de administração de conteúdo usando MongoDB.
+Site desenvolvido em React + Node.js para apresentar o ministério do Pastor Giovanni Moreira Guimarães, com sistema de administração dinâmica usando MongoDB.
+
+## 📋 Índice
+
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias](#tecnologias)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Como Usar](#como-usar)
+- [Comandos Disponíveis](#comandos-disponíveis)
+- [Configuração de Ambiente](#configuração-de-ambiente)
+- [Documentação](#documentação)
+- [Resolução de Problemas](#resolução-de-problemas)
+- [Status do Projeto](#status-do-projeto)
+- [Contribuição](#contribuição)
+
+## 🎯 Sobre o Projeto
+
+O Pastor Portfolio é uma plataforma web completa que permite ao Pastor Giovanni compartilhar seu ministério através de:
+
+- **Sermões**: Pregações organizadas por série e referência bíblica
+- **Estudos Bíblicos**: Material didático para grupos e EBD
+- **Resumos de Livros**: Sínteses de obras teológicas relevantes
+- **Agenda Ministerial**: Integração com Google Calendar
+- **Sistema de Apoio**: Informações para doações e PIX
 
 ## ✨ Funcionalidades
 
-### 🏠 **Frontend**
-- **Página Inicial:** Exibição dinâmica dos últimos sermões, estudos e livros
-- **Sermões, Estudos e Livros:** Listagem com filtros, paginação e ordenação
-- **Busca Avançada:** Pesquisa integrada em todo o conteúdo
-- **Sistema Responsivo:** Layout adaptado para todos os dispositivos
-- **Agenda:** Integração com Google Calendar
-- **Contato & Newsletter:** Formulários funcionais
+### 🏠 Frontend Público
+- ✅ **Página Inicial** - Últimos conteúdos em destaque
+- ✅ **Navegação Intuitiva** - Sermões, estudos e livros organizados
+- ✅ **Busca Avançada** - Pesquisa integrada em todo o conteúdo
+- ✅ **Design Responsivo** - Adaptado para todos os dispositivos
+- ✅ **Sistema de Newsletter** - Cadastro para receber atualizações
 
-### 🎛️ **Painel Administrativo**
-- **Dashboard:** Visão geral do sistema com contadores dinâmicos
-- **CRUD Completo:** Criar, editar, visualizar e deletar conteúdo
-- **Contadores em Tempo Real:** Exibição da quantidade de sermões, estudos e livros
-- **Ordenação Flexível:** Por data, título, autor/referência
-- **Autenticação Segura:** Sistema de login com JWT
-- **Interface Intuitiva:** Painel admin responsivo e amigável
+### 🎛️ Painel Administrativo
+- ✅ **Dashboard Inteligente** - Visão geral com contadores dinâmicos
+- ✅ **CRUD Completo** - Criar, editar, visualizar e deletar conteúdo
+- ✅ **Paginação Avançada** - Controle flexível de itens por página (5, 10, 20, 50)
+- ✅ **Ordenação Dinâmica** - Por data, título, autor/referência
+- ✅ **Interface Otimizada** - Layout horizontal e cores consistentes
 
-### 🔧 **Sistema Backend**
-- **API RESTful:** Endpoints organizados e documentados
-- **Banco de Dados:** MongoDB com Mongoose ODM
-- **Autenticação:** JWT + bcrypt para segurança
-- **Middlewares:** Validação e tratamento de erros
-- **Upload de PDFs:** Suporte para Google Drive, Dropbox e OneDrive
-- **Logs Detalhados:** Sistema de debug e monitoramento
+### 🔒 Sistema de Segurança
+- ✅ **Autenticação JWT** - Sistema seguro com refresh tokens
+- ✅ **Variáveis de Ambiente** - Proteção de credenciais sensíveis
+- ✅ **Rate Limiting** - Proteção contra ataques de força bruta
+- ✅ **Headers de Segurança** - Configurações avançadas implementadas
 
 ## 🚀 Tecnologias
 
 ### Frontend
-- **React** 19.1.0 - Framework principal
-- **React Router DOM** 7.5.3 - Roteamento
-- **Axios** 1.10.0 - Requisições HTTP
-- **FontAwesome** 6.7.2 - Ícones
-- **React Markdown** 10.1.0 - Renderização de markdown
+| Tecnologia | Versão | Descrição |
+|------------|--------|-----------|
+| **React** | 19.1.0 | Framework principal |
+| **React Router DOM** | 7.5.3 | Roteamento SPA |
+| **Axios** | 1.10.0 | Cliente HTTP |
+| **FontAwesome** | 6.7.2 | Biblioteca de ícones |
+| **React Markdown** | 10.1.0 | Renderização markdown |
 
 ### Backend
-- **Node.js** + **Express** 5.1.0 - Servidor web
-- **MongoDB** + **Mongoose** 8.16.0 - Banco de dados
-- **JWT** 9.0.2 - Autenticação
-- **bcryptjs** 3.0.2 - Criptografia
-- **CORS** 2.8.5 - Controle de acesso
+| Tecnologia | Versão | Descrição |
+|------------|--------|-----------|
+| **Node.js** + **Express** | 5.1.0 | Servidor web |
+| **MongoDB** + **Mongoose** | 8.16.0 | Banco de dados |
+| **JWT** | 9.0.2 | Autenticação |
+| **bcryptjs** | 3.0.2 | Criptografia |
+| **CORS** | 2.8.5 | Controle de acesso |
 
-## 🏗️ Arquitetura
-
-```
-pastor-portfolio/
-├── src/                    # Frontend React
-│   ├── components/         # Componentes reutilizáveis
-│   ├── pages/             # Páginas da aplicação
-│   └── assets/            # Imagens e recursos
-├── backend/               # API Node.js
-│   ├── models/           # Modelos MongoDB
-│   ├── routes/           # Rotas da API
-│   ├── controllers/      # Lógica de negócio
-│   └── middleware/       # Middlewares
-├── public/               # Arquivos estáticos
-└── docs/                 # Documentação técnica
-```
-
-## 🚀 Como Executar
+## 🛠️ Instalação e Configuração
 
 ### Pré-requisitos
-- Node.js 18+
-- MongoDB instalado ou MongoDB Atlas
-- Git
+- **Node.js** 18+ instalado
+- **MongoDB** local ou MongoDB Atlas
+- **Git** para controle de versão
 
-### 1. Clone o repositório
+### 1. Clone e Prepare o Projeto
 ```bash
+# Clone o repositório
 git clone https://github.com/SEU_USUARIO/pastor-portfolio.git
 cd pastor-portfolio
+
+# Instale as dependências do frontend
+npm install
 ```
 
 ### 2. Configure o Backend
 ```bash
-# Instale as dependências do backend
+# Navegue para o backend
 cd backend
+
+# Instale as dependências
 npm install
 
 # Configure as variáveis de ambiente
 cp .env.example .env
-# Edite o .env com suas configurações MongoDB e PIX
-
-# Inicie o servidor backend
-npm run dev
+# Edite o .env com suas configurações (veja seção de configuração)
 ```
 
 ### 3. Configure o Frontend
 ```bash
-# Volte para a raiz e instale dependências
+# Volte para a raiz
 cd ..
-npm install
 
-# Inicie o servidor de desenvolvimento
-npm start
+# Configure as variáveis de ambiente do frontend
+cp .env.local.example .env.local
+# Edite o .env.local com suas configurações
 ```
 
-### 4. Acesse o Sistema
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:3002
-- **Admin:** http://localhost:3000/admin/dashboard
-
-> **Importante:** O backend agora roda na porta 3002 para evitar conflitos.
-
-## � Últimas Correções e Melhorias
-
-### 🛠️ **Problemas Corrigidos (Versão 2.1.0)**
-
-#### Autenticação e JWT
-- ✅ **Erro de Login:** Corrigido problema "Falha no login. Verifique suas credenciais"
-- ✅ **Token JWT:** Ajustado campo `id` no token e middleware de autenticação
-- ✅ **Usuário Inativo:** Removida verificação de campo `isActive` inexistente
-
-#### Configuração de Portas
-- ✅ **Conflito de Portas:** Backend movido da porta 3001 para 3002
-- ✅ **URLs Frontend:** Atualizadas todas as chamadas de API para porta 3002
-- ✅ **Documentação:** README atualizado com nova configuração
-
-#### Validação de Dados
-- ✅ **Upload de PDFs:** Expandida validação para aceitar:
-  - Google Drive (`drive.google.com`)
-  - Dropbox (`dropbox.com`)
-  - OneDrive (`1drv.ms`, `onedrive.live.com`)
-- ✅ **Campos de Data:** Corrigido uso de `date` para `createdAt` nos modelos
-- ✅ **Erro "Invalid Date":** Solucionado em listas de estudos e livros
-
-#### Sistema de Debug
-- ✅ **Logs Detalhados:** Adicionados em rotas de criação e atualização
-- ✅ **Testes Automatizados:** Scripts para validação de URLs e criação de conteúdo
-- ✅ **Monitoramento:** Logs de debug para facilitar manutenção
-
-#### Interface Administrativa
-- ✅ **Botões de Navegação:** Botão "Voltar" adicionado em todas as listas administrativas
-- ✅ **Alinhamento Perfeito:** CSS otimizado para alinhamento consistente dos botões
-- ✅ **Cores Consistentes:** Botões "Editar" e "Adicionar" agora usam a mesma cor verde
-- ✅ **Paginação Implementada:** Listas divididas em páginas de 10 itens por padrão
-- ✅ **Controle de Página:** Seletor para 5, 10, 20 ou 50 itens por página
-- ✅ **Layout Otimizado:** Coluna "Série" removida da lista de livros, maior espaço para "Autor"
-- ✅ **Bug da Referência Bíblica:** Corrigido campo vazio na coluna "Referência" dos estudos
-- ✅ **Migração de Dados:** Migrados 19 estudos de `bibleReference` para `reference`
-- ✅ **Layout de Estudos:** Removidas colunas "Tema" e "Formato", expandidas "Título" e "Referência"
-- ✅ **Formulário de Sermões:** Reorganizada ordem dos campos para melhor fluxo de preenchimento
-- ✅ **Formulário de Estudos:** Reorganizada ordem dos campos (PDF antes de áudio/vídeo) e valor padrão no ministrante
-- ✅ **Formulário de Livros:** Reorganizada ordem dos campos priorizando informações bibliográficas
-- ✅ **Navegação Admin:** Botão "Voltar" das listas agora direciona para `/admin/dashboard`
-- ✅ **Cores Unificadas:** Botões "Criar", "Editar" e "Adicionar" agora usam o mesmo verde (#28a745)
-- ✅ **Contadores Dinâmicos:** Dashboard exibe quantidade de sermões, estudos e livros em tempo real
-- ✅ **Layout Horizontal:** Três botões de gerenciamento alinhados lado a lado no dashboard
-- ✅ **Consistência de Dados:** Alinhamento entre modelos backend e frontend
-- ✅ **UX Melhorada:** Navegação mais intuitiva e profissional
-
-### 🧪 **Testes Implementados**
-- **test-sermon-creation.js:** Teste de criação de sermão com diferentes URLs
-- **test-google-drive-url.js:** Validação específica de URLs do Google Drive
-- **test-studies-list.js:** Verificação de campos na lista de estudos
-- **migrate-study-references.js:** Script de migração de dados históricos
-- **Teste de APIs:** Confirmação de funcionamento de todas as rotas protegidas
-
-## 🛠️ Comandos de Desenvolvimento
-
-### Scripts NPM Disponíveis
+### 4. Inicie o Sistema
 ```bash
-# Desenvolvimento
-npm run dev                 # Inicia frontend + backend simultaneamente
-npm run dev:frontend        # Inicia apenas o frontend (porta 3000)
-npm run dev:backend         # Inicia apenas o backend (porta 3002)
+# Opção 1: Inicie tudo simultaneamente (recomendado)
+npm run dev
 
-# Produção
-npm run build               # Build do frontend para produção
-npm start                   # Inicia servidor de produção
+# Opção 2: Inicie separadamente
+npm run dev:frontend  # Frontend na porta 3000
+npm run dev:backend   # Backend na porta 3001
+```
 
-# Utilitários
-npm install                 # Instala todas as dependências
-npm test                    # Executa testes automatizados
+### 5. Acesse o Sistema
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:3001
+- **Admin Dashboard:** http://localhost:3000/admin/dashboard
+
+## 📖 Como Usar
+
+### Primeiro Acesso
+1. Acesse `/admin/dashboard`
+2. Crie sua conta de administrador
+3. Faça login no sistema
+4. Comece a adicionar conteúdo
+
+### Gerenciando Conteúdo
+- **Sermões:** `/admin/sermoes` - Adicione pregações com referências bíblicas
+- **Estudos:** `/admin/estudos` - Crie material para grupos de estudo
+- **Livros:** `/admin/livros` - Publique resumos de obras teológicas
+
+### Upload de Arquivos
+Suporte para múltiplas plataformas:
+- ✅ **Google Drive:** `https://drive.google.com/file/d/ID/view`
+- ✅ **Dropbox:** `https://www.dropbox.com/s/ID/file.pdf`
+- ✅ **OneDrive:** `https://1drv.ms/b/s!ID`
+
+## 🔧 Comandos Disponíveis
+
+### Scripts de Desenvolvimento
+```bash
+npm run dev                 # Frontend + Backend simultaneamente
+npm run dev:frontend        # Apenas frontend (porta 3000)
+npm run dev:backend         # Apenas backend (porta 3001)
+npm run build               # Build de produção
+npm start                   # Servidor de produção
 ```
 
 ### Scripts de Teste
 ```bash
-# Testar criação de sermão
-node test-sermon-creation.js
+# Testar criação de conteúdo
+node backend/test-sermon-creation.js
+node backend/test-google-drive-url.js
 
-# Testar validação de URLs do Google Drive
-node test-google-drive-url.js
-
-# Testar conexão com banco de dados
-node test-db.js
+# Verificar conexão com banco
+node backend/test-db.js
 ```
 
-### Comandos MongoDB Úteis
+### Comandos MongoDB
 ```bash
 # Conectar ao banco local
 mongo pastor-portfolio
-
-# Visualizar coleções
-show collections
 
 # Contar documentos
 db.sermons.countDocuments()
 db.studies.countDocuments()
 db.books.countDocuments()
-db.users.countDocuments()
-
-# Limpar dados (CUIDADO!)
-db.sermons.deleteMany({})
-db.studies.deleteMany({})
-db.books.deleteMany({})
 ```
 
-## �📖 Documentação
+## ⚙️ Configuração de Ambiente
 
-A documentação completa está disponível em [`docs/README.md`](./docs/README.md), incluindo:
-
-- **Guias de Implementação** - Detalhes técnicos das funcionalidades
-- **Histórico de Mudanças** - Log completo de alterações
-- **Arquitetura do Sistema** - Visão geral da estrutura
-
-## 🔐 Configuração
-
-### Variáveis de Ambiente (Backend)
+### Backend (.env)
 ```env
+# Servidor
 PORT=3001
+
+# Banco de dados
 MONGODB_URI=mongodb://localhost:27017/pastor-portfolio
-JWT_SECRET=sua_chave_secreta_muito_segura
+# Para MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/pastor-portfolio
+
+# Segurança JWT
+JWT_SECRET=sua_chave_secreta_de_64_caracteres_minimo
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Ambiente
 NODE_ENV=development
 ```
 
-### Variáveis de Ambiente (Frontend)
+### Frontend (.env.local)
 ```env
+# API
 REACT_APP_API_URL=http://localhost:3001
+
+# Informações de suporte (PIX)
 REACT_APP_PIX_KEY=sua_chave_pix_aqui
 REACT_APP_BANK_NAME=Nome_do_Banco
 REACT_APP_ACCOUNT_HOLDER=Nome_do_Titular
 ```
 
-> **Segurança:** As informações de PIX são configuradas via variáveis de ambiente para proteger dados sensíveis.
+> ⚠️ **Segurança:** Nunca commite arquivos `.env` com credenciais reais. Use sempre `.env.example` como template.
 
-### Primeiro Acesso Admin
-1. Acesse `/admin/dashboard`
-2. Crie sua conta de administrador
-3. Faça login e comece a gerenciar o conteúdo
+## 📚 Documentação
+
+A documentação técnica completa está em [`docs/README.md`](./docs/README.md):
+
+### Documentos Principais
+- **[API_CENTRALIZATION.md](./docs/API_CENTRALIZATION.md)** - Configuração centralizada de endpoints
+- **[JWT_SECURITY_ENHANCEMENT.md](./docs/JWT_SECURITY_ENHANCEMENT.md)** - Melhorias de segurança JWT
+- **[PIX_SECURITY_FIX.md](./docs/PIX_SECURITY_FIX.md)** - Correção de credenciais expostas
+- **[CHANGES.md](./docs/CHANGES.md)** - Histórico de mudanças
+- **[SECURITY.md](./docs/SECURITY.md)** - Guia de segurança completo
 
 ## 🔍 Resolução de Problemas
 
-### Problemas Comuns e Soluções
+### Problemas Comuns
 
 #### Backend não inicia
 ```bash
-# Verifique se a porta 3002 está livre
-netstat -ano | findstr :3002
+# Verifique se a porta está livre
+netstat -ano | findstr :3001
 
-# Se ocupada, altere a porta no .env ou finalize o processo
+# Limpe cache do npm
+npm cache clean --force
 ```
 
 #### Erro de autenticação
 ```bash
 # Limpe o localStorage do navegador
 localStorage.clear()
-
-# Ou acesse Ferramentas do Desenvolvedor > Application > Local Storage > Clear All
 ```
-
-#### URLs de PDF não aceitas
-- ✅ **Google Drive:** `https://drive.google.com/file/d/ID/view`
-- ✅ **Dropbox:** `https://www.dropbox.com/s/ID/file.pdf`
-- ✅ **OneDrive:** `https://1drv.ms/b/s!ID`
-- ❌ **Não suportado:** URLs diretas de arquivos locais
 
 #### Erro "Invalid Date"
-- Verifique se os documentos no MongoDB têm o campo `createdAt`
-- Execute uma migração se necessário:
 ```javascript
-// No MongoDB
-db.sermons.updateMany({}, {$set: {createdAt: new Date()}})
-db.studies.updateMany({}, {$set: {createdAt: new Date()}})
-db.books.updateMany({}, {$set: {createdAt: new Date()}})
+// Execute no MongoDB para corrigir documentos sem data
+db.sermons.updateMany({}, {$set: {createdAt: new Date()})
+db.studies.updateMany({}, {$set: {createdAt: new Date()})
+db.books.updateMany({}, {$set: {createdAt: new Date()})
 ```
+
+#### MongoDB não conecta
+- Verifique se o MongoDB está rodando localmente
+- Confirme a string de conexão no `.env`
+- Para MongoDB Atlas, verifique credenciais e whitelist de IP
 
 ## 📊 Status do Projeto
 
-### ✅ **Versão 2.2.6 - Estável**
-- ✅ **Sistema Completo** - Frontend + Backend funcional
-- ✅ **Banco de Dados** - MongoDB configurado e otimizado
-- ✅ **Autenticação** - Sistema JWT seguro e corrigido
-- ✅ **Responsividade** - Design adaptativo em todos os dispositivos
-- ✅ **Upload de Arquivos** - Suporte a múltiplas plataformas de armazenamento
-- ✅ **Validação de Dados** - Sistema robusto de validação
-- ✅ **Logs e Debug** - Monitoramento completo implementado
-- ✅ **Testes** - Scripts de teste automatizados
-- ✅ **Interface Admin** - Sistema de paginação e layout otimizado
-- ✅ **Paginação Avançada** - Controle flexível de itens por página
-- ✅ **Layout Inteligente** - Colunas otimizadas para melhor visualização
-- ✅ **Design System** - Paleta de cores unificada na interface administrativa
-- ✅ **Documentação** - Guides e docs técnicos atualizados
-- ✅ **Build Otimizado** - Pronto para produção
+### ✅ Versão 2.3.1 - Estável
 
-### 🐛 **Bugs Conhecidos**
-- ✅ ~~Coluna "Referência" vazia na lista de estudos~~ (Corrigido v2.2.2)
+**Funcionalidades Implementadas:**
+- ✅ Sistema completo frontend + backend
+- ✅ Autenticação JWT segura com refresh tokens
+- ✅ Interface administrativa com paginação avançada
+- ✅ Upload de arquivos para múltiplas plataformas
+- ✅ Sistema de busca integrado
+- ✅ Design responsivo otimizado
+- ✅ Logs detalhados e sistema de debug
+- ✅ Configuração de segurança implementada
+- ✅ Documentação técnica completa
+
+**Últimas Correções (v2.3.1):**
+- ✅ **Navegação Admin:** Botão "Voltar" direciona corretamente para dashboard
+- ✅ **Layout Horizontal:** Três botões alinhados lado a lado no dashboard
+- ✅ **Cores Unificadas:** Paleta consistente em toda interface administrativa
+- ✅ **Bug da Referência:** Corrigido campo vazio na lista de estudos
+- ✅ **Contadores Dinâmicos:** Dashboard exibe quantidades em tempo real
+
+### 🐛 Bugs Conhecidos
 - Nenhum bug crítico identificado na versão atual
 - Sistema totalmente funcional e testado
 
-### 📋 **Roadmap Futuro**
+### 📋 Roadmap Futuro
 - [ ] Sistema de notificações push
-- [ ] Cache Redis para melhor performance
-- [ ] Backup automático do banco de dados
+- [ ] Cache Redis para performance
+- [ ] Backup automático do banco
 - [ ] Dashboard de analytics
-- [ ] API de integração com redes sociais
+- [ ] Integração com redes sociais
+
+## 🏗️ Arquitetura do Projeto
+
+```
+pastor-portfolio/
+├── src/                    # Frontend React
+│   ├── components/         # Componentes reutilizáveis
+│   │   ├── admin/         # Painel administrativo
+│   │   ├── ContentCard/   # Card de conteúdo
+│   │   └── ...            # Outros componentes
+│   ├── pages/             # Páginas da aplicação
+│   ├── config/            # Configurações (API endpoints)
+│   └── utils/             # Utilitários e helpers
+├── backend/               # API Node.js
+│   ├── models/           # Modelos MongoDB (Sermon, Study, Book)
+│   ├── routes/           # Rotas da API REST
+│   ├── middleware/       # Middlewares (auth, security)
+│   └── utils/            # Utilitários backend
+├── public/               # Arquivos estáticos
+│   ├── images/           # Imagens do site
+│   └── ...               # Favicon, manifest, etc.
+├── docs/                 # Documentação técnica
+└── .vscode/              # Configurações VS Code
+```
 
 ## 🤝 Contribuição
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+1. **Fork** o projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/nova-funcionalidade`)
+3. **Commit** suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
+4. **Push** para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um **Pull Request**
+
+### Diretrizes de Contribuição
+- Siga os padrões de código existentes
+- Adicione testes para novas funcionalidades
+- Atualize a documentação quando necessário
+- Use mensagens de commit descritivas
 
 ## 📝 Licença
 
@@ -325,6 +331,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ---
 
 **🚀 Pastor Portfolio v2.3.1 - Dashboard Otimizado com Layout Horizontal**
+
 **Desenvolvido com ❤️ para o ministério do Pastor Giovanni Moreira Guimarães**
 
-*Última atualização: Janeiro 2025 - Corrigida navegação: botão "Voltar" das listas administrativas agora direciona corretamente para `/admin/dashboard`.*
+*Última atualização: Janeiro 2025 - Sistema completo, seguro e otimizado para produção*
