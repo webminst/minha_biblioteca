@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Sermon = require('../models/Sermon');
-const SermonService = require('../services/SermonService');
+const SermonService = require('../services/CachedSermonService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
+const { cacheMiddleware } = require('../middleware/cacheMiddleware');
 
 // DTOs
 const { CreateSermonDTO, UpdateSermonDTO } = require('../dto/sermons/SermonDTO');
@@ -18,7 +19,7 @@ const { validateInput, validateId, transformOutput } = require('../middleware/dt
 
 // ========== ROTAS PÚBLICAS ==========
 // GET /api/sermons/count - Conta total de sermões
-router.get('/count', async (req, res, next) => {
+router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const stats = await SermonService.getStats();
     res.json(ApiResponseDTO.success({ count: stats.totalSermons }, 'Contagem de sermões obtida com sucesso'));
@@ -28,7 +29,7 @@ router.get('/count', async (req, res, next) => {
 });
 
 // GET /api/sermons - Lista todos os sermões
-router.get('/', async (req, res, next) => {
+router.get('/', cacheMiddleware('list'), async (req, res, next) => {
   try {
     const options = {
       page: req.query.page,
@@ -68,7 +69,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // GET /api/sermons/latest - Busca o sermão mais recente
-router.get('/latest', async (req, res, next) => {
+router.get('/latest', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const latestSermon = await SermonService.findLatest();
     res.json(ApiResponseDTO.success(latestSermon, 'Último sermão obtido com sucesso'));
@@ -78,7 +79,7 @@ router.get('/latest', async (req, res, next) => {
 });
 
 // GET /api/sermons/stats - Estatísticas dos sermões
-router.get('/stats', async (req, res, next) => {
+router.get('/stats', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const stats = await SermonService.getStats();
     res.json(ApiResponseDTO.success(stats, 'Estatísticas obtidas com sucesso'));
@@ -88,7 +89,7 @@ router.get('/stats', async (req, res, next) => {
 });
 
 // GET /api/sermons/series - Lista todas as séries
-router.get('/series', async (req, res, next) => {
+router.get('/series', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const series = await SermonService.getAllSeries();
     res.json(ApiResponseDTO.success(series, 'Séries obtidas com sucesso'));
@@ -98,7 +99,7 @@ router.get('/series', async (req, res, next) => {
 });
 
 // GET /api/sermons/speakers - Lista todos os pregadores
-router.get('/speakers', async (req, res, next) => {
+router.get('/speakers', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const speakers = await SermonService.getAllSpeakers();
     res.json(ApiResponseDTO.success(speakers, 'Pregadores obtidos com sucesso'));
@@ -108,7 +109,7 @@ router.get('/speakers', async (req, res, next) => {
 });
 
 // GET /api/sermons/books - Lista todos os livros bíblicos
-router.get('/books', async (req, res, next) => {
+router.get('/books', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const books = await SermonService.getAllBooks();
     res.json(ApiResponseDTO.success(books, 'Livros bíblicos obtidos com sucesso'));
@@ -118,7 +119,7 @@ router.get('/books', async (req, res, next) => {
 });
 
 // GET /api/sermons/series/:name - Sermões por série específica
-router.get('/series/:name', async (req, res, next) => {
+router.get('/series/:name', cacheMiddleware('filter'), async (req, res, next) => {
   try {
     const sermons = await SermonService.findBySeries(req.params.name);
     res.json(ApiResponseDTO.success(sermons, `Sermões da série '${req.params.name}' obtidos com sucesso`));
@@ -128,7 +129,7 @@ router.get('/series/:name', async (req, res, next) => {
 });
 
 // GET /api/sermons/speaker/:name - Sermões por pregador específico
-router.get('/speaker/:name', async (req, res, next) => {
+router.get('/speaker/:name', cacheMiddleware('filter'), async (req, res, next) => {
   try {
     const sermons = await SermonService.findBySpeaker(req.params.name);
     res.json(ApiResponseDTO.success(sermons, `Sermões do pregador '${req.params.name}' obtidos com sucesso`));
@@ -138,7 +139,7 @@ router.get('/speaker/:name', async (req, res, next) => {
 });
 
 // GET /api/sermons/search/:term - Buscar sermões por termo
-router.get('/search/:term', async (req, res, next) => {
+router.get('/search/:term', cacheMiddleware('filter'), async (req, res, next) => {
   try {
     const searchTerm = req.params.term;
     const result = await SermonService.findAll({ search: searchTerm });
@@ -155,7 +156,7 @@ router.get('/search/:term', async (req, res, next) => {
 });
 
 // GET /api/sermons/:id - Busca sermão específico por ID
-router.get('/:id', validateId, transformOutput, async (req, res, next) => {
+router.get('/:id', validateId, cacheMiddleware('detail'), transformOutput, async (req, res, next) => {
   try {
     const sermon = await SermonService.findById(req.params.id);
     res.json(ApiResponseDTO.success(sermon, 'Sermão obtido com sucesso'));

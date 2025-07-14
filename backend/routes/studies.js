@@ -2,8 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const Study = require('../models/Study');
-const StudyService = require('../services/StudyService');
+const StudyService = require('../services/CachedStudyService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
+const { cacheMiddleware } = require('../middleware/cacheMiddleware');
 
 // Importa DTOs e middlewares de validação - NOVO
 const {
@@ -29,7 +30,7 @@ const {
 
 // ========== ROTAS PÚBLICAS ==========
 // GET /api/studies/count - Conta total de estudos
-router.get('/count', async (req, res, next) => {
+router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const stats = await StudyService.getStats();
 
@@ -45,7 +46,7 @@ router.get('/count', async (req, res, next) => {
 });
 
 // GET /api/studies - Lista todos os estudos
-router.get('/', async (req, res, next) => {
+router.get('/', cacheMiddleware('list'), async (req, res, next) => {
   try {
     // Primeiro, vamos usar o método tradicional para debug
     const options = {
@@ -83,7 +84,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // GET /api/studies/latest - Busca o estudo mais recente
-router.get('/latest', async (req, res, next) => {
+router.get('/latest', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const latestStudy = await StudyService.findLatest();
 
@@ -102,7 +103,7 @@ router.get('/latest', async (req, res, next) => {
 });
 
 // GET /api/studies/stats - Estatísticas dos estudos
-router.get('/stats', async (req, res, next) => {
+router.get('/stats', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const stats = await StudyService.getStats();
 
@@ -115,7 +116,7 @@ router.get('/stats', async (req, res, next) => {
 });
 
 // GET /api/studies/themes - Lista todos os temas
-router.get('/themes', async (req, res, next) => {
+router.get('/themes', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const themes = await StudyService.getAllThemes();
 
@@ -128,7 +129,7 @@ router.get('/themes', async (req, res, next) => {
 });
 
 // GET /api/studies/formats - Lista todos os formatos
-router.get('/formats', async (req, res, next) => {
+router.get('/formats', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const formats = await StudyService.getAllFormats();
 
@@ -141,7 +142,7 @@ router.get('/formats', async (req, res, next) => {
 });
 
 // GET /api/studies/references - Lista todas as referências bíblicas
-router.get('/references', async (req, res, next) => {
+router.get('/references', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const references = await StudyService.getAllReferences();
 
@@ -154,7 +155,7 @@ router.get('/references', async (req, res, next) => {
 });
 
 // GET /api/studies/popular - Estudos populares
-router.get('/popular', async (req, res, next) => {
+router.get('/popular', cacheMiddleware('filter'), async (req, res, next) => {
   try {
     const limit = req.query.limit || 10;
     const studies = await StudyService.findPopular(limit);
@@ -170,6 +171,7 @@ router.get('/popular', async (req, res, next) => {
 // GET /api/studies/:id - Busca estudo específico por ID
 router.get('/:id',
   validateId,
+  cacheMiddleware('detail'),
   transformOutput(StudyResponseDTO),
   async (req, res, next) => {
     try {
@@ -190,7 +192,7 @@ router.get('/:id',
   });
 
 // GET /api/studies/theme/:theme - Estudos por tema específico
-router.get('/theme/:theme', async (req, res, next) => {
+router.get('/theme/:theme', cacheMiddleware('filter'), async (req, res, next) => {
   try {
     const studies = await StudyService.findByTheme(req.params.theme);
 
@@ -203,7 +205,7 @@ router.get('/theme/:theme', async (req, res, next) => {
 });
 
 // GET /api/studies/format/:format - Estudos por formato específico
-router.get('/format/:format', async (req, res, next) => {
+router.get('/format/:format', cacheMiddleware('filter'), async (req, res, next) => {
   try {
     const studies = await StudyService.findByFormat(req.params.format);
 
@@ -300,6 +302,7 @@ router.delete('/:id',
 // GET /api/studies/search/:term - Buscar estudos por termo
 router.get('/search/:term',
   validateInput(StudySearchDTO, { isQuery: true }),
+  cacheMiddleware('filter'),
   transformOutput(StudyResponseDTO),
   async (req, res, next) => {
     try {

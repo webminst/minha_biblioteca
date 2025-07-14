@@ -349,6 +349,30 @@ class StudyService {
 
         return relatedStudies;
     }
+
+    /**
+     * Busca estudos populares (mais acessados)
+     * @param {number} limit - Limite de resultados
+     * @returns {Array} - Estudos populares
+     */
+    async findPopular(limit = 10) {
+        // Como não temos campo de visualizações, vamos usar os mais recentes como proxy
+        const studies = await Study.find()
+            .sort({ createdAt: -1 })
+            .limit(Number(limit))
+            .select('title theme format reference description date');
+
+        return studies;
+    }
+
+    /**
+     * Busca todas as referências bíblicas únicas
+     * @returns {Array} - Lista de referências
+     */
+    async getAllReferences() {
+        const references = await Study.distinct('reference');
+        return references.filter(r => r && r.trim() !== '');
+    }
 }
 
 module.exports = new StudyService();

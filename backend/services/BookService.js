@@ -447,4 +447,4 @@ class BookService {
     }
 }
 
-module.exports = new BookService();
+module.exports = BookService;
