@@ -1,13 +1,15 @@
 // src/hooks/useApi.js
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
 
 /**
  * Hook customizado para requisições API
  * Gerencia estado de loading, dados, erro e revalidação
+ * Inclui compatibilidade automática com estrutura DTO
  * 
  * @param {string} url - URL da API
- * @param {Object} options - Opções da requisição
+ * @param {Object} options - Opções da requisição (incluindo dataType para auto-extração)
  * @param {Array} dependencies - Dependências para refazer a requisição
  * @returns {Object} - { data, loading, error, refetch, mutate }
  */
@@ -15,6 +17,27 @@ export const useApi = (url, options = {}, dependencies = []) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Helper para extrair dados baseado no tipo de endpoint
+    const extractDataByType = (responseData, url) => {
+        if (options.dataType) {
+            // Usa tipo explícito se fornecido
+            switch (options.dataType) {
+                case 'sermons': return extractSermons(responseData);
+                case 'studies': return extractStudies(responseData);
+                case 'books': return extractBooks(responseData);
+                default: return responseData;
+            }
+        }
+
+        // Auto-detecção baseada na URL
+        if (url?.includes('/sermons')) return extractSermons(responseData);
+        if (url?.includes('/studies')) return extractStudies(responseData);
+        if (url?.includes('/books')) return extractBooks(responseData);
+
+        // Para outros endpoints, retorna os dados como estão (com fallback para DTO)
+        return responseData.success ? responseData.data : responseData;
+    };
 
     const fetchData = useCallback(async () => {
         if (!url) return;
@@ -40,7 +63,9 @@ export const useApi = (url, options = {}, dependencies = []) => {
             }
 
             const response = await axios(url, config);
-            setData(response.data);
+            // Extrai dados com compatibilidade DTO
+            const extractedData = extractDataByType(response.data, url);
+            setData(extractedData);
         } catch (err) {
             setError(err.response?.data?.message || err.message || 'Erro na requisição');
             console.error('Erro na API:', err);

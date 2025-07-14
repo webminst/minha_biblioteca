@@ -5,6 +5,23 @@ const Study = require('../models/Study');
 const StudyService = require('../services/StudyService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
+// Importa DTOs e middlewares de validação - NOVO
+const {
+  CreateStudyDTO,
+  UpdateStudyDTO,
+  StudyResponseDTO,
+  StudySearchDTO,
+  ApiResponseDTO,
+  PaginationDTO
+} = require('../dto');
+
+const {
+  validateInput,
+  validateId,
+  transformOutput,
+  handleValidationErrors
+} = require('../middleware/dtoValidation');
+
 /**
  * Rotas para gerenciamento de estudos bíblicos
  * CRUD completo para estudos e materiais didáticos
@@ -15,7 +32,13 @@ const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 router.get('/count', async (req, res, next) => {
   try {
     const stats = await StudyService.getStats();
-    res.json({ count: stats.totalStudies });
+
+    res.json(
+      ApiResponseDTO.success(
+        { count: stats.totalStudies },
+        'Contagem de estudos obtida com sucesso'
+      )
+    );
   } catch (error) {
     next(error);
   }
@@ -24,11 +47,12 @@ router.get('/count', async (req, res, next) => {
 // GET /api/studies - Lista todos os estudos
 router.get('/', async (req, res, next) => {
   try {
+    // Primeiro, vamos usar o método tradicional para debug
     const options = {
-      page: req.query.page,
-      limit: req.query.limit,
-      sortBy: req.query.sortBy,
-      sortOrder: req.query.sortOrder,
+      page: req.query.page || 1,
+      limit: req.query.limit || 10,
+      sortBy: req.query.sortBy || 'createdAt',
+      sortOrder: req.query.sortOrder || 'desc',
       theme: req.query.theme,
       format: req.query.format,
       reference: req.query.reference,
@@ -36,8 +60,24 @@ router.get('/', async (req, res, next) => {
     };
 
     const result = await StudyService.findAll(options);
-    res.json(result);
+
+    // Resposta no formato DTO
+    res.json(
+      ApiResponseDTO.success(
+        result.studies || result.data || result,
+        'Estudos recuperados com sucesso',
+        {
+          currentPage: parseInt(options.page),
+          totalPages: Math.ceil((result.total || 0) / parseInt(options.limit)),
+          totalItems: result.total || 0,
+          itemsPerPage: parseInt(options.limit),
+          hasNextPage: parseInt(options.page) < Math.ceil((result.total || 0) / parseInt(options.limit)),
+          hasPrevPage: parseInt(options.page) > 1
+        }
+      )
+    );
   } catch (error) {
+    console.error('Erro na rota GET /studies:', error);
     next(error);
   }
 });
@@ -46,7 +86,16 @@ router.get('/', async (req, res, next) => {
 router.get('/latest', async (req, res, next) => {
   try {
     const latestStudy = await StudyService.findLatest();
-    res.json(latestStudy);
+
+    if (!latestStudy) {
+      return res.status(404).json(
+        ApiResponseDTO.error('Nenhum estudo encontrado', [], 404)
+      );
+    }
+
+    res.json(
+      ApiResponseDTO.success(latestStudy, 'Último estudo encontrado')
+    );
   } catch (error) {
     next(error);
   }
@@ -56,7 +105,10 @@ router.get('/latest', async (req, res, next) => {
 router.get('/stats', async (req, res, next) => {
   try {
     const stats = await StudyService.getStats();
-    res.json(stats);
+
+    res.json(
+      ApiResponseDTO.success(stats, 'Estatísticas dos estudos obtidas com sucesso')
+    );
   } catch (error) {
     next(error);
   }
@@ -66,7 +118,10 @@ router.get('/stats', async (req, res, next) => {
 router.get('/themes', async (req, res, next) => {
   try {
     const themes = await StudyService.getAllThemes();
-    res.json(themes);
+
+    res.json(
+      ApiResponseDTO.success(themes, 'Temas dos estudos obtidos com sucesso')
+    );
   } catch (error) {
     next(error);
   }
@@ -76,7 +131,10 @@ router.get('/themes', async (req, res, next) => {
 router.get('/formats', async (req, res, next) => {
   try {
     const formats = await StudyService.getAllFormats();
-    res.json(formats);
+
+    res.json(
+      ApiResponseDTO.success(formats, 'Formatos dos estudos obtidos com sucesso')
+    );
   } catch (error) {
     next(error);
   }
@@ -86,7 +144,10 @@ router.get('/formats', async (req, res, next) => {
 router.get('/references', async (req, res, next) => {
   try {
     const references = await StudyService.getAllReferences();
-    res.json(references);
+
+    res.json(
+      ApiResponseDTO.success(references, 'Referências bíblicas obtidas com sucesso')
+    );
   } catch (error) {
     next(error);
   }
@@ -97,27 +158,45 @@ router.get('/popular', async (req, res, next) => {
   try {
     const limit = req.query.limit || 10;
     const studies = await StudyService.findPopular(limit);
-    res.json(studies);
+
+    res.json(
+      ApiResponseDTO.success(studies, 'Estudos populares obtidos com sucesso')
+    );
   } catch (error) {
     next(error);
   }
 });
 
 // GET /api/studies/:id - Busca estudo específico por ID
-router.get('/:id', async (req, res, next) => {
-  try {
-    const study = await StudyService.findById(req.params.id);
-    res.json(study);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/:id',
+  validateId,
+  transformOutput(StudyResponseDTO),
+  async (req, res, next) => {
+    try {
+      const study = await StudyService.findById(req.params.id);
+
+      if (!study) {
+        return res.status(404).json(
+          ApiResponseDTO.error('Estudo não encontrado', [], 404)
+        );
+      }
+
+      res.json(
+        ApiResponseDTO.success(study, 'Estudo encontrado com sucesso')
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // GET /api/studies/theme/:theme - Estudos por tema específico
 router.get('/theme/:theme', async (req, res, next) => {
   try {
     const studies = await StudyService.findByTheme(req.params.theme);
-    res.json(studies);
+
+    res.json(
+      ApiResponseDTO.success(studies, `Estudos do tema "${req.params.theme}" obtidos com sucesso`)
+    );
   } catch (error) {
     next(error);
   }
@@ -127,76 +206,121 @@ router.get('/theme/:theme', async (req, res, next) => {
 router.get('/format/:format', async (req, res, next) => {
   try {
     const studies = await StudyService.findByFormat(req.params.format);
-    res.json(studies);
+
+    res.json(
+      ApiResponseDTO.success(studies, `Estudos do formato "${req.params.format}" obtidos com sucesso`)
+    );
   } catch (error) {
     next(error);
   }
 });
 
 // GET /api/studies/:id/related - Estudos relacionados
-router.get('/:id/related', async (req, res, next) => {
-  try {
-    const limit = req.query.limit || 5;
-    const relatedStudies = await StudyService.findRelated(req.params.id, limit);
-    res.json(relatedStudies);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/:id/related',
+  validateId,
+  async (req, res, next) => {
+    try {
+      const limit = req.query.limit || 5;
+      const relatedStudies = await StudyService.findRelated(req.params.id, limit);
+
+      res.json(
+        ApiResponseDTO.success(relatedStudies, 'Estudos relacionados obtidos com sucesso')
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // ========== ROTAS PROTEGIDAS (ADMIN/EDITOR) ==========
 // POST /api/studies - Criar novo estudo
-router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
-  try {
-    const savedStudy = await StudyService.create(req.body, req.user._id);
-    res.status(201).json({
-      ...savedStudy.toObject(),
-      message: 'Estudo criado com sucesso'
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+router.post('/',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateInput(CreateStudyDTO),
+  transformOutput(StudyResponseDTO),
+  async (req, res, next) => {
+    try {
+      const studyData = req.validatedInput;
+      const savedStudy = await StudyService.create(studyData, req.user._id);
+
+      res.status(201).json(
+        ApiResponseDTO.success(savedStudy, 'Estudo criado com sucesso')
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // PATCH /api/studies/:id - Atualizar estudo existente
-router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
-  try {
-    const updatedStudy = await StudyService.update(req.params.id, req.body, req.user._id);
-    res.json({
-      ...updatedStudy.toObject(),
-      message: 'Estudo atualizado com sucesso'
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+router.patch('/:id',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateId,
+  validateInput(UpdateStudyDTO),
+  transformOutput(StudyResponseDTO),
+  async (req, res, next) => {
+    try {
+      const updateData = req.validatedInput;
+      const updatedStudy = await StudyService.update(req.params.id, updateData, req.user._id);
+
+      res.json(
+        ApiResponseDTO.success(updatedStudy, 'Estudo atualizado com sucesso')
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // ========== ROTAS PROTEGIDAS (APENAS ADMIN) ==========
 // DELETE /api/studies/:id - Deletar estudo
-router.delete('/:id', protect, authorizeRoles('admin'), async (req, res, next) => {
-  try {
-    const result = await StudyService.delete(req.params.id);
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-});
+router.delete('/:id',
+  protect,
+  authorizeRoles('admin'),
+  validateId,
+  transformOutput(ApiResponseDTO),
+  async (req, res, next) => {
+    try {
+      const result = await StudyService.delete(req.params.id);
+
+      // Se o service já retorna uma resposta estruturada, use-a
+      if (result.success !== undefined) {
+        res.json(result);
+      } else {
+        // Caso contrário, padroniza a resposta
+        res.json(
+          ApiResponseDTO.success(result, 'Estudo deletado com sucesso')
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // ========== ROTA DE BUSCA ==========
 // GET /api/studies/search/:term - Buscar estudos por termo
-router.get('/search/:term', async (req, res, next) => {
-  try {
-    const searchTerm = req.params.term;
-    const result = await StudyService.findAll({ search: searchTerm });
+router.get('/search/:term',
+  validateInput(StudySearchDTO, { isQuery: true }),
+  transformOutput(StudyResponseDTO),
+  async (req, res, next) => {
+    try {
+      const searchTerm = req.params.term;
+      const searchOptions = { ...req.validatedInput, search: searchTerm };
+      const result = await StudyService.findAll(searchOptions);
 
-    res.json({
-      searchTerm,
-      count: result.studies.length,
-      ...result
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json(
+        ApiResponseDTO.success(
+          result.studies || result.data || result,
+          `Busca por "${searchTerm}" realizada com sucesso`,
+          null,
+          { searchTerm, count: (result.studies || result.data || result).length }
+        )
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
+
+// Middleware de tratamento de erros específico para DTOs - NOVO
+router.use(handleValidationErrors);
 
 module.exports = router;

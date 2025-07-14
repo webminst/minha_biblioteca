@@ -5,50 +5,93 @@ const Book = require('../models/Book');
 const BookService = require('../services/BookService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
+// Importa DTOs e middlewares de validação - NOVO
+const {
+  CreateBookDTO,
+  UpdateBookDTO,
+  BookResponseDTO,
+  BookSearchDTO,
+  ApiResponseDTO,
+  PaginationDTO
+} = require('../dto');
+
+const {
+  validateInput,
+  transformOutput,
+  validateSearch,
+  validateId,
+  handleValidationErrors
+} = require('../middleware/dtoValidation');
+
 /**
  * Rotas para gerenciamento de livros/resumos
  * CRUD completo para resumos de livros teológicos
  */
 
 // ========== ROTAS PÚBLICAS ==========
-// GET /api/books/count - Conta total de livros
+// GET /api/books/count - Conta total de livros (MIGRADO)
 router.get('/count', async (req, res, next) => {
   try {
     const stats = await BookService.getStats();
-    res.json({ count: stats.totalBooks });
+    res.json(ApiResponseDTO.success(
+      { count: stats.totalBooks },
+      'Contagem de livros obtida com sucesso'
+    ));
   } catch (error) {
     next(error);
   }
 });
 
-// GET /api/books - Lista todos os livros
-router.get('/', async (req, res, next) => {
-  try {
-    const options = {
-      page: req.query.page,
-      limit: req.query.limit,
-      sortBy: req.query.sortBy,
-      sortOrder: req.query.sortOrder,
-      author: req.query.author,
-      area: req.query.area,
-      publisher: req.query.publisher,
-      series: req.query.series,
-      search: req.query.search
-    };
+// GET /api/books - Lista todos os livros (MIGRADO)
+router.get('/',
+  validateSearch(BookSearchDTO), // NOVO: Valida parâmetros de busca
+  async (req, res, next) => {
+    try {
+      // NOVO: Usa dados validados
+      const options = req.validatedData;
+      const result = await BookService.findAll(options);
 
-    const result = await BookService.findAll(options);
-    res.json(result);
-  } catch (error) {
-    next(error);
+      // NOVO: Cria paginação padronizada (corrigido)
+      const pagination = new PaginationDTO({
+        page: options.page,
+        limit: options.limit,
+        totalItems: result.totalBooks || 0
+      });
+
+      const paginationResult = pagination.validate();
+      if (!paginationResult.isValid) {
+        throw new Error('Erro na paginação');
+      }
+
+      const paginationData = pagination.transform();
+
+      // NOVO: Resposta padronizada com paginação
+      res.json(ApiResponseDTO.paginated(
+        result.books,
+        paginationData,
+        'Livros recuperados com sucesso'
+      ));
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // GET /api/books/latest - Busca o livro mais recente
 // ⚠️ IMPORTANTE: Esta rota DEVE vir ANTES de /:id
 router.get('/latest', async (req, res, next) => {
   try {
     const latestBook = await BookService.findLatest();
-    res.json(latestBook);
+
+    if (!latestBook) {
+      return res.status(404).json(
+        ApiResponseDTO.error('Nenhum livro encontrado', [], 404)
+      );
+    }
+
+    res.json(
+      ApiResponseDTO.success(latestBook, 'Último livro encontrado')
+    );
   } catch (error) {
     next(error);
   }
@@ -163,52 +206,95 @@ router.get('/:id/related', async (req, res, next) => {
   }
 });
 
-// GET /api/books/:id - Busca livro específico por ID
+// GET /api/books/:id - Busca livro específico por ID (MIGRADO)
 // ⚠️ Esta rota deve vir POR ÚLTIMO entre as rotas GET
-router.get('/:id', async (req, res, next) => {
-  try {
-    const book = await BookService.findById(req.params.id);
-    res.json(book);
-  } catch (error) {
-    next(error);
+router.get('/:id',
+  validateId, // NOVO: Valida formato do ID
+  transformOutput(BookResponseDTO, 'toPublicObject'), // NOVO: Transforma saída
+  async (req, res, next) => {
+    try {
+      // NOVO: Usa ID validado
+      const book = await BookService.findById(req.validatedId);
+
+      // NOVO: Resposta padronizada
+      res.json(ApiResponseDTO.success(
+        book,
+        'Livro encontrado com sucesso'
+      ));
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // ========== ROTAS PROTEGIDAS (ADMIN) ==========
-// POST /api/books - Criar novo livro
-router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
-  try {
-    const savedBook = await BookService.create(req.body, req.user._id);
-    res.status(201).json({
-      ...savedBook.toObject(),
-      message: 'Livro criado com sucesso'
-    });
-  } catch (error) {
-    next(error);
+// POST /api/books - Criar novo livro (MIGRADO PARA DTOs)
+router.post('/',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateInput(CreateBookDTO), // NOVO: Valida dados de entrada
+  transformOutput(BookResponseDTO, 'toPublicObject'), // NOVO: Transforma saída
+  async (req, res, next) => {
+    try {
+      // NOVO: Usa dados validados do middleware
+      const savedBook = await BookService.create(req.validatedData, req.user._id);
+
+      // NOVO: Resposta padronizada
+      res.status(201).json(ApiResponseDTO.success(
+        savedBook,
+        'Livro criado com sucesso'
+      ));
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // PUT /api/books/:id - Atualizar livro existente
-router.put('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
-  try {
-    const updatedBook = await BookService.update(req.params.id, req.body, req.user._id);
-    res.json({
-      ...updatedBook.toObject(),
-      message: 'Livro atualizado com sucesso'
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+router.put('/:id',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateId,
+  validateInput(UpdateBookDTO),
+  transformOutput(BookResponseDTO),
+  async (req, res, next) => {
+    try {
+      const updateData = req.validatedInput;
+      const updatedBook = await BookService.update(req.params.id, updateData, req.user._id);
+
+      res.json(
+        ApiResponseDTO.success('Livro atualizado com sucesso', updatedBook)
+      );
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // DELETE /api/books/:id - Deletar livro
-router.delete('/:id', protect, authorizeRoles('admin'), async (req, res, next) => {
-  try {
-    const result = await BookService.delete(req.params.id);
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-});
+router.delete('/:id',
+  protect,
+  authorizeRoles('admin'),
+  validateId,
+  transformOutput(ApiResponseDTO),
+  async (req, res, next) => {
+    try {
+      const result = await BookService.delete(req.params.id);
+
+      // Se o service já retorna uma resposta estruturada, use-a
+      if (result.success !== undefined) {
+        res.json(result);
+      } else {
+        // Caso contrário, padroniza a resposta
+        res.json(
+          ApiResponseDTO.success('Livro deletado com sucesso', result)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+// Middleware de tratamento de erros específico para DTOs - NOVO
+router.use(handleValidationErrors);
 
 module.exports = router;

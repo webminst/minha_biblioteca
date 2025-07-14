@@ -8,6 +8,7 @@ import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
+import { extractStudies, extractPagination } from '../utils/apiResponseHelpers';
 
 /**
  * Componente Studies - Página de estudos bíblicos
@@ -56,14 +57,12 @@ function Studies() {
 
         const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, { params });
 
-        // Verifica se a resposta tem a nova estrutura com studies e pagination
-        if (response.data.studies) {
-          setStudies(response.data.studies);
-          setPagination(response.data.pagination);
-        } else {
-          // Compatibilidade com estrutura antiga (array direto)
-          setStudies(Array.isArray(response.data) ? response.data : []);
-        }
+        // Usa helper para extrair dados de forma compatível
+        const studiesData = extractStudies(response.data);
+        const paginationData = extractPagination(response.data);
+
+        setStudies(studiesData);
+        setPagination(paginationData);
       } catch (err) {
         setError('Erro ao carregar os estudos. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar estudos:', err);
@@ -92,8 +91,21 @@ function Studies() {
           axios.get(`${API_ENDPOINTS.STUDIES.BASE}/themes`)
         ]);
 
-        setUniqueFormats(formatsResponse.data || []);
-        setUniqueThemes(themesResponse.data || []);
+        // Processa resposta dos formatos (compatível com DTO)
+        const formatsData = formatsResponse.data.success && formatsResponse.data.data
+          ? formatsResponse.data.data
+          : (formatsResponse.data || []);
+
+        // Processa resposta dos temas (compatível com DTO)
+        const themesData = themesResponse.data.success && themesResponse.data.data
+          ? themesResponse.data.data
+          : (themesResponse.data || []);
+
+        console.log('DEBUG - formatsData:', formatsData, 'isArray:', Array.isArray(formatsData));
+        console.log('DEBUG - themesData:', themesData, 'isArray:', Array.isArray(themesData));
+
+        setUniqueFormats(Array.isArray(formatsData) ? formatsData : []);
+        setUniqueThemes(Array.isArray(themesData) ? themesData : []);
       } catch (err) {
         console.error('Erro ao buscar opções de filtro:', err);
         // Em caso de erro, mantém arrays vazios
@@ -184,7 +196,7 @@ function Studies() {
           <label htmlFor="format-filter">Formato:</label>
           <select id="format-filter" value={selectedFormat} onChange={handleFormatChange}>
             <option value="">Todos</option>
-            {uniqueFormats.map(format => (
+            {Array.isArray(uniqueFormats) && uniqueFormats.map(format => (
               <option key={format} value={format}>{format}</option>
             ))}
           </select>
@@ -195,7 +207,7 @@ function Studies() {
           <label htmlFor="theme-filter">Tema:</label>
           <select id="theme-filter" value={selectedTheme} onChange={handleThemeChange}>
             <option value="">Todos</option>
-            {uniqueThemes.map(theme => (
+            {Array.isArray(uniqueThemes) && uniqueThemes.map(theme => (
               <option key={theme} value={theme}>{theme}</option>
             ))}
           </select>

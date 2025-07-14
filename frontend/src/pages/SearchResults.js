@@ -4,6 +4,7 @@ import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
+import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
 import './ListPage.css';
 
 /**
@@ -46,10 +47,10 @@ const SearchResults = () => {
           axios.get(API_ENDPOINTS.BOOKS.BASE)
         ]);
 
-        // Extrai dados considerando nova estrutura da API
-        const sermonsData = sermonsResponse.data.sermons || sermonsResponse.data;
-        const studiesData = studiesResponse.data.studies || studiesResponse.data;
-        const booksData = booksResponse.data.books || booksResponse.data;
+        // Extrai dados usando helpers de compatibilidade DTO
+        const sermonsData = extractSermons(sermonsResponse.data);
+        const studiesData = extractStudies(studiesResponse.data);
+        const booksData = extractBooks(booksResponse.data);
 
         setSermons(Array.isArray(sermonsData) ? sermonsData : []);
         setStudies(Array.isArray(studiesData) ? studiesData : []);

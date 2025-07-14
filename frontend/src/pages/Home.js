@@ -6,6 +6,7 @@ import { API_ENDPOINTS } from '../config/api';
 import './Home.css';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
+import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
 
 /**
  * Componente Home - Página inicial do portfólio pastoral
@@ -28,7 +29,8 @@ const Home = () => {
   const fetchLatestSermon = async () => {
     try {
       const response = await axios.get(API_ENDPOINTS.SERMONS.LATEST);
-      return response.data;
+      // Para endpoints /latest, o dado vem diretamente em response.data.data
+      return response.data.success ? response.data.data : response.data;
     } catch (err) {
       console.error('Erro ao buscar último sermão:', err);
       return null;
@@ -39,7 +41,8 @@ const Home = () => {
   const fetchLatestStudy = async () => {
     try {
       const response = await axios.get(API_ENDPOINTS.STUDIES.LATEST);
-      return response.data;
+      // Para endpoints /latest, o dado vem diretamente em response.data.data
+      return response.data.success ? response.data.data : response.data;
     } catch (err) {
       console.error('Erro ao buscar último estudo:', err);
       return null;
@@ -50,7 +53,8 @@ const Home = () => {
   const fetchLatestBook = async () => {
     try {
       const response = await axios.get(API_ENDPOINTS.BOOKS.LATEST);
-      return response.data;
+      // Para endpoints /latest, o dado vem diretamente em response.data.data
+      return response.data.success ? response.data.data : response.data;
     } catch (err) {
       console.error('Erro ao buscar último livro:', err);
       return null;

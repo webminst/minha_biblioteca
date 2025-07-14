@@ -9,6 +9,7 @@ import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
+import { extractSermons, extractPagination } from '../utils/apiResponseHelpers';
 
 /**
  * Componente Sermons - Página de sermões
@@ -60,14 +61,12 @@ function Sermons() {
 
         const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, { params });
 
-        // Verifica se a resposta tem a nova estrutura com sermons e pagination
-        if (response.data.sermons) {
-          setSermons(response.data.sermons);
-          setPagination(response.data.pagination);
-        } else {
-          // Compatibilidade com estrutura antiga (array direto)
-          setSermons(Array.isArray(response.data) ? response.data : []);
-        }
+        // Usa helpers para extrair dados e paginação
+        const sermonsData = extractSermons(response.data);
+        const paginationData = extractPagination(response.data);
+
+        setSermons(sermonsData);
+        setPagination(paginationData);
       } catch (err) {
         setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar sermões:', err);
@@ -138,9 +137,14 @@ function Sermons() {
           axios.get(`${API_ENDPOINTS.SERMONS.BASE}/speakers`)
         ]);
 
-        setUniqueBooks(booksResponse.data || []);
-        setUniqueSeries(seriesResponse.data || []);
-        setUniqueSpeakers(speakersResponse.data || []);
+        // Extrai dados dos filtros, verificando se é DTO ou formato antigo
+        const books = booksResponse.data.success ? booksResponse.data.data : (booksResponse.data || []);
+        const series = seriesResponse.data.success ? seriesResponse.data.data : (seriesResponse.data || []);
+        const speakers = speakersResponse.data.success ? speakersResponse.data.data : (speakersResponse.data || []);
+
+        setUniqueBooks(Array.isArray(books) ? books : []);
+        setUniqueSeries(Array.isArray(series) ? series : []);
+        setUniqueSpeakers(Array.isArray(speakers) ? speakers : []);
       } catch (err) {
         console.error('Erro ao buscar opções de filtro:', err);
         // Em caso de erro, mantém arrays vazios

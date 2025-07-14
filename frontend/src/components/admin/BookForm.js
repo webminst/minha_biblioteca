@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { extractBooks } from '../../utils/apiResponseHelpers';
 import './Form.css'; // Reutiliza o CSS geral de formulários admin
 
 function BookForm() {
@@ -44,7 +45,8 @@ function BookForm() {
                         },
                     };
                     const response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(id), config);
-                    const bookData = response.data;
+                    // Extrai dados usando helper com compatibilidade DTO
+                    const bookData = extractBooks([response.data])[0] || (response.data.success ? response.data.data : response.data);
 
                     // Preenche os estados com os dados do livro
                     setTitle(bookData.title || '');

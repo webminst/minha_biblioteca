@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { extractBooks } from '../../utils/apiResponseHelpers';
 import './AdminList.css'; // Reutiliza o CSS geral de listas admin
 
 function AdminBooksList() {
@@ -28,8 +29,8 @@ function AdminBooksList() {
             // Faz a requisição GET para buscar os livros
             const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, config);
 
-            // Verifica se a resposta tem a nova estrutura com books
-            const booksData = response.data.books || response.data;
+            // Usa helper para extrair dados com compatibilidade DTO
+            const booksData = extractBooks(response.data);
             setBooks(Array.isArray(booksData) ? booksData : []);
         } catch (err) {
             setError('Erro ao carregar livros: ' + (err.response?.data?.message || err.message));

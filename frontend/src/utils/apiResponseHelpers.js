@@ -11,9 +11,17 @@
  * @returns {Array} - Array de sermões
  */
 export const extractSermons = (responseData) => {
+    // Formato novo (DTO): responseData.data
+    if (responseData.success && responseData.data) {
+        return Array.isArray(responseData.data) ? responseData.data : [];
+    }
+
+    // Formato intermediário: responseData.sermons
     if (responseData.sermons) {
         return Array.isArray(responseData.sermons) ? responseData.sermons : [];
     }
+
+    // Formato antigo: array direto
     return Array.isArray(responseData) ? responseData : [];
 };
 
@@ -23,9 +31,17 @@ export const extractSermons = (responseData) => {
  * @returns {Array} - Array de estudos
  */
 export const extractStudies = (responseData) => {
+    // Formato novo (DTO): responseData.data
+    if (responseData.success && responseData.data) {
+        return Array.isArray(responseData.data) ? responseData.data : [];
+    }
+
+    // Formato intermediário: responseData.studies
     if (responseData.studies) {
         return Array.isArray(responseData.studies) ? responseData.studies : [];
     }
+
+    // Formato antigo: array direto
     return Array.isArray(responseData) ? responseData : [];
 };
 
@@ -35,9 +51,17 @@ export const extractStudies = (responseData) => {
  * @returns {Array} - Array de livros
  */
 export const extractBooks = (responseData) => {
+    // Formato novo (DTO): responseData.data
+    if (responseData.success && responseData.data) {
+        return Array.isArray(responseData.data) ? responseData.data : [];
+    }
+
+    // Formato intermediário: responseData.books
     if (responseData.books) {
         return Array.isArray(responseData.books) ? responseData.books : [];
     }
+
+    // Formato antigo: array direto
     return Array.isArray(responseData) ? responseData : [];
 };
 

@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { verifySecureToken, applySecurityHeaders } = require('./jwtSecurity');
 
+// Importa DTO para respostas padronizadas - NOVO
+const { ApiResponseDTO } = require('../dto');
+
 /**
  * Middleware de autenticação e autorização
  * Protege rotas e verifica permissões de usuários
@@ -32,9 +35,13 @@ const protect = async (req, res, next) => {
       // Verifica se usuário ainda existe
       if (!req.user) {
         console.log('❌ Usuário não encontrado no banco de dados');
-        return res.status(401).json({
-          message: 'Token válido, mas usuário não encontrado'
-        });
+        return res.status(401).json(
+          ApiResponseDTO.error(
+            'Token válido, mas usuário não encontrado',
+            null,
+            401
+          )
+        );
       }
 
       console.log('✅ Autenticação bem-sucedida');
@@ -45,28 +52,32 @@ const protect = async (req, res, next) => {
 
       // Trata diferentes tipos de erro de token
       if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({
-          message: 'Token expirado'
-        });
+        return res.status(401).json(
+          ApiResponseDTO.error('Token expirado', null, 401)
+        );
       }
 
       if (error.name === 'JsonWebTokenError') {
-        return res.status(401).json({
-          message: 'Token inválido'
-        });
+        return res.status(401).json(
+          ApiResponseDTO.error('Token inválido', null, 401)
+        );
       }
 
-      return res.status(401).json({
-        message: 'Falha na autenticação'
-      });
+      return res.status(401).json(
+        ApiResponseDTO.error('Falha na autenticação', null, 401)
+      );
     }
   }
 
   // Se não há token
   if (!token) {
-    return res.status(401).json({
-      message: 'Acesso negado. Token de autenticação necessário'
-    });
+    return res.status(401).json(
+      ApiResponseDTO.error(
+        'Acesso negado. Token de autenticação necessário',
+        null,
+        401
+      )
+    );
   }
 };
 
@@ -75,17 +86,20 @@ const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     // Verifica se o usuário foi autenticado
     if (!req.user) {
-      return res.status(401).json({
-        message: 'Usuário não autenticado'
-      });
+      return res.status(401).json(
+        ApiResponseDTO.error('Usuário não autenticado', null, 401)
+      );
     }
 
     // Verifica se a role do usuário está nas roles permitidas
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        message: `Acesso negado. Permissão '${req.user.role}' insuficiente para esta operação`,
-        requiredRoles: roles
-      });
+      return res.status(403).json(
+        ApiResponseDTO.error(
+          `Acesso negado. Permissão '${req.user.role}' insuficiente para esta operação`,
+          [{ field: 'role', message: `Roles requeridas: ${roles.join(', ')}` }],
+          403
+        )
+      );
     }
 
     next(); // Usuário autorizado, prossegue

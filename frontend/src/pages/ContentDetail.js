@@ -9,6 +9,7 @@ import NotFound from './NotFound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
 import './ContentDetail.css';
 import {
   FacebookShareButton,
@@ -46,13 +47,20 @@ const ContentDetail = () => {
         // Determina qual API chamar baseado na URL
         if (window.location.pathname.startsWith('/sermoes')) {
           response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(contentId));
+          // Extrai dados usando helper de sermões
+          const sermonData = extractSermons([response.data])[0] || response.data.success ? response.data.data : response.data;
+          setSermon(sermonData);
         } else if (window.location.pathname.startsWith('/estudos')) {
           response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(contentId));
+          // Extrai dados usando helper de estudos
+          const studyData = extractStudies([response.data])[0] || response.data.success ? response.data.data : response.data;
+          setSermon(studyData);
         } else if (window.location.pathname.startsWith('/livros')) {
           response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(contentId));
+          // Extrai dados usando helper de livros
+          const bookData = extractBooks([response.data])[0] || response.data.success ? response.data.data : response.data;
+          setSermon(bookData);
         }
-
-        setSermon(response.data);
       } catch (err) {
         setError('Conteúdo não encontrado.');
       } finally {

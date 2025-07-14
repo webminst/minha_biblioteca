@@ -1,9 +1,15 @@
-// routes/sermons.js
 const express = require('express');
 const router = express.Router();
 const Sermon = require('../models/Sermon');
 const SermonService = require('../services/SermonService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
+
+// DTOs
+const { CreateSermonDTO, UpdateSermonDTO } = require('../dto/sermons/SermonDTO');
+const { ApiResponseDTO, PaginationDTO } = require('../dto/common/ResponseDTO');
+
+// Middleware de validação
+const { validateInput, validateId, transformOutput } = require('../middleware/dtoValidation');
 
 /**
  * Rotas para gerenciamento de sermões
@@ -15,7 +21,7 @@ const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 router.get('/count', async (req, res, next) => {
   try {
     const stats = await SermonService.getStats();
-    res.json({ count: stats.totalSermons });
+    res.json(ApiResponseDTO.success({ count: stats.totalSermons }, 'Contagem de sermões obtida com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -36,7 +42,26 @@ router.get('/', async (req, res, next) => {
     };
 
     const result = await SermonService.findAll(options);
-    res.json(result);
+
+    // Criar paginação padronizada
+    const pagination = new PaginationDTO({
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+      totalItems: result.totalSermons || 0
+    });
+
+    const paginationResult = pagination.validate();
+    if (!paginationResult.isValid) {
+      throw new Error('Erro na paginação');
+    }
+
+    const paginationData = pagination.transform();
+
+    res.json(ApiResponseDTO.paginated(
+      result.sermons,
+      paginationData,
+      'Sermões listados com sucesso'
+    ));
   } catch (error) {
     next(error);
   }
@@ -46,7 +71,7 @@ router.get('/', async (req, res, next) => {
 router.get('/latest', async (req, res, next) => {
   try {
     const latestSermon = await SermonService.findLatest();
-    res.json(latestSermon);
+    res.json(ApiResponseDTO.success(latestSermon, 'Último sermão obtido com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -56,7 +81,7 @@ router.get('/latest', async (req, res, next) => {
 router.get('/stats', async (req, res, next) => {
   try {
     const stats = await SermonService.getStats();
-    res.json(stats);
+    res.json(ApiResponseDTO.success(stats, 'Estatísticas obtidas com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -66,7 +91,7 @@ router.get('/stats', async (req, res, next) => {
 router.get('/series', async (req, res, next) => {
   try {
     const series = await SermonService.getAllSeries();
-    res.json(series);
+    res.json(ApiResponseDTO.success(series, 'Séries obtidas com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -76,7 +101,7 @@ router.get('/series', async (req, res, next) => {
 router.get('/speakers', async (req, res, next) => {
   try {
     const speakers = await SermonService.getAllSpeakers();
-    res.json(speakers);
+    res.json(ApiResponseDTO.success(speakers, 'Pregadores obtidos com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -86,7 +111,7 @@ router.get('/speakers', async (req, res, next) => {
 router.get('/books', async (req, res, next) => {
   try {
     const books = await SermonService.getAllBooks();
-    res.json(books);
+    res.json(ApiResponseDTO.success(books, 'Livros bíblicos obtidos com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -96,7 +121,7 @@ router.get('/books', async (req, res, next) => {
 router.get('/series/:name', async (req, res, next) => {
   try {
     const sermons = await SermonService.findBySeries(req.params.name);
-    res.json(sermons);
+    res.json(ApiResponseDTO.success(sermons, `Sermões da série '${req.params.name}' obtidos com sucesso`));
   } catch (error) {
     next(error);
   }
@@ -106,17 +131,34 @@ router.get('/series/:name', async (req, res, next) => {
 router.get('/speaker/:name', async (req, res, next) => {
   try {
     const sermons = await SermonService.findBySpeaker(req.params.name);
-    res.json(sermons);
+    res.json(ApiResponseDTO.success(sermons, `Sermões do pregador '${req.params.name}' obtidos com sucesso`));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/search/:term - Buscar sermões por termo
+router.get('/search/:term', async (req, res, next) => {
+  try {
+    const searchTerm = req.params.term;
+    const result = await SermonService.findAll({ search: searchTerm });
+
+    res.json(ApiResponseDTO.success({
+      searchTerm,
+      count: result.sermons.length,
+      data: result.sermons,
+      pagination: result.pagination
+    }, `Busca por '${searchTerm}' realizada com sucesso`));
   } catch (error) {
     next(error);
   }
 });
 
 // GET /api/sermons/:id - Busca sermão específico por ID
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', validateId, transformOutput, async (req, res, next) => {
   try {
     const sermon = await SermonService.findById(req.params.id);
-    res.json(sermon);
+    res.json(ApiResponseDTO.success(sermon, 'Sermão obtido com sucesso'));
   } catch (error) {
     next(error);
   }
@@ -124,57 +166,53 @@ router.get('/:id', async (req, res, next) => {
 
 // ========== ROTAS PROTEGIDAS (ADMIN/EDITOR) ==========
 // POST /api/sermons - Criar novo sermão
-router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
-  try {
-    const savedSermon = await SermonService.create(req.body, req.user._id);
-    res.status(201).json({
-      ...savedSermon.toObject(),
-      message: 'Sermão criado com sucesso'
-    });
-  } catch (error) {
-    next(error);
+router.post('/',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateInput(CreateSermonDTO),
+  transformOutput,
+  async (req, res, next) => {
+    try {
+      const savedSermon = await SermonService.create(req.validatedData, req.user._id);
+      res.status(201).json(ApiResponseDTO.success(savedSermon, 'Sermão criado com sucesso'));
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-// PATCH /api/sermons/:id - Atualizar sermão existente
-router.patch('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res, next) => {
-  try {
-    const updatedSermon = await SermonService.update(req.params.id, req.body, req.user._id);
-    res.json({
-      ...updatedSermon.toObject(),
-      message: 'Sermão atualizado com sucesso'
-    });
-  } catch (error) {
-    next(error);
+// PUT /api/sermons/:id - Atualizar sermão existente
+router.put('/:id',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateId,
+  validateInput(UpdateSermonDTO),
+  transformOutput,
+  async (req, res, next) => {
+    try {
+      const updatedSermon = await SermonService.update(req.params.id, req.validatedData, req.user._id);
+      res.json(ApiResponseDTO.success(updatedSermon, 'Sermão atualizado com sucesso'));
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // ========== ROTAS PROTEGIDAS (APENAS ADMIN) ==========
 // DELETE /api/sermons/:id - Deletar sermão
-router.delete('/:id', protect, authorizeRoles('admin'), async (req, res, next) => {
-  try {
-    const result = await SermonService.delete(req.params.id);
-    res.json(result);
-  } catch (error) {
-    next(error);
+router.delete('/:id',
+  protect,
+  authorizeRoles('admin'),
+  validateId,
+  transformOutput,
+  async (req, res, next) => {
+    try {
+      const result = await SermonService.delete(req.params.id);
+      res.json(ApiResponseDTO.success(result, 'Sermão deletado com sucesso'));
+    } catch (error) {
+      next(error);
+    }
   }
-});
-
-// ========== ROTA DE BUSCA ==========
-// GET /api/sermons/search/:term - Buscar sermões por termo
-router.get('/search/:term', async (req, res, next) => {
-  try {
-    const searchTerm = req.params.term;
-    const result = await SermonService.findAll({ search: searchTerm });
-
-    res.json({
-      searchTerm,
-      count: result.sermons.length,
-      ...result
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+);
 
 module.exports = router;

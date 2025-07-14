@@ -8,6 +8,7 @@ import './ListPage.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
+import { extractBooks, extractPagination } from '../utils/apiResponseHelpers';
 
 /**
  * Componente Books - Página de resumos de livros
@@ -56,14 +57,12 @@ function Books() {
 
         const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
 
-        // Verifica se a resposta tem a nova estrutura com books e pagination
-        if (response.data.books) {
-          setBooks(response.data.books);
-          setPagination(response.data.pagination);
-        } else {
-          // Compatibilidade com estrutura antiga (array direto)
-          setBooks(Array.isArray(response.data) ? response.data : []);
-        }
+        // Usa helper para extrair dados de forma compatível
+        const booksData = extractBooks(response.data);
+        const paginationData = extractPagination(response.data);
+
+        setBooks(booksData);
+        setPagination(paginationData);
       } catch (err) {
         setError('Erro ao carregar os livros. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar livros:', err);
@@ -91,8 +90,12 @@ function Books() {
           axios.get(`${API_ENDPOINTS.BOOKS.BASE}/authors`)
         ]);
 
-        setUniqueAreas(areasResponse.data || []);
-        setUniqueAuthors(authorsResponse.data || []);
+        // Extrai dados dos filtros, verificando se é DTO ou formato antigo  
+        const areas = areasResponse.data.success ? areasResponse.data.data : (areasResponse.data || []);
+        const authors = authorsResponse.data.success ? authorsResponse.data.data : (authorsResponse.data || []);
+
+        setUniqueAreas(Array.isArray(areas) ? areas : []);
+        setUniqueAuthors(Array.isArray(authors) ? authors : []);
       } catch (err) {
         console.error('Erro ao buscar opções de filtro:', err);
         // Em caso de erro, mantém arrays vazios

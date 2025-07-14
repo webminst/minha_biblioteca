@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { extractStudies } from '../../utils/apiResponseHelpers';
 import './AdminList.css'; // Reutiliza o CSS geral de listas admin
 
 function AdminStudiesList() {
@@ -28,8 +29,8 @@ function AdminStudiesList() {
             // Faz a requisição GET para buscar os estudos
             const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, config);
 
-            // Verifica se a resposta tem a nova estrutura com studies
-            const studiesData = response.data.studies || response.data;
+            // Usa helper para extrair dados com compatibilidade DTO
+            const studiesData = extractStudies(response.data);
             setStudies(Array.isArray(studiesData) ? studiesData : []);
         } catch (err) {
             setError('Erro ao carregar estudos: ' + (err.response?.data?.message || err.message));

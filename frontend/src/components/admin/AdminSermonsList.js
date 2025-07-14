@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { extractSermons } from '../../utils/apiResponseHelpers';
 import './AdminList.css'; // CSS geral para listas admin
 
 function AdminSermonsList() {
@@ -28,8 +29,8 @@ function AdminSermonsList() {
       // Faz a requisição GET para buscar os sermões
       const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, config);
 
-      // Verifica se a resposta tem a nova estrutura com sermons
-      const sermonsData = response.data.sermons || response.data;
+      // Usa helper para extrair dados com compatibilidade DTO
+      const sermonsData = extractSermons(response.data);
       setSermons(Array.isArray(sermonsData) ? sermonsData : []);
     } catch (err) {
       setError('Erro ao carregar sermões: ' + (err.response?.data?.message || err.message));

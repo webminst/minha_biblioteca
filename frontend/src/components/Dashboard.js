@@ -33,9 +33,9 @@ function Dashboard({ user }) {
             ]);
 
             setCounts({
-                sermons: sermonsData.count || 0,
-                studies: studiesData.count || 0,
-                books: booksData.count || 0
+                sermons: (sermonsData.success ? sermonsData.data.count : sermonsData.count) || 0,
+                studies: (studiesData.success ? studiesData.data.count : studiesData.count) || 0,
+                books: (booksData.success ? booksData.data.count : booksData.count) || 0
             });
         } catch (error) {
             console.error('Erro ao buscar contadores:', error);
