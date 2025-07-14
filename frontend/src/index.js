@@ -4,11 +4,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import './index.css';
 
-// Validação de segurança em desenvolvimento
-if (process.env.NODE_ENV === 'development') {
-  import('./utils/securityValidator');
-}
-
 /**
  * Ponto de entrada da aplicação React
  * Configura o roteamento e renderiza o componente App principal
