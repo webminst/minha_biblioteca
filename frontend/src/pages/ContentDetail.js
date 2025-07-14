@@ -47,18 +47,18 @@ const ContentDetail = () => {
         // Determina qual API chamar baseado na URL
         if (window.location.pathname.startsWith('/sermoes')) {
           response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(contentId));
-          // Extrai dados usando helper de sermões
-          const sermonData = extractSermons([response.data])[0] || response.data.success ? response.data.data : response.data;
+          // Para endpoints BY_ID, o dado vem diretamente em response.data.data
+          const sermonData = response.data.success ? response.data.data : response.data;
           setSermon(sermonData);
         } else if (window.location.pathname.startsWith('/estudos')) {
           response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(contentId));
-          // Extrai dados usando helper de estudos
-          const studyData = extractStudies([response.data])[0] || response.data.success ? response.data.data : response.data;
+          // Para endpoints BY_ID, o dado vem diretamente em response.data.data
+          const studyData = response.data.success ? response.data.data : response.data;
           setSermon(studyData);
         } else if (window.location.pathname.startsWith('/livros')) {
           response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(contentId));
-          // Extrai dados usando helper de livros
-          const bookData = extractBooks([response.data])[0] || response.data.success ? response.data.data : response.data;
+          // Para endpoints BY_ID, o dado vem diretamente em response.data.data
+          const bookData = response.data.success ? response.data.data : response.data;
           setSermon(bookData);
         }
       } catch (err) {

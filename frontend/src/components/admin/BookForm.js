@@ -45,8 +45,8 @@ function BookForm() {
                         },
                     };
                     const response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(id), config);
-                    // Extrai dados usando helper com compatibilidade DTO
-                    const bookData = extractBooks([response.data])[0] || (response.data.success ? response.data.data : response.data);
+                    // Para endpoints BY_ID, o dado vem diretamente em response.data.data
+                    const bookData = response.data.success ? response.data.data : response.data;
 
                     // Preenche os estados com os dados do livro
                     setTitle(bookData.title || '');

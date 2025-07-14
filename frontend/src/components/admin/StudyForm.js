@@ -46,8 +46,8 @@ function StudyForm() {
                         },
                     };
                     const response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(id), config);
-                    // Extrai dados usando helper com compatibilidade DTO
-                    const studyData = extractStudies([response.data])[0] || (response.data.success ? response.data.data : response.data);
+                    // Para endpoints BY_ID, o dado vem diretamente em response.data.data
+                    const studyData = response.data.success ? response.data.data : response.data;
 
                     // Preenche os estados com os dados do estudo
                     setTitle(studyData.title || '');

@@ -43,8 +43,8 @@ function SermonForm() {
                         },
                     };
                     const response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(id), config);
-                    // Extrai dados usando helper com compatibilidade DTO
-                    const sermonData = extractSermons([response.data])[0] || (response.data.success ? response.data.data : response.data);
+                    // Para endpoints BY_ID, o dado vem diretamente em response.data.data
+                    const sermonData = response.data.success ? response.data.data : response.data;
 
                     setTitle(sermonData.title || '');
                     setBibleReference(sermonData.bibleReference || '');
