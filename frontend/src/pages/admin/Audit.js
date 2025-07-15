@@ -5,11 +5,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuditLogs from '../../components/admin/AuditLogs';
 import axios from 'axios';
 import './Audit.css';
 
 const Audit = () => {
+    const navigate = useNavigate();
     const [systemHealth, setSystemHealth] = useState(null);
     const [config, setConfig] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -54,33 +56,43 @@ const Audit = () => {
 
     return (
         <div className="audit-page">
+            {/* Botão Voltar */}
+            <div className="page-header-top">
+                <button
+                    onClick={() => navigate('/admin/dashboard')}
+                    className="btn btn-secondary btn-back"
+                >
+                    ← Voltar ao Dashboard
+                </button>
+            </div>
+
             {/* Header da Página */}
             <div className="audit-page-header">
-                <h1>🔍 Painel de Auditoria</h1>
+                <h1>Painel de Auditoria</h1>
                 <p>Monitor completo de atividades administrativas e segurança do sistema</p>
             </div>
 
             {/* Status do Sistema */}
             <div className="system-status">
-                <h3>🏥 Status do Sistema de Auditoria</h3>
+                <h3>Status do Sistema de Auditoria</h3>
                 <div className="status-grid">
                     <div className={`status-card ${systemHealth?.status === 'healthy' ? 'healthy' : 'degraded'}`}>
                         <h4>Status Geral</h4>
                         <p className="status-value">
-                            {systemHealth?.status === 'healthy' ? '✅ Saudável' : '⚠️ Degradado'}
+                            {systemHealth?.status === 'healthy' ? 'Saudável' : 'Degradado'}
                         </p>
                     </div>
 
                     <div className={`status-card ${systemHealth?.components?.redis?.status === 'up' ? 'healthy' : 'degraded'}`}>
                         <h4>Redis</h4>
                         <p className="status-value">
-                            {systemHealth?.components?.redis?.connected ? '✅ Conectado' : '❌ Desconectado'}
+                            {systemHealth?.components?.redis?.connected ? 'Conectado' : 'Desconectado'}
                         </p>
                     </div>
 
                     <div className="status-card healthy">
                         <h4>Serviço de Auditoria</h4>
-                        <p className="status-value">✅ Ativo</p>
+                        <p className="status-value">Ativo</p>
                         <small>Uptime: {Math.floor(systemHealth?.components?.auditService?.uptime || 0)}s</small>
                     </div>
 
@@ -100,10 +112,10 @@ const Audit = () => {
             {/* Configurações Ativas */}
             {config && (
                 <div className="audit-config">
-                    <h3>⚙️ Configurações Ativas</h3>
+                    <h3>Configurações Ativas</h3>
                     <div className="config-grid">
                         <div className="config-section">
-                            <h4>📊 Logging</h4>
+                            <h4>Logging</h4>
                             <ul>
                                 <li><strong>Nível:</strong> {config.logging.level}</li>
                                 <li><strong>Ações Habilitadas:</strong> {config.logging.enabledActions.length}</li>
@@ -112,7 +124,7 @@ const Audit = () => {
                         </div>
 
                         <div className="config-section">
-                            <h4>💾 Armazenamento</h4>
+                            <h4>Armazenamento</h4>
                             <ul>
                                 <li><strong>Estratégia:</strong> {config.storage.strategy}</li>
                                 <li><strong>TTL Redis:</strong> {config.storage.redis.ttl}s</li>
@@ -121,7 +133,7 @@ const Audit = () => {
                         </div>
 
                         <div className="config-section">
-                            <h4>⚡ Performance</h4>
+                            <h4>Performance</h4>
                             <ul>
                                 <li><strong>Assíncrono:</strong> {config.performance.async ? 'Sim' : 'Não'}</li>
                                 <li><strong>Buffer:</strong> {config.performance.buffer ? 'Ativo' : 'Inativo'}</li>
@@ -130,7 +142,7 @@ const Audit = () => {
                         </div>
 
                         <div className="config-section">
-                            <h4>🚨 Alertas</h4>
+                            <h4>Alertas</h4>
                             <ul>
                                 <li><strong>Status:</strong> {config.alerts.enabled ? 'Habilitados' : 'Desabilitados'}</li>
                                 <li><strong>Regras Ativas:</strong> {config.alerts.rules.length}</li>
@@ -142,27 +154,27 @@ const Audit = () => {
 
             {/* Ações de Manutenção */}
             <div className="maintenance-actions">
-                <h3>🔧 Ações de Manutenção</h3>
+                <h3>Ações de Manutenção</h3>
                 <div className="actions-grid">
                     <button
                         onClick={performCleanup}
                         className="maintenance-btn cleanup"
                     >
-                        🧹 Limpar Logs Antigos
+                        Limpar Logs Antigos
                     </button>
 
                     <button
                         onClick={loadSystemInfo}
                         className="maintenance-btn refresh"
                     >
-                        🔄 Atualizar Status
+                        Atualizar Status
                     </button>
 
                     <button
                         onClick={() => window.location.reload()}
                         className="maintenance-btn restart"
                     >
-                        ♻️ Recarregar Painel
+                        Recarregar Painel
                     </button>
                 </div>
             </div>
@@ -173,9 +185,10 @@ const Audit = () => {
             {/* Footer Informativo */}
             <div className="audit-footer">
                 <p>
-                    Sistema de Auditoria v1.0 |
+                    Sistema de Auditoria do aplicativo Minha Biblioteca v1.0 |
                     Gerado em {new Date().toLocaleString('pt-BR')} |
-                    <strong>Confidencial</strong> - Acesso restrito a administradores
+                    <strong>Documento Confidencial</strong></p>
+                <p>Acesso restrito a administradores
                 </p>
             </div>
         </div>

@@ -132,6 +132,15 @@ class AuditService {
      * Salva um log individual
      */
     async save(logData) {
+        // Garante que há um logId - essencial para o Redis
+        if (!logData.metadata) {
+            logData.metadata = {};
+        }
+        if (!logData.metadata.logId) {
+            logData.metadata.logId = generateTraceId();
+            console.log('🔧 LogId gerado automaticamente:', logData.metadata.logId);
+        }
+
         const promises = [];
 
         // Salva no Redis se habilitado
@@ -178,18 +187,32 @@ class AuditService {
      * Salva no Redis
      */
     async saveToRedis(logData) {
-        const key = `${AUDIT_CONFIG.STORAGE.redis.keyPrefix}${logData.metadata.logId}`;
+        const logId = logData.metadata?.logId;
+        console.log('💾 REDIS SAVE - LogId:', logId, 'Type:', typeof logId);
+
+        if (!logId) {
+            throw new Error('LogId é obrigatório para salvar no Redis');
+        }
+
+        const key = `${AUDIT_CONFIG.STORAGE.redis.keyPrefix}${logId}`;
         const ttl = AUDIT_CONFIG.STORAGE.redis.ttl;
+
+        console.log('💾 REDIS SAVE - Key:', key, 'TTL:', ttl);
 
         await redis.setex(key, ttl, JSON.stringify(logData));
 
         // Adiciona à lista ordenada por timestamp
         const listKey = `${AUDIT_CONFIG.STORAGE.redis.keyPrefix}timeline`;
-        await redis.zadd(listKey, Date.now(), logData.metadata.logId);
+        const timestamp = logData.timestamp || Date.now();
+        console.log('💾 REDIS TIMELINE - Adding:', logId, 'at timestamp:', timestamp);
+
+        await redis.zadd(listKey, timestamp, logId);
 
         // Mantém apenas os logs mais recentes
         const maxLogs = AUDIT_CONFIG.STORAGE.redis.maxLogs;
         await redis.zremrangebyrank(listKey, 0, -(maxLogs + 1));
+
+        console.log('✅ REDIS SAVE COMPLETO para logId:', logId);
     }
 
     /**

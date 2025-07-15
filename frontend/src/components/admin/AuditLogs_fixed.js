@@ -5,10 +5,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AuditLogs.css';
 
 const AuditLogs = () => {
+    const navigate = useNavigate();
     const [logs, setLogs] = useState([]);
     const [stats, setStats] = useState(null);
     const [summary, setSummary] = useState(null);
@@ -40,19 +42,10 @@ const AuditLogs = () => {
                 axios.get('/api/audit/summary')
             ]);
 
-            // Debug: Log das respostas das APIs
-            console.log('📊 Logs Response:', logsResponse.data);
-            console.log('📈 Stats Response:', statsResponse.data);
-            console.log('📋 Summary Response:', summaryResponse.data);
-
             setLogs(logsResponse.data.data?.logs || logsResponse.data.logs || []);
             setStats(statsResponse.data.data || statsResponse.data || {});
             setSummary(summaryResponse.data.data || summaryResponse.data || {});
-
-            // Debug: Log dos dados processados
-            console.log('🔍 Processed Summary:', summaryResponse.data.data || summaryResponse.data || {});
         } catch (err) {
-            console.error('❌ Erro ao carregar dados:', err);
             setError(err.response?.data?.message || 'Erro ao carregar dados de auditoria');
         } finally {
             setLoading(false);
@@ -130,23 +123,6 @@ const AuditLogs = () => {
         }
     };
 
-    const generateTestData = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.post('/api/audit/generate-test-data');
-
-            if (response.data.success) {
-                alert(`✅ ${response.data.data.generatedLogs} logs de teste gerados com sucesso!`);
-                // Recarrega os dados após gerar
-                await loadInitialData();
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || 'Erro ao gerar dados de teste');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const formatDateTime = (timestamp) => {
         return new Date(timestamp).toLocaleString('pt-BR');
     };
@@ -187,6 +163,14 @@ const AuditLogs = () => {
     return (
         <div className="audit-logs-container">
             <div className="audit-header">
+                <div className="header-top">
+                    <button
+                        onClick={() => navigate('/admin/dashboard')}
+                        className="btn btn-secondary btn-back"
+                    >
+                        ← Voltar ao Dashboard
+                    </button>
+                </div>
                 <h2>Logs de Auditoria</h2>
                 <p>Monitor de atividades administrativas em tempo real</p>
             </div>
@@ -297,9 +281,6 @@ const AuditLogs = () => {
                             </button>
                             <button onClick={() => exportLogs('csv')} className="btn btn-success">
                                 Exportar CSV
-                            </button>
-                            <button onClick={generateTestData} className="btn btn-warning">
-                                🧪 Gerar Dados de Teste
                             </button>
                         </div>
                     </div>

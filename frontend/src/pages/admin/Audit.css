@@ -45,7 +45,34 @@
     }
 }
 
-/* ========== HEADER ========== */
+/* ========== HEADER E NAVEGAÇÃO ========== */
+.page-header-top {
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: transparent;
+    color: #6c757d;
+    border: 2px solid #6c757d;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+    font-weight: bold;
+}
+
+.btn-back:hover {
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+}
+
 .audit-page-header {
     text-align: center;
     margin-bottom: 30px;
@@ -281,6 +308,11 @@
 
     .audit-page-header h1 {
         font-size: 1.5rem;
+    }
+
+    .btn-back {
+        font-size: 0.8rem;
+        padding: 6px 12px;
     }
 
     .status-card {
