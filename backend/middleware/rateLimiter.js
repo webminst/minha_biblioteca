@@ -1,5 +1,5 @@
 // middleware/rateLimiter.js
-const { redis, getRedisStatus } = require('../config/redis');
+const { redis, getRedisStatus, isRedisConnected } = require('../config/redis');
 const {
     RATE_LIMIT_CONFIG,
     TRUSTED_NETWORKS,
@@ -7,12 +7,6 @@ const {
     getMessage,
     ACTIVE_PROFILE
 } = require('../config/rateLimitConfig');
-
-// Helper para verificar se Redis está conectado
-const isRedisConnected = () => {
-    const status = getRedisStatus();
-    return status.connected;
-};
 
 /**
  * Classe para gerenciar Rate Limiting com Redis

@@ -191,9 +191,15 @@ process.on('SIGINT', async () => {
     await redis.disconnect();
 });
 
+// Função para verificar se Redis está conectado
+const isRedisConnected = () => {
+    return isConnected;
+};
+
 module.exports = {
     redis,
     redisHelpers,
     getRedisStatus,
-    safeRedisOperation
+    safeRedisOperation,
+    isRedisConnected
 };
