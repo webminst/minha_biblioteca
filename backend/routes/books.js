@@ -12,6 +12,9 @@ const {
   cacheStatsMiddleware
 } = require('../middleware/cacheMiddleware');
 
+// NOVO: Importa middlewares de auditoria
+const { auditAdminActions, auditCriticalActions } = require('../middleware/auditLogger');
+
 // Importa DTOs e middlewares de validação - NOVO
 const {
   CreateBookDTO,
@@ -280,6 +283,7 @@ router.get('/:id',
 router.post('/',
   protect,
   authorizeRoles('admin', 'editor'),
+  auditAdminActions(), // NOVO: Auditoria para ações administrativas
   validateInput(CreateBookDTO), // Valida dados de entrada
   transformOutput(BookResponseDTO, 'toPublicObject'), // Transforma saída
   invalidateCacheMiddleware('books', 'create'), // NOVO: Invalida cache após criação
@@ -303,6 +307,7 @@ router.post('/',
 router.put('/:id',
   protect,
   authorizeRoles('admin', 'editor'),
+  auditAdminActions(), // NOVO: Auditoria para ações administrativas
   validateId,
   validateInput(UpdateBookDTO),
   transformOutput(BookResponseDTO),
@@ -324,6 +329,7 @@ router.put('/:id',
 router.delete('/:id',
   protect,
   authorizeRoles('admin'),
+  auditCriticalActions(), // NOVO: Auditoria crítica para deleções
   validateId,
   transformOutput(ApiResponseDTO),
   invalidateCacheMiddleware('books', 'delete'), // NOVO: Invalida cache após exclusão

@@ -156,12 +156,14 @@ router.get('/search/:term', cacheMiddleware('filter'), async (req, res, next) =>
 });
 
 // GET /api/sermons/:id - Busca sermão específico por ID
-router.get('/:id', validateId, cacheMiddleware('detail'), transformOutput, async (req, res, next) => {
+router.get('/:id', validateId, async (req, res) => {
   try {
     const sermon = await SermonService.findById(req.params.id);
     res.json(ApiResponseDTO.success(sermon, 'Sermão obtido com sucesso'));
   } catch (error) {
-    next(error);
+    res.status(error.statusCode || 500).json(
+      ApiResponseDTO.error(error.message || 'Erro interno', null, error.statusCode || 500)
+    );
   }
 });
 
@@ -171,7 +173,6 @@ router.post('/',
   protect,
   authorizeRoles('admin', 'editor'),
   validateInput(CreateSermonDTO),
-  transformOutput,
   async (req, res, next) => {
     try {
       const savedSermon = await SermonService.create(req.validatedData, req.user._id);
@@ -188,7 +189,22 @@ router.put('/:id',
   authorizeRoles('admin', 'editor'),
   validateId,
   validateInput(UpdateSermonDTO),
-  transformOutput,
+  async (req, res, next) => {
+    try {
+      const updatedSermon = await SermonService.update(req.params.id, req.validatedData, req.user._id);
+      res.json(ApiResponseDTO.success(updatedSermon, 'Sermão atualizado com sucesso'));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// PATCH /api/sermons/:id - Atualizar sermão existente (compatibilidade)
+router.patch('/:id',
+  protect,
+  authorizeRoles('admin', 'editor'),
+  validateId,
+  validateInput(UpdateSermonDTO),
   async (req, res, next) => {
     try {
       const updatedSermon = await SermonService.update(req.params.id, req.validatedData, req.user._id);
@@ -205,7 +221,6 @@ router.delete('/:id',
   protect,
   authorizeRoles('admin'),
   validateId,
-  transformOutput,
   async (req, res, next) => {
     try {
       const result = await SermonService.delete(req.params.id);

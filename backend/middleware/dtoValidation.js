@@ -17,10 +17,17 @@ const validateInput = (DTOClass, source = 'body') => {
             // Obtém os dados da fonte especificada
             const data = req[source];
 
+            console.log('=== DEBUG VALIDAÇÃO DTO ===');
+            console.log('Classe DTO:', DTOClass.name);
+            console.log('Dados recebidos:', JSON.stringify(data, null, 2));
+
             // Valida usando o DTO
             const result = DTOClass.validateAndCreate(data);
 
             if (!result.success) {
+                console.log('❌ Validação falhou:');
+                console.log('Erros:', JSON.stringify(result.errors, null, 2));
+
                 return res.status(400).json(
                     ApiResponseDTO.error(
                         'Dados de entrada inválidos',
@@ -29,6 +36,9 @@ const validateInput = (DTOClass, source = 'body') => {
                     )
                 );
             }
+
+            console.log('✅ Validação bem-sucedida');
+            console.log('Dados validados:', JSON.stringify(result.data, null, 2));
 
             // Armazena os dados validados e transformados
             req.validatedData = result.data;

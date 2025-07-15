@@ -34,6 +34,7 @@ import AdminStudiesList from './components/admin/AdminStudiesList';
 import StudyForm from './components/admin/StudyForm';
 import AdminBooksList from './components/admin/AdminBooksList';
 import BookForm from './components/admin/BookForm';
+import Audit from './pages/admin/Audit';
 
 import './App.css';
 
@@ -142,6 +143,9 @@ function App() {
               <Route path="admin/livros" element={<AdminBooksList />} />
               <Route path="admin/livros/novo" element={<BookForm />} />
               <Route path="admin/livros/editar/:id" element={<BookForm />} />
+
+              {/* Auditoria e Logs */}
+              <Route path="admin/auditoria" element={<Audit />} />
 
             </Route>
 

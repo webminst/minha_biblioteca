@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
         LOGIN: `${API_BASE_URL}/api/auth/login`,
         REGISTER: `${API_BASE_URL}/api/auth/register`,
         VERIFY: `${API_BASE_URL}/api/auth/verify`,
+        REFRESH: `${API_BASE_URL}/api/auth/refresh`, // NOVO: Endpoint de refresh
     },
 
     // Sermons endpoints

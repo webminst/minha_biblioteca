@@ -11,6 +11,9 @@ const {
   clearAttemptsMiddleware
 } = require('../middleware/rateLimiter');
 
+// NOVO: Importa middlewares de auditoria
+const { auditAuthActions, auditCriticalActions } = require('../middleware/auditLogger');
+
 /**
  * Rotas de autenticação
  * Gerencia login e registro de usuários administrativos
@@ -18,6 +21,9 @@ const {
 
 // Aplica rate limiting geral a todas as rotas de autenticação
 router.use(authRateLimit);
+
+// NOVO: Aplica auditoria específica para autenticação
+router.use(auditAuthActions());
 
 // Função auxiliar para gerar JWT (DEPRECIADA - use generateSecureToken)
 const generateToken = (id, role) => {
@@ -27,54 +33,56 @@ const generateToken = (id, role) => {
 
 // ========== ROTA DE REGISTRO ========== 
 // POST /api/auth/register - Criar primeiro usuário admin
-router.post('/register', async (req, res) => {
-  try {
-    const { username, password, role } = req.body;
+router.post('/register',
+  auditCriticalActions(), // NOVO: Auditoria crítica para criação de usuários
+  async (req, res) => {
+    try {
+      const { username, password, role } = req.body;
 
-    // Validação básica
-    if (!username || !password) {
-      return res.status(400).json({
-        message: 'Username e senha são obrigatórios'
+      // Validação básica
+      if (!username || !password) {
+        return res.status(400).json({
+          message: 'Username e senha são obrigatórios'
+        });
+      }
+
+      // Verifica se usuário já existe
+      const userExists = await User.findOne({ username });
+      if (userExists) {
+        return res.status(400).json({
+          message: 'Nome de usuário já existe'
+        });
+      }
+
+      // Cria novo usuário
+      const user = await User.create({
+        username,
+        password, // Senha será hasheada automaticamente pelo schema
+        role: role || 'admin'
+      });
+
+      // Gera tokens seguros para o novo usuário
+      const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
+      const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
+
+      // Retorna dados do usuário criado
+      res.status(201).json({
+        _id: user._id,
+        username: user.username,
+        role: user.role,
+        token: accessToken,
+        refreshToken: refreshToken,
+        message: 'Usuário criado com sucesso',
+        expiresIn: '15m'
+      });
+
+    } catch (error) {
+      console.error('Erro no registro:', error);
+      res.status(500).json({
+        message: 'Erro interno do servidor'
       });
     }
-
-    // Verifica se usuário já existe
-    const userExists = await User.findOne({ username });
-    if (userExists) {
-      return res.status(400).json({
-        message: 'Nome de usuário já existe'
-      });
-    }
-
-    // Cria novo usuário
-    const user = await User.create({
-      username,
-      password, // Senha será hasheada automaticamente pelo schema
-      role: role || 'admin'
-    });
-
-    // Gera tokens seguros para o novo usuário
-    const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
-    const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
-
-    // Retorna dados do usuário criado
-    res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      role: user.role,
-      token: accessToken,
-      refreshToken: refreshToken,
-      message: 'Usuário criado com sucesso',
-      expiresIn: '15m'
-    });
-
-  } catch (error) {
-    console.error('Erro no registro:', error);
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
-  }
-});
+  });
 
 // ========== ROTA DE LOGIN ==========
 // POST /api/auth/login - Autenticar usuário

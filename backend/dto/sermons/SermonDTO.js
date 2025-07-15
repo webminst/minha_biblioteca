@@ -21,6 +21,16 @@ class CreateSermonDTO extends BaseDTO {
                     'string.max': 'Título não pode exceder 200 caracteres'
                 }),
 
+            // Pregador
+            speaker: Joi.string()
+                .optional()
+                .trim()
+                .max(100)
+                .default('Giovanni Guimarães')
+                .messages({
+                    'string.max': 'Nome do pregador não pode exceder 100 caracteres'
+                }),
+
             // Referência bíblica
             biblicalReference: Joi.string()
                 .required()
@@ -33,12 +43,13 @@ class CreateSermonDTO extends BaseDTO {
                 }),
 
             book: Joi.string()
-                .required()
                 .trim()
                 .min(2)
                 .max(50)
+                .allow('')
+                .optional()
                 .messages({
-                    'string.empty': 'Livro bíblico é obrigatório'
+                    'string.min': 'Livro bíblico deve ter pelo menos 2 caracteres'
                 }),
 
             chapter: Joi.number()
@@ -164,6 +175,22 @@ class CreateSermonDTO extends BaseDTO {
                     'number.max': 'Duração não pode exceder 300 minutos'
                 }),
 
+            local: Joi.string()
+                .optional()
+                .trim()
+                .max(150)
+                .allow('')
+                .messages({
+                    'string.max': 'Local não pode exceder 150 caracteres'
+                }),
+
+            date: Joi.date()
+                .optional()
+                .max('now')
+                .messages({
+                    'date.max': 'Data não pode ser futura'
+                }),
+
             series: Joi.string()
                 .optional()
                 .trim()
@@ -182,10 +209,10 @@ class CreateSermonDTO extends BaseDTO {
                 }),
 
             // Recursos adicionais
-            audioUrl: BaseDTO.commonValidations.url.optional(),
-            videoUrl: BaseDTO.commonValidations.url.optional(),
-            slidesUrl: BaseDTO.commonValidations.url.optional(),
-            notesUrl: BaseDTO.commonValidations.url.optional(),
+            audioUrl: Joi.string().uri().allow('').optional(),
+            videoUrl: Joi.string().uri().allow('').optional(),
+            slidesUrl: Joi.string().uri().allow('').optional(),
+            notesUrl: Joi.string().uri().allow('').optional(),
 
             // Status
             isPublished: Joi.boolean().default(true),
@@ -272,6 +299,7 @@ class SermonResponseDTO extends BaseDTO {
             tags: Joi.array().items(Joi.string()),
             audience: Joi.string(),
             preachedDate: Joi.date(),
+            date: Joi.date(),
             duration: Joi.number(),
             series: Joi.string().allow(''),
             seriesOrder: Joi.number(),
@@ -309,6 +337,7 @@ class SermonResponseDTO extends BaseDTO {
             tags: data.tags || [],
             audience: data.audience,
             preachedDate: data.preachedDate || null,
+            date: data.date || null,
             duration: data.duration || null,
             series: data.series || null,
             seriesOrder: data.seriesOrder || null,
@@ -338,6 +367,7 @@ class SermonResponseDTO extends BaseDTO {
             tags: data.tags?.slice(0, 3) || [],
             summary: data.summary?.substring(0, 150) + '...' || '',
             preachedDate: data.preachedDate || null,
+            date: data.date || null,
             duration: data.duration || null,
             series: data.series || null,
             featured: data.featured || false,

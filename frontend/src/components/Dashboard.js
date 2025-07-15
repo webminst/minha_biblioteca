@@ -80,6 +80,15 @@ function Dashboard({ user }) {
                         {loading ? 'Carregando...' : `${counts.books} livro${counts.books !== 1 ? 's' : ''} cadastrado${counts.books !== 1 ? 's' : ''}`}
                     </span>
                 </div>
+
+                <div className="dashboard-item">
+                    <Link to="/admin/auditoria" className="dashboard-link">
+                        🔍 Logs e Auditoria
+                    </Link>
+                    <span className="item-count">
+                        Visualizar logs do sistema
+                    </span>
+                </div>
             </div>
 
             {/* Estatísticas resumidas */}

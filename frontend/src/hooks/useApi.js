@@ -56,11 +56,8 @@ export const useApi = (url, options = {}, dependencies = []) => {
                 }
             };
 
-            // Adiciona token se disponível
-            const token = localStorage.getItem('userToken');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
+            // O token é adicionado automaticamente pelo interceptor do authService
+            // Não é mais necessário adicionar manualmente aqui
 
             const response = await axios(url, config);
             // Extrai dados com compatibilidade DTO

@@ -1,0 +1,386 @@
+/* src/pages/admin/Audit.css */
+/**
+ * Estilos para a Página de Auditoria
+ * Layout executivo e profissional
+ */
+
+.audit-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ========== LOADING ========== */
+.audit-page-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+}
+
+.audit-page-loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+/* ========== HEADER ========== */
+.audit-page-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.audit-page-header h1 {
+    margin: 0;
+    font-size: 2.8rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.audit-page-header p {
+    margin: 15px 0 0 0;
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ========== STATUS DO SISTEMA ========== */
+.system-status {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.system-status h3 {
+    margin: 0 0 25px 0;
+    color: #495057;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.status-card {
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.status-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.status-card.healthy {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #28a745;
+}
+
+.status-card.degraded {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-color: #ffc107;
+}
+
+.status-card h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.status-value {
+    margin: 0 0 5px 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #495057;
+}
+
+.status-card small {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+/* ========== CONFIGURAÇÕES ========== */
+.audit-config {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.audit-config h3 {
+    margin: 0 0 25px 0;
+    color: #495057;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.config-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.config-section h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.config-section ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.config-section li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+}
+
+.config-section li:last-child {
+    border-bottom: none;
+}
+
+.config-section strong {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* ========== AÇÕES DE MANUTENÇÃO ========== */
+.maintenance-actions {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.maintenance-actions h3 {
+    margin: 0 0 25px 0;
+    color: #495057;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.maintenance-btn {
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.maintenance-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.maintenance-btn.cleanup {
+    background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+    color: white;
+}
+
+.maintenance-btn.cleanup:hover {
+    background: linear-gradient(135deg, #e84393 0%, #fd79a8 100%);
+}
+
+.maintenance-btn.refresh {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+}
+
+.maintenance-btn.refresh:hover {
+    background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+}
+
+.maintenance-btn.restart {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    color: white;
+}
+
+.maintenance-btn.restart:hover {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+}
+
+/* ========== FOOTER ========== */
+.audit-footer {
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    backdrop-filter: blur(10px);
+}
+
+.audit-footer p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.audit-footer strong {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media (max-width: 768px) {
+    .audit-page {
+        padding: 15px;
+    }
+
+    .audit-page-header {
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .audit-page-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .audit-page-header p {
+        font-size: 1rem;
+    }
+
+    .system-status,
+    .audit-config,
+    .maintenance-actions {
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .status-grid,
+    .config-grid,
+    .actions-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .audit-footer {
+        padding: 20px;
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .audit-page-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .system-status h3,
+    .audit-config h3,
+    .maintenance-actions h3 {
+        font-size: 1.3rem;
+    }
+
+    .maintenance-btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+/* ========== ANIMAÇÕES ========== */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.audit-page>* {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* ========== TEMAS ESCUROS (Opcional) ========== */
+@media (prefers-color-scheme: dark) {
+    .audit-page {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        color: #e2e8f0;
+    }
+
+    .system-status,
+    .audit-config,
+    .maintenance-actions,
+    .audit-footer {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+
+    .config-section {
+        background: #1a202c;
+        border-left-color: #667eea;
+    }
+
+    .status-card.healthy {
+        background: linear-gradient(135deg, #22543d 0%, #276749 100%);
+        border-color: #38a169;
+    }
+
+    .status-card.degraded {
+        background: linear-gradient(135deg, #744210 0%, #975a16 100%);
+        border-color: #d69e2e;
+    }
+}
