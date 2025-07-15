@@ -3,14 +3,20 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const { generateSecureToken, verifySecureToken, authRateLimit } = require('../middleware/jwtSecurity');
+const { generateSecureToken, verifySecureToken } = require('../middleware/jwtSecurity');
+const {
+  loginRateLimit,
+  authRateLimit,
+  recordAttemptMiddleware,
+  clearAttemptsMiddleware
+} = require('../middleware/rateLimiter');
 
 /**
  * Rotas de autenticação
  * Gerencia login e registro de usuários administrativos
  */
 
-// Aplica rate limiting a todas as rotas de autenticação
+// Aplica rate limiting geral a todas as rotas de autenticação
 router.use(authRateLimit);
 
 // Função auxiliar para gerar JWT (DEPRECIADA - use generateSecureToken)
@@ -72,54 +78,70 @@ router.post('/register', async (req, res) => {
 
 // ========== ROTA DE LOGIN ==========
 // POST /api/auth/login - Autenticar usuário
-router.post('/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
+router.post('/login',
+  loginRateLimit, // Rate limiting específico para login
+  async (req, res) => {
+    try {
+      const { username, password } = req.body;
 
-    // Validação básica
-    if (!username || !password) {
-      return res.status(400).json({
-        message: 'Username e senha são obrigatórios'
+      // Registra tentativa de login
+      const recordAttempt = recordAttemptMiddleware('LOGIN');
+      await new Promise((resolve) => recordAttempt(req, res, resolve));
+
+      // Validação básica
+      if (!username || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Username e senha são obrigatórios'
+        });
+      }
+
+      // Busca usuário no banco
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Credenciais inválidas',
+          attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0
+        });
+      }
+
+      // Verifica senha usando método do schema
+      const isPasswordValid = await user.matchPassword(password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Credenciais inválidas',
+          attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0
+        });
+      }
+
+      // Login bem-sucedido - limpa tentativas e gera tokens seguros
+      const clearAttempts = clearAttemptsMiddleware('LOGIN');
+      await new Promise((resolve) => clearAttempts(req, res, resolve));
+
+      const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
+      const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
+
+      res.json({
+        success: true,
+        _id: user._id,
+        username: user.username,
+        role: user.role,
+        token: accessToken,
+        refreshToken: refreshToken,
+        message: 'Login realizado com sucesso',
+        expiresIn: '15m' // Access token expira em 15 minutos
+      });
+
+    } catch (error) {
+      console.error('Erro no login:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erro interno do servidor'
       });
     }
-
-    // Busca usuário no banco
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(401).json({
-        message: 'Credenciais inválidas'
-      });
-    }
-
-    // Verifica senha usando método do schema
-    const isPasswordValid = await user.matchPassword(password);
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        message: 'Credenciais inválidas'
-      });
-    }
-
-    // Login bem-sucedido - gera tokens seguros
-    const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
-    const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
-
-    res.json({
-      _id: user._id,
-      username: user.username,
-      role: user.role,
-      token: accessToken,
-      refreshToken: refreshToken,
-      message: 'Login realizado com sucesso',
-      expiresIn: '15m' // Access token expira em 15 minutos
-    });
-
-  } catch (error) {
-    console.error('Erro no login:', error);
-    res.status(500).json({
-      message: 'Erro interno do servidor'
-    });
-  }
-});
+  });
 
 // ========== ROTA DE VERIFICAÇÃO ==========
 // POST /api/auth/verify - Verificar validade do token

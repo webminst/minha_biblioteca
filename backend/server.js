@@ -17,6 +17,8 @@ const sermonsRouter = require('./routes/sermons');
 const studiesRouter = require('./routes/studies');
 const booksRouter = require('./routes/books');
 const authRouter = require('./routes/auth');
+const securityRouter = require('./routes/security');
+const testRouter = require('./routes/test');
 
 // Importa middlewares de erro
 const { globalErrorHandler, notFound, requestLogger } = require('./middleware/errorHandler');
@@ -129,6 +131,8 @@ app.use('/api/sermons', sermonsRouter); // Todas as rotas em sermonsRouter serã
 app.use('/api/studies', studiesRouter);   // Todas as rotas em studiesRouter serão prefixadas com /api/studies
 app.use('/api/books', booksRouter);     // Todas as rotas em booksRouter serão prefixadas com /api/books
 app.use('/api/auth', authRouter); // Usa as rotas de autenticação (ex: /api/auth/login, /api/auth/register)
+app.use('/api/security', securityRouter); // NOVO: Rotas de monitoramento de segurança
+app.use('/api/test', testRouter); // NOVO: Rotas de teste para rate limiting
 
 // --- Middlewares de Erro (devem vir depois das rotas) ---
 // Middleware para rotas não encontradas

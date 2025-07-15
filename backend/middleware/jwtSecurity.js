@@ -119,33 +119,11 @@ function applySecurityHeaders(req, res, next) {
 }
 
 /**
- * Middleware para rate limiting básico de autenticação
+ * DEPRECIADO: Rate limiting básico movido para rateLimiter.js
+ * Mantido para compatibilidade temporária
  */
-const authAttempts = new Map();
-
 function authRateLimit(req, res, next) {
-    const clientIP = req.ip || req.connection.remoteAddress;
-    const now = Date.now();
-    const windowMs = 15 * 60 * 1000; // 15 minutos
-    const maxAttempts = 5; // Máximo 5 tentativas por IP
-
-    // Limpa tentativas antigas
-    const attempts = authAttempts.get(clientIP) || [];
-    const recentAttempts = attempts.filter(timestamp => now - timestamp < windowMs);
-
-    if (recentAttempts.length >= maxAttempts) {
-        return res.status(429).json({
-            message: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
-            retryAfter: Math.ceil((recentAttempts[0] + windowMs - now) / 1000)
-        });
-    }
-
-    // Adiciona tentativa atual (apenas para rotas de login)
-    if (req.path.includes('/login') && req.method === 'POST') {
-        recentAttempts.push(now);
-        authAttempts.set(clientIP, recentAttempts);
-    }
-
+    console.warn('⚠️ authRateLimit depreciado. Use o novo sistema em rateLimiter.js');
     next();
 }
 
