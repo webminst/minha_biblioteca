@@ -13,6 +13,16 @@ export const API_ENDPOINTS = {
         REGISTER: `${API_BASE_URL}/api/auth/register`,
         VERIFY: `${API_BASE_URL}/api/auth/verify`,
         REFRESH: `${API_BASE_URL}/api/auth/refresh`, // NOVO: Endpoint de refresh
+
+        // Two Factor Authentication endpoints
+        TWO_FACTOR: {
+            SETUP: `${API_BASE_URL}/api/auth2fa/setup`,
+            ENABLE: `${API_BASE_URL}/api/auth2fa/enable`,
+            VERIFY: `${API_BASE_URL}/api/auth2fa/verify`,
+            DISABLE: `${API_BASE_URL}/api/auth2fa/disable`,
+            STATUS: `${API_BASE_URL}/api/auth2fa/status`,
+            REGENERATE_BACKUP_CODES: `${API_BASE_URL}/api/auth2fa/backup-codes/regenerate`,
+        }
     },
 
     // Sermons endpoints

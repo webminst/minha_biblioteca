@@ -17,40 +17,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['admin', 'editor', 'viewer'], // Exemplo de roles
     default: 'admin' // Para o seu caso, pode ser sempre 'admin'
-  },
-
-  // ========== CAMPOS PARA 2FA ==========
-  twoFactorAuth: {
-    enabled: {
-      type: Boolean,
-      default: false
-    },
-    secret: {
-      type: String, // Secret TOTP criptografado
-      default: null
-    },
-    backupCodes: [{
-      code: {
-        type: String,
-        required: true
-      },
-      used: {
-        type: Boolean,
-        default: false
-      },
-      usedAt: {
-        type: Date,
-        default: null
-      }
-    }],
-    setupAt: {
-      type: Date,
-      default: null
-    },
-    lastVerified: {
-      type: Date,
-      default: null
-    }
   }
 }, {
   timestamps: true
@@ -71,29 +37,6 @@ UserSchema.pre('save', async function (next) {
 // Método para comparar a senha fornecida com a senha hasheada
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
-};
-
-// ========== MÉTODOS PARA 2FA ==========
-
-/**
- * Verifica se 2FA está habilitado
- */
-UserSchema.methods.isTwoFactorEnabled = function () {
-  return this.twoFactorAuth.enabled;
-};
-
-/**
- * Obtém códigos de backup não utilizados
- */
-UserSchema.methods.getAvailableBackupCodes = function () {
-  return this.twoFactorAuth.backupCodes.filter(code => !code.used);
-};
-
-/**
- * Conta códigos de backup disponíveis
- */
-UserSchema.methods.getBackupCodesCount = function () {
-  return this.getAvailableBackupCodes().length;
 };
 
 //module.exports = mongoose.model('User', UserSchema);

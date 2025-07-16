@@ -45,10 +45,12 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
     const result = await SermonService.findAll(options);
 
     // Criar paginação padronizada
+    // Corrigido: usa o campo correto de total de itens
+    const totalItems = (result.pagination && result.pagination.total) || result.total || result.totalSermons || 0;
     const pagination = new PaginationDTO({
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 10,
-      totalItems: result.totalSermons || 0
+      totalItems
     });
 
     const paginationResult = pagination.validate();

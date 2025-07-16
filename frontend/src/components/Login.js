@@ -24,6 +24,13 @@ function Login({ onLoginSuccess }) {
       // Usa o novo serviço de autenticação com refresh automático
       const userData = await login(username, password);
 
+      // Verifica se precisa de verificação 2FA
+      if (userData?.requires2FA) {
+        // Usuário será redirecionado automaticamente pelo TwoFactorProtectedRoute
+        navigate('/admin/dashboard');
+        return;
+      }
+
       // Chama a função passada por prop para atualizar o estado de autenticação no App.js
       if (onLoginSuccess) {
         onLoginSuccess(userData);

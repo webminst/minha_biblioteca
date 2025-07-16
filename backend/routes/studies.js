@@ -48,10 +48,9 @@ router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
 // GET /api/studies - Lista todos os estudos
 router.get('/', cacheMiddleware('list'), async (req, res, next) => {
   try {
-    // Primeiro, vamos usar o método tradicional para debug
     const options = {
-      page: req.query.page || 1,
-      limit: req.query.limit || 10,
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
       sortBy: req.query.sortBy || 'createdAt',
       sortOrder: req.query.sortOrder || 'desc',
       theme: req.query.theme,
@@ -62,19 +61,26 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
 
     const result = await StudyService.findAll(options);
 
-    // Resposta no formato DTO
+    // Cria objeto de paginação padronizado
+    // Corrigido: usa o campo correto de total de itens
+    const totalItems = (result.pagination && result.pagination.total) || result.total || 0;
+    const pagination = new PaginationDTO({
+      page: options.page,
+      limit: options.limit,
+      totalItems
+    });
+    const paginationResult = pagination.validate();
+    if (!paginationResult.isValid) {
+      throw new Error('Erro na paginação');
+    }
+    const paginationData = pagination.transform();
+
+    // Resposta padronizada com paginação
     res.json(
-      ApiResponseDTO.success(
+      ApiResponseDTO.paginated(
         result.studies || result.data || result,
-        'Estudos recuperados com sucesso',
-        {
-          currentPage: parseInt(options.page),
-          totalPages: Math.ceil((result.total || 0) / parseInt(options.limit)),
-          totalItems: result.total || 0,
-          itemsPerPage: parseInt(options.limit),
-          hasNextPage: parseInt(options.page) < Math.ceil((result.total || 0) / parseInt(options.limit)),
-          hasPrevPage: parseInt(options.page) > 1
-        }
+        paginationData,
+        'Estudos recuperados com sucesso'
       )
     );
   } catch (error) {

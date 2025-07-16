@@ -100,9 +100,14 @@
         padding: 20px;
     }
 
+    .dashboard-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
     .dashboard-item {
-        min-width: 200px;
-        max-width: 250px;
+        min-width: 100%;
+        max-width: 100%;
     }
 }
 
@@ -117,4 +122,44 @@
         max-width: 300px;
         min-width: auto;
     }
+}
+
+/* Estilos para seção de segurança */
+.security-section {
+    border: 2px solid #2196F3;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+}
+
+.security-section h4 {
+    color: #1976D2;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.security-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.security-link {
+    border-color: #2196F3;
+    color: #2196F3;
+    background: transparent;
+    font-size: 1em;
+    padding: 8px 16px;
+    text-align: center;
+}
+
+.security-link:hover {
+    background-color: #2196F3;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+.security-section .item-count {
+    color: #1976D2;
+    font-weight: 500;
 }

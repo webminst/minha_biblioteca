@@ -27,6 +27,10 @@ import NotFound from './pages/NotFound';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 
+// Componentes 2FA
+import { TwoFactorSetup, TwoFactorLogin, TwoFactorManagement } from './components';
+import TwoFactorProtectedRoute from './components/TwoFactorProtectedRoute';
+
 // Componentes administrativos
 import AdminSermonsList from './components/admin/AdminSermonsList';
 import SermonForm from './components/admin/SermonForm';
@@ -122,6 +126,19 @@ function App() {
             {/* Páginas de funcionalidades */}
             <Route path="busca" element={<SearchResults />} />
             <Route path="login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+
+            {/* ========== ROTAS 2FA ========== */}
+            <Route path="setup-2fa" element={
+              <TwoFactorProtectedRoute>
+                <TwoFactorSetup />
+              </TwoFactorProtectedRoute>
+            } />
+
+            <Route path="security" element={
+              <TwoFactorProtectedRoute>
+                <TwoFactorManagement />
+              </TwoFactorProtectedRoute>
+            } />
 
             {/* ========== ROTAS PROTEGIDAS (ADMIN) ========== */}
             <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>

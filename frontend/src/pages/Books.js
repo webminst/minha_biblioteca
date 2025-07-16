@@ -58,9 +58,11 @@ function Books() {
         const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
 
         // Usa helper para extrair dados de forma compatível
+        console.log('[Books] API response:', response.data);
         const booksData = extractBooks(response.data);
         const paginationData = extractPagination(response.data);
-
+        console.log('[Books] booksData:', booksData);
+        console.log('[Books] paginationData:', paginationData);
         setBooks(booksData);
         setPagination(paginationData);
       } catch (err) {

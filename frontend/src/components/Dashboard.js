@@ -89,6 +89,21 @@ function Dashboard({ user }) {
                         Visualizar logs do sistema
                     </span>
                 </div>
+
+                <div className="dashboard-item security-section">
+                    <h4>🔐 Segurança</h4>
+                    <div className="security-links">
+                        <Link to="/setup-2fa" className="dashboard-link security-link">
+                            🛡️ Configurar 2FA
+                        </Link>
+                        <Link to="/security" className="dashboard-link security-link">
+                            ⚙️ Gerenciar 2FA
+                        </Link>
+                    </div>
+                    <span className="item-count">
+                        Autenticação de dois fatores
+                    </span>
+                </div>
             </div>
 
             {/* Estatísticas resumidas */}

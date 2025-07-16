@@ -280,6 +280,128 @@ class AuthService {
             return false;
         }
     }
+
+    // ========================================
+    // MÉTODOS DE AUTENTICAÇÃO DE DOIS FATORES
+    // ========================================
+
+    /**
+     * Configura 2FA - Gera QR code e secret
+     */
+    async setupTwoFactor() {
+        try {
+            const response = await axios.post(API_ENDPOINTS.AUTH.TWO_FACTOR.SETUP);
+            return response;
+        } catch (error) {
+            console.error('Erro ao configurar 2FA:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Habilita 2FA após verificação
+     */
+    async enableTwoFactor(token) {
+        try {
+            const response = await axios.post(API_ENDPOINTS.AUTH.TWO_FACTOR.ENABLE, {
+                token
+            });
+            return response;
+        } catch (error) {
+            console.error('Erro ao habilitar 2FA:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Verifica código 2FA durante login
+     */
+    async verifyTwoFactor(token, isBackupCode = false) {
+        try {
+            const response = await axios.post(API_ENDPOINTS.AUTH.TWO_FACTOR.VERIFY, {
+                token,
+                isBackupCode
+            });
+
+            // Se a verificação for bem-sucedida, salva os novos tokens
+            if (response.data.success && response.data.tokens) {
+                this.saveTokens(response.data.tokens);
+            }
+
+            return response;
+        } catch (error) {
+            console.error('Erro ao verificar 2FA:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Desabilita 2FA
+     */
+    async disableTwoFactor() {
+        try {
+            const response = await axios.post(API_ENDPOINTS.AUTH.TWO_FACTOR.DISABLE);
+            return response;
+        } catch (error) {
+            console.error('Erro ao desabilitar 2FA:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Regenera códigos de backup
+     */
+    async regenerateBackupCodes() {
+        try {
+            const response = await axios.post(API_ENDPOINTS.AUTH.TWO_FACTOR.REGENERATE_BACKUP_CODES);
+            return response;
+        } catch (error) {
+            console.error('Erro ao regenerar códigos de backup:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Obtém status atual do 2FA
+     */
+    async getTwoFactorStatus() {
+        try {
+            const response = await axios.get(API_ENDPOINTS.AUTH.TWO_FACTOR.STATUS);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter status 2FA:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Verifica se o usuário tem 2FA habilitado
+     */
+    async hasTwoFactorEnabled() {
+        try {
+            const response = await this.getTwoFactorStatus();
+            return response.data?.enabled || false;
+        } catch (error) {
+            console.error('Erro ao verificar status 2FA:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Verifica se precisa de verificação 2FA
+     * (usado após login com credenciais)
+     */
+    needsTwoFactorVerification() {
+        const token = this.getAccessToken();
+        if (!token) return false;
+
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.type === 'partial_auth';
+        } catch (error) {
+            return false;
+        }
+    }
 }
 
 // Instância singleton

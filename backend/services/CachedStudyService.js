@@ -17,13 +17,32 @@ class CachedStudyService {
      * Busca todos os estudos com cache
      */
     async findAll(options = {}) {
-        const cacheKey = `${this.cachePrefix}:list`;
-
-        return await this.cacheService.getOrSet(
+        // Garante que page e limit são números
+        const page = Number(options.page) || 1;
+        const limit = Number(options.limit) || 10;
+        // Cria uma chave de cache única para cada combinação de filtros e paginação
+        const filtersKey = [
+            `page:${page}`,
+            `limit:${limit}`,
+            options.sortBy ? `sortBy:${options.sortBy}` : '',
+            options.sortOrder ? `sortOrder:${options.sortOrder}` : '',
+            options.theme ? `theme:${options.theme}` : '',
+            options.format ? `format:${options.format}` : '',
+            options.series ? `series:${options.series}` : '',
+            options.speaker ? `speaker:${options.speaker}` : '',
+            options.search ? `search:${options.search}` : ''
+        ].filter(Boolean).join('|');
+        const cacheKey = `${this.cachePrefix}:list:${filtersKey}`;
+        const result = await this.cacheService.getOrSet(
             cacheKey,
-            () => this.studyService.findAll(options),
+            () => this.studyService.findAll({ ...options, page, limit }),
             this.cacheService.getTTLForType('list')
         );
+        // Garante que o campo total está presente para a rota usar corretamente
+        if (result && result.pagination && typeof result.pagination.total === 'number') {
+            result.total = result.pagination.total;
+        }
+        return result;
     }
 
     /**

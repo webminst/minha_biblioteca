@@ -70,11 +70,13 @@ router.get('/',
       const options = req.validatedData;
       const result = await CachedBookService.findAll(options); // NOVO: Service com cache
 
-      // NOVO: Cria paginação padronizada (corrigido)
+
+      // Corrigido: usa o campo correto de total de itens
+      const totalItems = (result.pagination && result.pagination.total) || result.total || 0;
       const pagination = new PaginationDTO({
         page: options.page,
         limit: options.limit,
-        totalItems: result.totalBooks || 0
+        totalItems
       });
 
       const paginationResult = pagination.validate();

@@ -62,9 +62,11 @@ function Sermons() {
         const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, { params });
 
         // Usa helpers para extrair dados e paginação
+        console.log('[Sermons] API response:', response.data);
         const sermonsData = extractSermons(response.data);
         const paginationData = extractPagination(response.data);
-
+        console.log('[Sermons] sermonsData:', sermonsData);
+        console.log('[Sermons] paginationData:', paginationData);
         setSermons(sermonsData);
         setPagination(paginationData);
       } catch (err) {

@@ -9,6 +9,7 @@ const JWT_CONFIG = {
     // Expiração padrão dos tokens
     ACCESS_TOKEN_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',  // 15 minutos
     REFRESH_TOKEN_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '7d', // 7 dias
+    PARTIAL_AUTH_EXPIRY: process.env.JWT_PARTIAL_EXPIRY || '5m',  // 5 minutos (NOVO)
 
     // Issuer e audience para validação adicional
     ISSUER: process.env.JWT_ISSUER || 'pastor-portfolio-api',
@@ -29,7 +30,7 @@ const JWT_CONFIG = {
 /**
  * Gera um token JWT com configurações de segurança aprimoradas
  * @param {Object} payload - Dados do usuário
- * @param {string} type - Tipo do token ('access' ou 'refresh')
+ * @param {string} type - Tipo do token ('access', 'refresh' ou 'partial_auth')
  * @returns {string} Token JWT
  */
 function generateSecureToken(payload, type = 'access') {
@@ -44,7 +45,21 @@ function generateSecureToken(payload, type = 'access') {
         console.warn('⚠️  JWT_SECRET muito fraco! Use pelo menos 32 caracteres.');
     }
 
-    const expiry = type === 'refresh' ? JWT_CONFIG.REFRESH_TOKEN_EXPIRY : JWT_CONFIG.ACCESS_TOKEN_EXPIRY;
+    // Define expiração baseada no tipo
+    let expiry;
+    switch (type) {
+        case 'access':
+            expiry = JWT_CONFIG.ACCESS_TOKEN_EXPIRY;
+            break;
+        case 'refresh':
+            expiry = JWT_CONFIG.REFRESH_TOKEN_EXPIRY;
+            break;
+        case 'partial_auth': // NOVO
+            expiry = JWT_CONFIG.PARTIAL_AUTH_EXPIRY;
+            break;
+        default:
+            throw new Error(`Tipo de token inválido: ${type}`);
+    }
 
     // Adiciona informações de segurança ao payload
     const securePayload = {

@@ -14,6 +14,9 @@ const {
 // NOVO: Importa middlewares de auditoria
 const { auditAuthActions, auditCriticalActions } = require('../middleware/auditLogger');
 
+// NOVO: Importa serviço 2FA
+const twoFactorService = require('../services/TwoFactorService');
+
 /**
  * Rotas de autenticação
  * Gerencia login e registro de usuários administrativos
@@ -90,7 +93,7 @@ router.post('/login',
   loginRateLimit, // Rate limiting específico para login
   async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { username, password, twoFactorCode } = req.body;
 
       // Registra tentativa de login
       const recordAttempt = recordAttemptMiddleware('LOGIN');
@@ -124,12 +127,49 @@ router.post('/login',
         });
       }
 
+      // ========== LÓGICA 2FA ==========
+
+      // Verifica se 2FA está habilitado
+      if (user.twoFactorAuth.enabled) {
+        // Se não forneceu código 2FA, retorna token temporário
+        if (!twoFactorCode) {
+          const tempToken = generateSecureToken(
+            { id: user._id, role: user.role },
+            'partial_auth' // Novo tipo de token
+          );
+
+          return res.json({
+            success: false,
+            requiresTwoFactor: true,
+            tempToken: tempToken,
+            message: 'Código 2FA necessário',
+            expiresIn: '5m' // Token temporário expira em 5 minutos
+          });
+        }
+
+        // Verifica código 2FA fornecido
+        const is2FAValid = await twoFactorService.verifyLogin(user, twoFactorCode);
+
+        if (!is2FAValid) {
+          return res.status(401).json({
+            success: false,
+            message: 'Código 2FA inválido',
+            attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0
+          });
+        }
+      }
+
+      // ========== LOGIN COMPLETO ==========
+
       // Login bem-sucedido - limpa tentativas e gera tokens seguros
       const clearAttempts = clearAttemptsMiddleware('LOGIN');
       await new Promise((resolve) => clearAttempts(req, res, resolve));
 
       const accessToken = generateSecureToken({ id: user._id, role: user.role }, 'access');
       const refreshToken = generateSecureToken({ id: user._id, role: user.role }, 'refresh');
+
+      // Atualiza último login
+      await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
 
       res.json({
         success: true,
@@ -139,7 +179,8 @@ router.post('/login',
         token: accessToken,
         refreshToken: refreshToken,
         message: 'Login realizado com sucesso',
-        expiresIn: '15m' // Access token expira em 15 minutos
+        expiresIn: '15m', // Access token expira em 15 minutos
+        twoFactorEnabled: user.twoFactorAuth.enabled
       });
 
     } catch (error) {

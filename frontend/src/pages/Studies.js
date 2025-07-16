@@ -58,9 +58,11 @@ function Studies() {
         const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, { params });
 
         // Usa helper para extrair dados de forma compatível
+        console.log('[Studies] API response:', response.data);
         const studiesData = extractStudies(response.data);
         const paginationData = extractPagination(response.data);
-
+        console.log('[Studies] studiesData:', studiesData);
+        console.log('[Studies] paginationData:', paginationData);
         setStudies(studiesData);
         setPagination(paginationData);
       } catch (err) {
