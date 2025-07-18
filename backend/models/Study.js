@@ -22,40 +22,19 @@ const StudySchema = new mongoose.Schema({
     maxlength: [100, 'Referência bíblica não pode exceder 100 caracteres']
   },
 
-  // ========== CATEGORIZAÇÃO ==========
+  // ========== CATEGORIZAÇÃO ========== 
   theme: {
     type: String,
     required: false,
-    trim: true,
-    enum: [
-      'Doutrina',
-      'Vida Cristã',
-      'Evangelismo',
-      'Discipulado',
-      'Família',
-      'Oração',
-      'Estudo de Livro',
-      'Estudo de Personagem',
-      'Profecia',
-      'Apologética',
-      'Outros'
-    ]
+    trim: true
+    // Aceita qualquer string, alinhado ao DTO/frontend
   },
 
   format: {
     type: String,
     required: false,
-    trim: true,
-    enum: [
-      'Estudo Indutivo',
-      'Expositivo',
-      'Temático',
-      'Devocional',
-      'Pequeno Grupo',
-      'EBD',
-      'Conferência',
-      'Outros'
-    ]
+    trim: true
+    // Aceita qualquer string, alinhado ao DTO/frontend
   },
 
   tags: {
@@ -85,9 +64,10 @@ const StudySchema = new mongoose.Schema({
   },
 
   questions: {
-    type: [String],
+    type: [Object],
     required: false,
     validate: [questionsLimit, 'Máximo 20 perguntas permitidas']
+    // Aceita array de objetos, alinhado ao DTO/frontend
   },
 
   // ========== RECURSOS ==========
@@ -107,17 +87,18 @@ const StudySchema = new mongoose.Schema({
     required: false,
     validate: {
       validator: function (v) {
-        return !v || /^https?:\/\/.+\.pdf$/i.test(v);
+        return !v || /^https?:\/\/.+/i.test(v);
       },
-      message: 'URL deve apontar para um arquivo PDF válido'
+      message: 'URL deve ser uma URL válida'
     }
   },
 
   // ========== METADADOS ==========
   type: {
     type: String,
-    default: 'Estudo Bíblico',
-    required: true
+    required: false,
+    trim: true
+    // Aceita qualquer string, alinhado ao DTO/frontend
   },
 
   difficulty: {

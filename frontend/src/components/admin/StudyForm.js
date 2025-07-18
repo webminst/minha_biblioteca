@@ -11,7 +11,9 @@ function StudyForm() {
     const [title, setTitle] = useState('');
     const [theme, setTheme] = useState('');
     const [format, setFormat] = useState('');
-    const [reference, setReference] = useState('');
+    const [biblicalReference, setBiblicalReference] = useState('');
+    const [introduction, setIntroduction] = useState('');
+    const [application, setApplication] = useState('');
     const [series, setSeries] = useState('');
     const [tags, setTags] = useState(''); // Armazenado como string e convertido para array
     const [speaker, setSpeaker] = useState('Giovanni Guimarães');
@@ -53,7 +55,9 @@ function StudyForm() {
                     setTitle(studyData.title || '');
                     setTheme(studyData.theme || '');
                     setFormat(studyData.format || '');
-                    setReference(studyData.reference || '');
+                    setBiblicalReference(studyData.biblicalReference || '');
+                    setIntroduction(studyData.introduction || '');
+                    setApplication(studyData.application || '');
                     setSeries(studyData.series || '');
                     setTags(studyData.tags ? studyData.tags.join(', ') : ''); // Converte array para string para o input
                     setSpeaker(studyData.speaker || '');
@@ -88,7 +92,7 @@ function StudyForm() {
             title,
             theme,
             format,
-            reference,
+            biblicalReference,
             series,
             tags: tagsArray, // Envia como array
             speaker,
@@ -96,6 +100,8 @@ function StudyForm() {
             local,
             description,
             content,
+            introduction,
+            application,
             audioUrl,
             videoUrl,
             pdfUrl,
@@ -120,7 +126,9 @@ function StudyForm() {
                 setTitle('');
                 setTheme('');
                 setFormat('');
-                setReference('');
+                setBiblicalReference('');
+                setIntroduction('');
+                setApplication('');
                 setSeries('');
                 setTags('');
                 setSpeaker('');
@@ -157,8 +165,16 @@ function StudyForm() {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="reference">Referência Bíblica:</label>
-                    <input type="text" id="reference" value={reference} onChange={(e) => setReference(e.target.value)} required disabled={loading} />
+                    <label htmlFor="biblicalReference">Referência Bíblica:</label>
+                    <input type="text" id="biblicalReference" value={biblicalReference} onChange={(e) => setBiblicalReference(e.target.value)} required disabled={loading} />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="introduction">Introdução:</label>
+                    <textarea id="introduction" value={introduction} onChange={(e) => setIntroduction(e.target.value)} rows="4" required disabled={loading}></textarea>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="application">Aplicação Prática:</label>
+                    <textarea id="application" value={application} onChange={(e) => setApplication(e.target.value)} rows="3" required disabled={loading}></textarea>
                 </div>
 
                 <div className="form-group">

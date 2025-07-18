@@ -117,6 +117,10 @@ class StudyService {
      * @returns {Object} - Estudo criado
      */
     async create(studyData, userId) {
+        if (!studyData) {
+            console.error('ERRO: studyData está undefined no StudyService.create!');
+            throw new AppError('Dados do estudo não recebidos pelo backend.', 500);
+        }
         // Validações de negócio
         if (!studyData.title) {
             throw new AppError('Título é obrigatório', 400);
@@ -136,13 +140,27 @@ class StudyService {
             throw new AppError('Já existe um estudo com este título e tema', 409);
         }
 
-        const study = new Study({
+        // Mapeia biblicalReference para reference, se presente
+        const referenceValue = studyData.biblicalReference || studyData.reference || '';
+        if (!referenceValue) {
+            throw new AppError('Referência bíblica é obrigatória', 400);
+        }
+        const studyToSave = {
             ...studyData,
+            reference: referenceValue,
             createdBy: userId
-        });
+        };
+        // Remove biblicalReference do objeto salvo, se existir
+        delete studyToSave.biblicalReference;
 
-        const savedStudy = await study.save();
-        return savedStudy;
+        try {
+            const study = new Study(studyToSave);
+            const savedStudy = await study.save();
+            return savedStudy;
+        } catch (err) {
+            console.error('Erro ao salvar estudo no MongoDB:', err.message, err.errors || err);
+            throw new AppError('Erro ao salvar estudo: ' + (err.message || 'Erro desconhecido'), 400);
+        }
     }
 
     /**

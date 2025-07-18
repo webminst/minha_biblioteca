@@ -31,27 +31,22 @@ class CreateStudyDTO extends BaseDTO {
                     'string.empty': 'Referência bíblica é obrigatória'
                 }),
 
+
             book: Joi.string()
-                .required()
+                .optional()
                 .trim()
                 .min(2)
-                .max(50)
-                .messages({
-                    'string.empty': 'Livro bíblico é obrigatório'
-                }),
+                .max(50),
 
             chapter: Joi.number()
                 .integer()
                 .positive()
-                .required()
-                .messages({
-                    'number.positive': 'Capítulo deve ser um número positivo'
-                }),
+                .optional(),
 
             startVerse: Joi.number()
                 .integer()
                 .positive()
-                .required(),
+                .optional(),
 
             endVerse: Joi.number()
                 .integer()
@@ -81,6 +76,7 @@ class CreateStudyDTO extends BaseDTO {
                     'string.min': 'Conteúdo deve ter pelo menos 100 caracteres'
                 }),
 
+
             sections: Joi.array()
                 .items(
                     Joi.object({
@@ -104,6 +100,7 @@ class CreateStudyDTO extends BaseDTO {
                 )
                 .max(15)
                 .default([])
+                .optional()
                 .messages({
                     'array.max': 'Máximo de 15 seções permitidas'
                 }),
@@ -121,9 +118,11 @@ class CreateStudyDTO extends BaseDTO {
                 )
                 .max(20)
                 .default([])
+                .optional()
                 .messages({
                     'array.max': 'Máximo de 20 perguntas permitidas'
                 }),
+
 
             // Aplicação prática
             application: Joi.string()
@@ -148,16 +147,19 @@ class CreateStudyDTO extends BaseDTO {
                     'Apologético',
                     'Outros'
                 )
-                .default('Temático'),
+                .default('Temático')
+                .optional(),
 
             level: Joi.string()
                 .valid('Iniciante', 'Intermediário', 'Avançado')
-                .default('Intermediário'),
+                .default('Intermediário')
+                .optional(),
 
             tags: Joi.array()
                 .items(BaseDTO.commonValidations.tag)
                 .max(10)
-                .default([]),
+                .default([])
+                .optional(),
 
             // Metadados de série/curso
             series: Joi.string()
@@ -183,11 +185,14 @@ class CreateStudyDTO extends BaseDTO {
                     'number.max': 'Duração estimada não pode exceder 480 minutos'
                 }),
 
+
             targetAudience: Joi.string()
                 .valid('Geral', 'Novos Convertidos', 'Líderes', 'Jovens', 'Adultos', 'Casais', 'Mulheres', 'Homens')
-                .default('Geral'),
+                .default('Geral')
+                .optional(),
 
             // Recursos adicionais
+
             resources: Joi.array()
                 .items(
                     Joi.object({
@@ -200,9 +205,11 @@ class CreateStudyDTO extends BaseDTO {
                     })
                 )
                 .max(10)
-                .default([]),
+                .default([])
+                .optional(),
 
             // Versículos-chave memorização
+
             memoryVerses: Joi.array()
                 .items(
                     Joi.object({
@@ -215,17 +222,19 @@ class CreateStudyDTO extends BaseDTO {
                     })
                 )
                 .max(5)
-                .default([]),
+                .default([])
+                .optional(),
+
 
             // Status
-            isPublished: Joi.boolean().default(true),
-            featured: Joi.boolean().default(false),
-            allowComments: Joi.boolean().default(true),
+            isPublished: Joi.boolean().default(true).optional(),
+            featured: Joi.boolean().default(false).optional(),
+            allowComments: Joi.boolean().default(true).optional(),
 
             // Material complementar
             worksheetUrl: BaseDTO.commonValidations.url.optional(),
-            audioUrl: BaseDTO.commonValidations.url.optional(),
-            videoUrl: BaseDTO.commonValidations.url.optional(),
+            audioUrl: BaseDTO.commonValidations.url.optional().allow(''),
+            videoUrl: BaseDTO.commonValidations.url.optional().allow(''),
             slidesUrl: BaseDTO.commonValidations.url.optional()
         });
     }

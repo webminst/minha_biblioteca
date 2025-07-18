@@ -248,7 +248,7 @@ router.post('/',
   transformOutput(StudyResponseDTO),
   async (req, res, next) => {
     try {
-      const studyData = req.validatedInput;
+      const studyData = req.validatedInput || req.body;
       const savedStudy = await StudyService.create(studyData, req.user._id);
 
       res.status(201).json(

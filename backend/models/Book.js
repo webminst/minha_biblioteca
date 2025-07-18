@@ -84,9 +84,9 @@ const BookSchema = new mongoose.Schema({
     required: false,
     validate: {
       validator: function (v) {
-        return !v || /^https?:\/\/.+\.pdf$/i.test(v);
+        return !v || /^https?:\/\/.+/i.test(v);
       },
-      message: 'URL deve apontar para um arquivo PDF válido'
+      message: 'URL deve ser uma URL válida'
     }
   },
 
