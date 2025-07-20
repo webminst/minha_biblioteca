@@ -4,18 +4,23 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { extractStudies } from '../../utils/apiResponseHelpers';
-import './Form.css'; // Reutiliza o CSS geral de formulários admin
 
 function StudyForm() {
     // Estados para os campos do formulário, baseados no seu StudySchema
     const [title, setTitle] = useState('');
     const [theme, setTheme] = useState('');
-    const [format, setFormat] = useState('');
+    const [format, setFormat] = useState('Estudo');
+    const formatOptions = [
+        'Estudo',
+        'Palestra',
+        'Conferência',
+        'Outros'
+    ];
     const [biblicalReference, setBiblicalReference] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [application, setApplication] = useState('');
     const [series, setSeries] = useState('');
-    const [tags, setTags] = useState(''); // Armazenado como string e convertido para array
+    const [tags, setTags] = useState('');
     const [speaker, setSpeaker] = useState('Giovanni Guimarães');
     const [date, setDate] = useState('');
     const [local, setLocal] = useState('');
@@ -24,18 +29,29 @@ function StudyForm() {
     const [audioUrl, setAudioUrl] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
     const [pdfUrl, setPdfUrl] = useState('');
-
+    const [type, setType] = useState('Temático');
+    const studyTypeOptions = [
+        'Exegético',
+        'Temático',
+        'Devocional',
+        'Doutrinário',
+        'Biográfico',
+        'Profético',
+        'Apologético',
+        'Histórico',
+        'Prático',
+        'Missionário',
+        'Evangelístico',
+        'Outros'
+    ];
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-
     const navigate = useNavigate();
-    const { id } = useParams(); // Pega o ID da URL se estiver em modo de edição
-
-    const isEditing = !!id; // Verdadeiro se um ID estiver presente na URL
+    const { id } = useParams();
+    const isEditing = !!id;
 
     useEffect(() => {
-        // Se estiver no modo de edição, busca os dados do estudo para preencher o formulário
         if (isEditing) {
             const fetchStudy = async () => {
                 setLoading(true);
@@ -48,18 +64,15 @@ function StudyForm() {
                         },
                     };
                     const response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(id), config);
-                    // Para endpoints BY_ID, o dado vem diretamente em response.data.data
                     const studyData = response.data.success ? response.data.data : response.data;
-
-                    // Preenche os estados com os dados do estudo
                     setTitle(studyData.title || '');
                     setTheme(studyData.theme || '');
-                    setFormat(studyData.format || '');
+                    setFormat(studyData.format || 'Estudo');
                     setBiblicalReference(studyData.biblicalReference || '');
                     setIntroduction(studyData.introduction || '');
                     setApplication(studyData.application || '');
                     setSeries(studyData.series || '');
-                    setTags(studyData.tags ? studyData.tags.join(', ') : ''); // Converte array para string para o input
+                    setTags(studyData.tags ? studyData.tags.join(', ') : '');
                     setSpeaker(studyData.speaker || '');
                     setDate(studyData.date ? new Date(studyData.date).toISOString().split('T')[0] : '');
                     setLocal(studyData.local || '');
@@ -68,6 +81,7 @@ function StudyForm() {
                     setAudioUrl(studyData.audioUrl || '');
                     setVideoUrl(studyData.videoUrl || '');
                     setPdfUrl(studyData.pdfUrl || '');
+                    setType(studyData.type || 'Temático');
                 } catch (err) {
                     setError('Erro ao carregar dados do estudo: ' + (err.response?.data?.message || err.message));
                     console.error('Erro ao buscar estudo para edição:', err);
@@ -77,24 +91,21 @@ function StudyForm() {
             };
             fetchStudy();
         }
-    }, [id, isEditing]); // Dependências do useEffect
+    }, [id, isEditing]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         setSuccess(null);
-
-        // Converte a string de tags de volta para um array para enviar ao backend
         const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
-
         const studyData = {
             title,
             theme,
             format,
             biblicalReference,
             series,
-            tags: tagsArray, // Envia como array
+            tags: tagsArray,
             speaker,
             date,
             local,
@@ -105,8 +116,8 @@ function StudyForm() {
             audioUrl,
             videoUrl,
             pdfUrl,
+            type,
         };
-
         try {
             const token = localStorage.getItem('userToken');
             const config = {
@@ -115,23 +126,21 @@ function StudyForm() {
                     'Content-Type': 'application/json',
                 },
             };
-
             if (isEditing) {
                 await axios.patch(API_ENDPOINTS.STUDIES.BY_ID(id), studyData, config);
                 setSuccess('Estudo atualizado com sucesso!');
             } else {
                 await axios.post(API_ENDPOINTS.STUDIES.BASE, studyData, config);
                 setSuccess('Estudo criado com sucesso!');
-                // Limpa o formulário após a criação
                 setTitle('');
                 setTheme('');
-                setFormat('');
+                setFormat('Estudo');
                 setBiblicalReference('');
                 setIntroduction('');
                 setApplication('');
                 setSeries('');
                 setTags('');
-                setSpeaker('');
+                setSpeaker('Giovanni Guimarães');
                 setDate('');
                 setLocal('');
                 setDescription('');
@@ -139,8 +148,8 @@ function StudyForm() {
                 setAudioUrl('');
                 setVideoUrl('');
                 setPdfUrl('');
+                setType('Temático');
             }
-            // Opcional: redirecionar para a lista de estudos após sucesso
             navigate('/admin/estudos');
         } catch (err) {
             setError('Erro ao salvar estudo: ' + (err.response?.data?.message || err.message));
@@ -213,6 +222,37 @@ function StudyForm() {
                     <input type="url" id="videoUrl" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} disabled={loading} />
                 </div>
 
+                <div className="form-row" style={{ display: 'flex', gap: 16 }}>
+                    <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                        <label htmlFor="type">Tipo de Estudo:</label>
+                        <select
+                            id="type"
+                            value={type}
+                            onChange={e => setType(e.target.value)}
+                            required
+                            disabled={loading}
+                        >
+                            {studyTypeOptions.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
+                        <label htmlFor="format">Formato:</label>
+                        <select
+                            id="format"
+                            value={format}
+                            onChange={e => setFormat(e.target.value)}
+                            required
+                            disabled={loading}
+                        >
+                            {formatOptions.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="tags">Tags (separar por vírgula, opcional):</label>
                     <input type="text" id="tags" value={tags} onChange={(e) => setTags(e.target.value)} disabled={loading} />
@@ -232,11 +272,6 @@ function StudyForm() {
                 <div className="form-group">
                     <label htmlFor="local">Local (opcional):</label>
                     <input type="text" id="local" value={local} onChange={(e) => setLocal(e.target.value)} disabled={loading} />
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="format">Formato:</label>
-                    <input type="text" id="format" value={format} onChange={(e) => setFormat(e.target.value)} required disabled={loading} />
                 </div>
 
                 <button type="submit" disabled={loading}>

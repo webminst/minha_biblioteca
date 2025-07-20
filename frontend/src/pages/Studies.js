@@ -230,7 +230,7 @@ function Studies() {
             <ContentCard
               key={study._id}
               title={study.title}
-              type="Estudo"
+              type={study.format || 'Estudo'}
               reference={study.reference}
               description={study.description}
               detailsUrl={`/estudos/${study._id}`}
