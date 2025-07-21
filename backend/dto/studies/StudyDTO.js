@@ -55,17 +55,6 @@ class CreateStudyDTO extends BaseDTO {
                 .greater(Joi.ref('startVerse')),
 
             // Conteúdo do estudo
-            introduction: Joi.string()
-                .required()
-                .trim()
-                .min(20)
-                .max(2000)
-                .messages({
-                    'string.empty': 'Introdução é obrigatória',
-                    'string.min': 'Introdução deve ter pelo menos 20 caracteres',
-                    'string.max': 'Introdução não pode exceder 2000 caracteres'
-                }),
-
             content: Joi.string()
                 .required()
                 .trim()
@@ -123,17 +112,6 @@ class CreateStudyDTO extends BaseDTO {
                     'array.max': 'Máximo de 20 perguntas permitidas'
                 }),
 
-
-            // Aplicação prática
-            application: Joi.string()
-                .required()
-                .trim()
-                .min(20)
-                .max(2000)
-                .messages({
-                    'string.empty': 'Aplicação prática é obrigatória',
-                    'string.min': 'Aplicação deve ter pelo menos 20 caracteres'
-                }),
 
             // Categorização
             type: Joi.string()

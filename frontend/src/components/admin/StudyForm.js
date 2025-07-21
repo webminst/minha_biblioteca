@@ -17,8 +17,7 @@ function StudyForm() {
         'Outros'
     ];
     const [biblicalReference, setBiblicalReference] = useState('');
-    const [introduction, setIntroduction] = useState('');
-    const [application, setApplication] = useState('');
+
     const [series, setSeries] = useState('');
     const [tags, setTags] = useState('');
     const [speaker, setSpeaker] = useState('Giovanni Guimarães');
@@ -69,8 +68,6 @@ function StudyForm() {
                     setTheme(studyData.theme || '');
                     setFormat(studyData.format || 'Estudo');
                     setBiblicalReference(studyData.biblicalReference || '');
-                    setIntroduction(studyData.introduction || '');
-                    setApplication(studyData.application || '');
                     setSeries(studyData.series || '');
                     setTags(studyData.tags ? studyData.tags.join(', ') : '');
                     setSpeaker(studyData.speaker || '');
@@ -98,46 +95,68 @@ function StudyForm() {
         setLoading(true);
         setError(null);
         setSuccess(null);
-        const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
-        const studyData = {
-            title,
-            theme,
-            format,
-            biblicalReference,
-            series,
-            tags: tagsArray,
-            speaker,
-            date,
-            local,
-            description,
-            content,
-            introduction,
-            application,
-            audioUrl,
-            videoUrl,
-            pdfUrl,
-            type,
-        };
+        
         try {
             const token = localStorage.getItem('userToken');
+            if (!token) {
+                throw new Error('Usuário não autenticado. Faça login novamente.');
+            }
+
+            // Preparar os dados do formulário
+            const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+            const studyData = {
+                title: title.trim(),
+                theme: theme.trim(),
+                format: format.trim(),
+                biblicalReference: biblicalReference.trim(),
+                series: series ? series.trim() : undefined,
+                tags: tagsArray,
+                speaker: speaker ? speaker.trim() : undefined,
+                date: date || undefined,
+                local: local ? local.trim() : undefined,
+                description: description ? description.trim() : undefined,
+                content: content.trim(),
+                audioUrl: audioUrl ? audioUrl.trim() : undefined,
+                videoUrl: videoUrl ? videoUrl.trim() : undefined,
+                pdfUrl: pdfUrl ? pdfUrl.trim() : undefined,
+                type: type || 'Temático',
+            };
+
+            console.log('Enviando dados para a API:', studyData);
+
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             };
+
             if (isEditing) {
-                await axios.patch(API_ENDPOINTS.STUDIES.BY_ID(id), studyData, config);
+                console.log(`Atualizando estudo com ID: ${id}`);
+                const response = await axios.patch(
+                    API_ENDPOINTS.STUDIES.BY_ID(id), 
+                    studyData, 
+                    config
+                );
+                
+                console.log('Resposta da API (atualização):', response.data);
                 setSuccess('Estudo atualizado com sucesso!');
             } else {
-                await axios.post(API_ENDPOINTS.STUDIES.BASE, studyData, config);
+                console.log('Criando novo estudo');
+                const response = await axios.post(
+                    API_ENDPOINTS.STUDIES.BASE, 
+                    studyData, 
+                    config
+                );
+                
+                console.log('Resposta da API (criação):', response.data);
                 setSuccess('Estudo criado com sucesso!');
+                
+                // Limpar o formulário apenas em caso de criação bem-sucedida
                 setTitle('');
                 setTheme('');
                 setFormat('Estudo');
                 setBiblicalReference('');
-                setIntroduction('');
-                setApplication('');
                 setSeries('');
                 setTags('');
                 setSpeaker('Giovanni Guimarães');
@@ -150,13 +169,34 @@ function StudyForm() {
                 setPdfUrl('');
                 setType('Temático');
             }
-            navigate('/admin/estudos');
+            
+            // Redireciona após 1.5 segundos para mostrar a mensagem de sucesso
+            setTimeout(() => {
+                navigate('/admin/estudos');
+            }, 1500);
+            
         } catch (err) {
-            setError('Erro ao salvar estudo: ' + (err.response?.data?.message || err.message));
-            console.error('Erro ao salvar estudo:', err);
+            console.error('Erro ao salvar estudo:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status,
+                statusText: err.response?.statusText,
+                config: {
+                    url: err.config?.url,
+                    method: err.config?.method,
+                    data: err.config?.data
+                }
+            });
+            
+            const errorMessage = err.response?.data?.message || 
+                             err.response?.data?.error || 
+                             err.message || 
+                             'Ocorreu um erro ao salvar o estudo. Tente novamente mais tarde.';
+            
+            setError(`Erro ao salvar estudo: ${errorMessage}`);
         } finally {
             setLoading(false);
-        }
+        }    
     };
 
     if (loading && isEditing) return <p>Carregando dados do estudo...</p>;
@@ -176,14 +216,6 @@ function StudyForm() {
                 <div className="form-group">
                     <label htmlFor="biblicalReference">Referência Bíblica:</label>
                     <input type="text" id="biblicalReference" value={biblicalReference} onChange={(e) => setBiblicalReference(e.target.value)} required disabled={loading} />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="introduction">Introdução:</label>
-                    <textarea id="introduction" value={introduction} onChange={(e) => setIntroduction(e.target.value)} rows="4" required disabled={loading}></textarea>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="application">Aplicação Prática:</label>
-                    <textarea id="application" value={application} onChange={(e) => setApplication(e.target.value)} rows="3" required disabled={loading}></textarea>
                 </div>
 
                 <div className="form-group">

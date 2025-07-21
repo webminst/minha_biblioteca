@@ -268,13 +268,37 @@ router.patch('/:id',
   transformOutput(StudyResponseDTO),
   async (req, res, next) => {
     try {
-      const updateData = req.validatedInput;
+      console.log('=== DADOS RECEBIDOS NO PATCH ===');
+      console.log('Params:', req.params);
+      console.log('Body:', req.body);
+      console.log('Validated Input:', req.validatedInput);
+      console.log('Usuário autenticado ID:', req.user?._id);
+      
+      const updateData = req.validatedInput || req.body;
+      console.log('Dados para atualização:', updateData);
+      
+      if (!updateData || Object.keys(updateData).length === 0) {
+        console.warn('Nenhum dado fornecido para atualização');
+        return res.status(400).json(ApiResponseDTO.error('Nenhum dado fornecido para atualização', null, 400));
+      }
+
       const updatedStudy = await StudyService.update(req.params.id, updateData, req.user._id);
+      
+      console.log('Estudo atualizado com sucesso:', updatedStudy ? 'Sim' : 'Não');
+      if (!updatedStudy) {
+        console.warn('O serviço não retornou o estudo atualizado');
+      }
 
       res.json(
         ApiResponseDTO.success(updatedStudy, 'Estudo atualizado com sucesso')
       );
     } catch (error) {
+      console.error('Erro na rota PATCH:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        ...(error.response?.data && { responseData: error.response.data })
+      });
       next(error);
     }
   });
