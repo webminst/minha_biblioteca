@@ -243,6 +243,34 @@ router.get('/area/:area',
   }
 );
 
+// GET /api/books/suggestions - Busca sugestões de livros (COM CACHE)
+router.get('/suggestions',
+  cacheStrategies.suggestions('books'), // NOVO: Cache para sugestões
+  async (req, res, next) => {
+    try {
+      const { term, limit = 5 } = req.query;
+      
+      if (!term || term.trim().length < 2) {
+        return res.json(ApiResponseDTO.success({
+          titles: [],
+          authors: [],
+          areas: [],
+          publishers: []
+        }, 'Termo de busca muito curto'));
+      }
+
+      const suggestions = await CachedBookService.findSuggestions(term, parseInt(limit));
+      
+      res.json(ApiResponseDTO.success(
+        suggestions,
+        'Sugestões de livros encontradas com sucesso'
+      ));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // GET /api/books/:id/related - Livros relacionados (COM CACHE)
 router.get('/:id/related',
   cacheStrategies.contentList('books'), // NOVO: Cache para lista relacionada

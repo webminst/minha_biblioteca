@@ -401,6 +401,83 @@ class BookService {
     }
 
     /**
+     * Busca sugestões de livros com base em um termo de busca
+     * @param {string} term - Termo de busca
+     * @param {number} limit - Limite de sugestões por categoria
+     * @returns {Object} - Objeto com sugestões agrupadas por categoria
+     */
+    async findSuggestions(term, limit = 5) {
+        if (!term || term.trim().length < 2) {
+            return {
+                titles: [],
+                authors: [],
+                areas: [],
+                publishers: []
+            };
+        }
+
+        const searchRegex = new RegExp(term, 'i');
+        
+        try {
+            // Busca paralela por diferentes categorias
+            const [titles, authors, areas, publishers] = await Promise.all([
+                // Títulos
+                Book.find({ 
+                    title: searchRegex 
+                })
+                .select('title')
+                .limit(limit)
+                .distinct('title'),
+                
+                // Autores
+                Book.find({ 
+                    author: searchRegex 
+                })
+                .select('author')
+                .limit(limit)
+                .distinct('author'),
+                
+                // Áreas
+                Book.find({ 
+                    area: searchRegex 
+                })
+                .select('area')
+                .limit(limit)
+                .distinct('area'),
+                
+                // Editoras
+                Book.find({ 
+                    publisher: searchRegex 
+                })
+                .select('publisher')
+                .limit(limit)
+                .distinct('publisher')
+            ]);
+
+            // Filtra resultados nulos/vazios e limita o número de sugestões
+            const filteredTitles = titles.filter(item => item && item.trim() !== '').slice(0, limit);
+            const filteredAuthors = authors.filter(item => item && item.trim() !== '').slice(0, limit);
+            const filteredAreas = areas.filter(item => item && item.trim() !== '').slice(0, limit);
+            const filteredPublishers = publishers.filter(item => item && item.trim() !== '').slice(0, limit);
+
+            return {
+                titles: filteredTitles,
+                authors: filteredAuthors,
+                areas: filteredAreas,
+                publishers: filteredPublishers
+            };
+        } catch (error) {
+            console.error('Erro ao buscar sugestões de livros:', error);
+            return {
+                titles: [],
+                authors: [],
+                areas: [],
+                publishers: []
+            };
+        }
+    }
+
+    /**
      * Busca livros relacionados por área, autor ou tags
      * @param {string} bookId - ID do livro atual
      * @param {number} limit - Limite de resultados

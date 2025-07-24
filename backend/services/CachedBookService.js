@@ -232,10 +232,11 @@ class CachedBookService extends BookService {
         // Invalida caches específicos de books
         await cacheService.invalidateRelated('books', operation);
 
-        // Invalida caches de listagem e busca
+        // Invalida caches de listagem, busca e sugestões
         await cacheService.invalidatePattern('books:list*');
         await cacheService.invalidatePattern('books:search*');
         await cacheService.invalidatePattern('books:filters*');
+        await cacheService.invalidatePattern('books:suggestions*');
 
         // Se houver um ID específico, invalida o cache detalhado
         if (data.id) {
@@ -284,6 +285,17 @@ class CachedBookService extends BookService {
                     () => super.getStats(),
                     { type: 'stats', forceRefresh: true }
                 );
+                
+            case 'suggestions':
+                const { term, limit } = options.params || {};
+                if (!term) throw new Error('Termo de busca é obrigatório');
+                const cacheKey = `suggestions:${term.toLowerCase()}`;
+                return cacheService.smartCache(
+                    'books',
+                    cacheKey,
+                    () => super.findSuggestions(term, limit || 5),
+                    { type: 'suggestions', forceRefresh: true, params: { term, limit } }
+                );
 
             default:
                 throw new Error(`Tipo de cache não suportado: ${type}`);
@@ -303,6 +315,33 @@ class CachedBookService extends BookService {
             cacheKeys: keys.slice(0, 10), // Primeiras 10 chaves
             stats
         };
+    }
+
+    /**
+     * 🔍 Busca sugestões de livros com cache
+     */
+    async findSuggestions(term, limit = 5) {
+        if (!term || term.trim().length < 2) {
+            return {
+                titles: [],
+                authors: [],
+                areas: [],
+                publishers: []
+            };
+        }
+
+        const cacheKey = `suggestions:${term.toLowerCase()}`;
+        
+        return cacheService.smartCache(
+            'books',
+            cacheKey,
+            () => super.findSuggestions(term, limit),
+            {
+                type: 'suggestions',
+                ttl: 1800, // 30 minutos de cache para sugestões
+                params: { term, limit }
+            }
+        );
     }
 
     /**

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
 import { extractBooks, extractPagination } from '../utils/apiResponseHelpers';
+import BookService from '../services/bookService';
 
 /**
  * Componente Books - Página de resumos de livros
@@ -41,7 +42,15 @@ function Books() {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState('');
+  const [suggestionCategories, setSuggestionCategories] = useState({
+    titles: [],
+    authors: [],
+    areas: [],
+    publishers: []
+  });
+  const lastRequestId = useRef(0);
 
   // Busca dados dos livros na API com filtros e paginação
   useEffect(() => {
@@ -181,48 +190,75 @@ function Books() {
     navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${e.target.value ? `&author=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
-  // Gera sugestões de busca com base no termo digitado
-  const generateSearchSuggestions = (term) => {
-    if (!term.trim()) return [];
+  // Busca sugestões globais com base no termo digitado
+  const fetchSearchSuggestions = async (term) => {
+    if (!term.trim() || term.trim().length < 2) {
+      setSuggestionCategories({
+        titles: [],
+        authors: [],
+        areas: [],
+        publishers: []
+      });
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    // Gera um novo ID para a requisição atual
+    const requestId = ++lastRequestId.current;
+    setIsLoadingSuggestions(true);
     
-    const lowerTerm = term.toLowerCase();
-    const suggestions = new Set();
-    
-    // Adiciona sugestões de títulos
-    books.forEach(book => {
-      if (book.title.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(book.title);
-      }
+    try {
+      const suggestions = await BookService.getSuggestions(term, 5);
       
-      // Adiciona sugestões de autores
-      if (book.author && book.author.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(book.author);
-      }
+      // Verifica se ainda é a requisição mais recente
+      if (requestId !== lastRequestId.current) return;
       
-      // Adiciona sugestões de áreas
-      if (book.area) {
-        const areas = book.area.split(',').map(a => a.trim());
-        areas.forEach(area => {
-          if (area.toLowerCase().includes(lowerTerm)) {
-            suggestions.add(area);
-          }
-        });
+      setSuggestionCategories(suggestions);
+      
+      // Combina todas as sugestões em uma única lista
+      const allSuggestions = [
+        ...(suggestions.titles || []).map(s => ({ text: s, type: 'título' })),
+        ...(suggestions.authors || []).map(s => ({ text: s, type: 'autor' })),
+        ...(suggestions.areas || []).map(s => ({ text: s, type: 'área' })),
+        ...(suggestions.publishers || []).map(s => ({ text: s, type: 'editora' }))
+      ].slice(0, 10); // Limita a 10 sugestões no total
+      
+      setSearchSuggestions(allSuggestions);
+      setShowSuggestions(allSuggestions.length > 0);
+    } catch (error) {
+      console.error('Erro ao buscar sugestões:', error);
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    } finally {
+      if (requestId === lastRequestId.current) {
+        setIsLoadingSuggestions(false);
       }
-    });
-    
-    return Array.from(suggestions).slice(0, 5); // Limita a 5 sugestões
+    }
   };
+  
+  // Debounce para evitar muitas chamadas à API
+  const debouncedFetchSuggestions = useMemo(
+    () => {
+      let timeoutId;
+      return (term) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          fetchSearchSuggestions(term);
+        }, 300); // 300ms de atraso
+      };
+    },
+    [] // O array vazio garante que a função é criada apenas uma vez
+  );
 
   // Atualiza o termo de busca local
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setLocalSearchTerm(value);
     
-    // Gera sugestões em tempo real
-    if (value.length > 1) {
-      const suggestions = generateSearchSuggestions(value);
-      setSearchSuggestions(suggestions);
-      setShowSuggestions(suggestions.length > 0);
+    // Busca sugestões em tempo real
+    if (value.trim().length > 1) {
+      debouncedFetchSuggestions(value.trim());
     } else {
       setSearchSuggestions([]);
       setShowSuggestions(false);
@@ -233,18 +269,22 @@ function Books() {
   const applySearch = (value = null) => {
     const searchValue = value !== null ? value : localSearchTerm;
     
+    // Se o valor for vazio, não faz nada
+    if (!searchValue || !searchValue.trim()) return;
+    
     setIsSearching(true);
     
     // Atualiza a URL com o novo termo de busca
     const newSearchParams = new URLSearchParams();
     newSearchParams.set('page', '1');
     
-    if (selectedArea) newSearchParams.set('area', selectedArea);
-    if (selectedAuthor) newSearchParams.set('author', selectedAuthor);
+    // Limpa outros filtros ao aplicar uma busca por sugestão
+    // Isso evita conflitos entre os filtros
+    if (selectedArea) newSearchParams.set('area', '');
+    if (selectedAuthor) newSearchParams.set('author', '');
     
-    if (searchValue) {
-      newSearchParams.set('search', searchValue);
-    }
+    // Adiciona o termo de busca
+    newSearchParams.set('search', searchValue.trim());
     
     // Navega para a nova URL
     navigate(`${location.pathname}?${newSearchParams.toString()}`);
@@ -265,6 +305,8 @@ function Books() {
   const handleSuggestionClick = (suggestion) => {
     setLocalSearchTerm(suggestion);
     applySearch(suggestion);
+    // Fecha as sugestões após a seleção
+    setShowSuggestions(false);
   };
 
   // Limpar todos os filtros aplicados
@@ -331,23 +373,32 @@ function Books() {
             </div>
             
             {/* Sugestões de busca */}
-            {showSuggestions && searchSuggestions.length > 0 && (
+            {showSuggestions && (
               <div className="search-suggestions visible">
-                {searchSuggestions.map((suggestion, index) => (
-                  <div 
-                    key={index}
-                    className="suggestion-item"
-                    onMouseDown={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion}
+                {isLoadingSuggestions ? (
+                  <div className="search-loading">
+                    <div className="spinner-border spinner-border-sm me-2" role="status">
+                      <span className="visually-hidden">Carregando...</span>
+                    </div>
+                    Buscando sugestões...
                   </div>
-                ))}
-              </div>
-            )}
-            
-            {showSuggestions && searchSuggestions.length === 0 && searchTerm.length > 1 && (
-              <div className="search-suggestions visible">
-                <div className="search-loading">Nenhuma sugestão encontrada</div>
+                ) : searchSuggestions.length > 0 ? (
+                  <>
+                    {searchSuggestions.map((suggestion, index) => (
+                      <div 
+                        key={index}
+                        className="suggestion-item"
+                        data-type={suggestion.type}
+                        onMouseDown={() => handleSuggestionClick(suggestion.text)}
+                      >
+                        <span className="suggestion-text">{suggestion.text}</span>
+                        <span className="suggestion-type">{suggestion.type}</span>
+                      </div>
+                    ))}
+                  </>
+                ) : localSearchTerm.length > 1 ? (
+                  <div className="search-loading">Nenhuma sugestão encontrada</div>
+                ) : null}
               </div>
             )}
           </div>

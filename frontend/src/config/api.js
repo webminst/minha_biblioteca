@@ -43,6 +43,9 @@ export const API_ENDPOINTS = {
         LATEST: `${API_BASE_URL}/api/studies/latest`,
         BY_ID: (id) => `${API_BASE_URL}/api/studies/${id}`,
         SEARCH: (term) => `${API_BASE_URL}/api/studies/search/${term}`,
+        SUGGESTIONS: `${API_BASE_URL}/api/studies/suggestions`,
+        THEMES: `${API_BASE_URL}/api/studies/themes`,
+        FORMATS: `${API_BASE_URL}/api/studies/formats`,
     },
 
     // Books endpoints
@@ -51,6 +54,11 @@ export const API_ENDPOINTS = {
         LATEST: `${API_BASE_URL}/api/books/latest`,
         BY_ID: (id) => `${API_BASE_URL}/api/books/${id}`,
         SEARCH: (term) => `${API_BASE_URL}/api/books/search/${term}`,
+        SUGGESTIONS: `${API_BASE_URL}/api/books/suggestions`,
+        AUTHORS: `${API_BASE_URL}/api/books/authors`,
+        AREAS: `${API_BASE_URL}/api/books/areas`,
+        PUBLISHERS: `${API_BASE_URL}/api/books/publishers`,
+        SERIES: `${API_BASE_URL}/api/books/series`
     }
 };
 

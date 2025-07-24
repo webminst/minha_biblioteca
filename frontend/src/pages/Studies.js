@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
+import StudyService from '../services/studyService';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -100,26 +101,16 @@ function Studies() {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const [formatsResponse, themesResponse] = await Promise.all([
-          axios.get(`${API_ENDPOINTS.STUDIES.BASE}/formats`),
-          axios.get(`${API_ENDPOINTS.STUDIES.BASE}/themes`)
+        const [formats, themes] = await Promise.all([
+          StudyService.getFormats(),
+          StudyService.getThemes()
         ]);
 
-        // Processa resposta dos formatos (compatível com DTO)
-        const formatsData = formatsResponse.data.success && formatsResponse.data.data
-          ? formatsResponse.data.data
-          : (formatsResponse.data || []);
+        console.log('DEBUG - formats:', formats, 'isArray:', Array.isArray(formats));
+        console.log('DEBUG - themes:', themes, 'isArray:', Array.isArray(themes));
 
-        // Processa resposta dos temas (compatível com DTO)
-        const themesData = themesResponse.data.success && themesResponse.data.data
-          ? themesResponse.data.data
-          : (themesResponse.data || []);
-
-        console.log('DEBUG - formatsData:', formatsData, 'isArray:', Array.isArray(formatsData));
-        console.log('DEBUG - themesData:', themesData, 'isArray:', Array.isArray(themesData));
-
-        setUniqueFormats(Array.isArray(formatsData) ? formatsData : []);
-        setUniqueThemes(Array.isArray(themesData) ? themesData : []);
+        setUniqueFormats(Array.isArray(formats) ? formats : []);
+        setUniqueThemes(Array.isArray(themes) ? themes : []);
       } catch (err) {
         console.error('Erro ao buscar opções de filtro:', err);
         // Em caso de erro, mantém arrays vazios
@@ -135,25 +126,31 @@ function Studies() {
   };
 
   // Gera sugestões de busca com base no termo digitado
-  const generateSearchSuggestions = (term) => {
-    if (!term.trim()) return [];
+  const generateSearchSuggestions = async (term) => {
+    if (!term.trim() || term.trim().length < 2) return [];
     
-    const lowerTerm = term.toLowerCase();
-    const suggestions = new Set();
-    
-    // Adiciona sugestões de títulos
-    studies.forEach(study => {
-      if (study.title.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(study.title);
-      }
+    try {
+      setIsSearching(true);
+      const suggestionsData = await StudyService.getSuggestions(term.trim(), 5);
       
-      // Adiciona sugestões de temas
-      if (study.theme && study.theme.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(study.theme);
-      }
-    });
-    
-    return Array.from(suggestions).slice(0, 5); // Limita a 5 sugestões
+      // Combina todas as sugestões em um único array e remove duplicatas
+      const allSuggestions = [
+        ...(suggestionsData.titles || []),
+        ...(suggestionsData.themes || []),
+        ...(suggestionsData.references || []),
+        ...(suggestionsData.formats || [])
+      ];
+      
+      // Remove duplicatas e limita a 5 sugestões
+      const uniqueSuggestions = [...new Set(allSuggestions)].slice(0, 5);
+      
+      return uniqueSuggestions;
+    } catch (error) {
+      console.error('Erro ao buscar sugestões:', error);
+      return [];
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   // Handlers para mudança de filtros
@@ -168,13 +165,13 @@ function Studies() {
   };
 
   // Atualiza o termo de busca local
-  const handleSearchChange = (e) => {
+  const handleSearchChange = async (e) => {
     const value = e.target.value;
     setLocalSearchTerm(value);
     
     // Gera sugestões em tempo real
     if (value.length > 1) {
-      const suggestions = generateSearchSuggestions(value);
+      const suggestions = await generateSearchSuggestions(value);
       setSearchSuggestions(suggestions);
       setShowSuggestions(suggestions.length > 0);
     } else {
