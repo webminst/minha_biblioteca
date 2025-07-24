@@ -98,12 +98,103 @@ class SermonService {
         const sermon = await Sermon.findOne()
             .sort({ createdAt: -1 })
             .select('title bibleReference series description date');
-
+            
         if (!sermon) {
             throw new AppError('Nenhum sermão encontrado', 404);
         }
-
+        
         return sermon;
+    }
+
+    /**
+     * Busca sugestões de busca baseadas em um termo
+     * @param {string} term - Termo de busca
+     * @param {number} limit - Limite de sugestões
+     * @returns {Array} - Lista de sugestões
+     */
+    /**
+     * Busca sugestões de busca baseadas em um termo
+     * @param {string} term - Termo de busca
+     * @param {number} limit - Limite de sugestões
+     * @returns {Array} - Lista de sugestões no formato de string
+     */
+    async findSuggestions(term, limit = 5) {
+        if (!term || term.length < 2) {
+            return [];
+        }
+
+        const regex = new RegExp(term, 'i');
+        
+        // Busca em múltiplos campos usando agregação para obter resultados únicos
+        const suggestions = await Sermon.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { title: { $regex: regex } },
+                        { bibleReference: { $regex: regex } },
+                        { series: { $regex: regex } },
+                        { speaker: { $regex: regex } },
+                        { book: { $regex: regex } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    title: 1,
+                    bibleReference: 1,
+                    series: 1,
+                    speaker: 1,
+                    book: 1,
+                    // Cria um campo de pontuação baseado na relevância
+                    score: {
+                        $add: [
+                            { $cond: [{ $regexMatch: { input: "$title", regex: regex } }, 10, 0] },
+                            { $cond: [{ $regexMatch: { input: "$bibleReference", regex: regex } }, 8, 0] },
+                            { $cond: [{ $regexMatch: { input: "$series", regex: regex } }, 6, 0] },
+                            { $cond: [{ $regexMatch: { input: "$speaker", regex: regex } }, 4, 0] },
+                            { $cond: [{ $regexMatch: { input: "$book", regex: regex } }, 2, 0] }
+                        ]
+                    }
+                }
+            },
+            { $sort: { score: -1 } },
+            { $limit: limit },
+            {
+                $project: {
+                    text: {
+                        $cond: {
+                            if: { $and: [{ $gt: ["$title", null] }, { $regexMatch: { input: "$title", regex: regex } }] },
+                            then: "$title",
+                            else: {
+                                $cond: {
+                                    if: { $and: [{ $gt: ["$bibleReference", null] }, { $regexMatch: { input: "$bibleReference", regex: regex } }] },
+                                    then: "$bibleReference",
+                                    else: {
+                                        $cond: {
+                                            if: { $and: [{ $gt: ["$series", null] }, { $regexMatch: { input: "$series", regex: regex } }] },
+                                            then: "$series",
+                                            else: {
+                                                $cond: {
+                                                    if: { $and: [{ $gt: ["$speaker", null] }, { $regexMatch: { input: "$speaker", regex: regex } }] },
+                                                    then: "$speaker",
+                                                    else: "$book"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
+
+        // Extrai apenas o campo 'text' de cada sugestão e remove duplicatas
+        const uniqueSuggestions = [...new Set(suggestions.map(s => s.text))];
+        
+        return uniqueSuggestions.filter(Boolean); // Remove valores nulos ou vazios
     }
 
     /**
@@ -293,6 +384,99 @@ class SermonService {
         const books = await Sermon.distinct('book');
         return books.filter(b => b && b.trim() !== '');
     }
+
+    /**
+     * Busca sugestões de busca em todo o banco de dados
+     * @param {string} term - Termo de busca
+     * @param {number} [limit=5] - Limite de sugestões
+     * @returns {Promise<Array>} - Lista de sugestões
+     */
+    async findSuggestions(term, limit = 5) {
+        if (!term || term.length < 2) {
+            return [];
+        }
+
+        try {
+            const searchRegex = new RegExp(term, 'i');
+            console.log(`🔍 Buscando sugestões para o termo: ${term}`);
+            
+            // Usa aggregation para buscar todas as sugestões em uma única consulta
+            const results = await Sermon.aggregate([
+                {
+                    $match: {
+                        $or: [
+                            { title: searchRegex },
+                            { series: { $exists: true, $ne: null, $regex: searchRegex } },
+                            { book: { $exists: true, $ne: null, $regex: searchRegex } },
+                            { speaker: { $exists: true, $ne: null, $regex: searchRegex } }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        title: 1,
+                        series: 1,
+                        book: 1,
+                        speaker: 1
+                    }
+                },
+                {
+                    $limit: 20 // Busca mais itens para garantir variedade
+                }
+            ]);
+
+            // Combina e remove duplicatas
+            const suggestions = new Set();
+            
+            // Adiciona sugestões de cada campo
+            results.forEach(item => {
+                if (item.title && item.title.match(searchRegex)) {
+                    suggestions.add(item.title);
+                }
+                if (item.series && item.series.match(searchRegex)) {
+                    suggestions.add(item.series);
+                }
+                if (item.book && item.book.match(searchRegex)) {
+                    suggestions.add(item.book);
+                }
+                if (item.speaker && item.speaker.match(searchRegex)) {
+                    suggestions.add(item.speaker);
+                }
+                
+                // Limita o número de itens processados se já tivermos sugestões suficientes
+                if (suggestions.size >= limit * 2) {
+                    return; // Sai do forEach
+                }
+            });
+
+            // Converte para array, ordena por relevância (tamanho do termo) e limita
+            const sortedSuggestions = Array.from(suggestions)
+                .sort((a, b) => {
+                    // Prioriza termos mais curtos (mais relevantes)
+                    const aScore = a.length;
+                    const bScore = b.length;
+                    return aScore - bScore;
+                })
+                .slice(0, limit);
+
+            console.log(`✅ ${sortedSuggestions.length} sugestões encontradas para: ${term}`);
+            return sortedSuggestions;
+            
+        } catch (error) {
+            console.error('❌ Erro ao buscar sugestões:', error);
+            return []; // Retorna array vazio em caso de erro
+        }
+    }
+
+    /**
+     * Busca os livros bíblicos únicos
+     * @returns {Promise<Array>} - Lista de livros bíblicos únicos
+     */
+    async findUniqueBooks() {
+        return await Sermon.distinct('book');
+    }
+
 }
 
 module.exports = new SermonService();

@@ -34,10 +34,14 @@ function Studies() {
   const [selectedFormat, setSelectedFormat] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [uniqueFormats, setUniqueFormats] = useState([]);
   const [uniqueThemes, setUniqueThemes] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Busca dados dos estudos na API com filtros e paginação
   useEffect(() => {
@@ -79,9 +83,17 @@ function Studies() {
   // Inicializa filtros a partir da URL
   useEffect(() => {
     const query = new URLSearchParams(location.search);
+    const urlSearchTerm = query.get('search') || '';
+    
+    // Atualiza o estado local quando a URL muda
+    if (urlSearchTerm !== searchTerm) {
+      setSearchTerm(urlSearchTerm);
+      setLocalSearchTerm(urlSearchTerm);
+    }
+    
+    // Atualiza outros filtros
     setSelectedFormat(query.get('format') || '');
     setSelectedTheme(query.get('theme') || '');
-    setSearchTerm(query.get('search') || '');
   }, [location.search]);
 
   // Busca listas únicas para filtros via API
@@ -122,6 +134,28 @@ function Studies() {
     navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
+  // Gera sugestões de busca com base no termo digitado
+  const generateSearchSuggestions = (term) => {
+    if (!term.trim()) return [];
+    
+    const lowerTerm = term.toLowerCase();
+    const suggestions = new Set();
+    
+    // Adiciona sugestões de títulos
+    studies.forEach(study => {
+      if (study.title.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(study.title);
+      }
+      
+      // Adiciona sugestões de temas
+      if (study.theme && study.theme.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(study.theme);
+      }
+    });
+    
+    return Array.from(suggestions).slice(0, 5); // Limita a 5 sugestões
+  };
+
   // Handlers para mudança de filtros
   const handleFormatChange = (e) => {
     setSelectedFormat(e.target.value);
@@ -133,14 +167,52 @@ function Studies() {
     navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${e.target.value ? `&theme=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
+  // Atualiza o termo de busca local
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    // Aplica busca com debounce
-    if (searchTimeout) clearTimeout(searchTimeout);
-    const timeout = setTimeout(() => {
-      navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${e.target.value ? `&search=${e.target.value}` : ''}`);
-    }, 500);
-    setSearchTimeout(timeout);
+    const value = e.target.value;
+    setLocalSearchTerm(value);
+    
+    // Gera sugestões em tempo real
+    if (value.length > 1) {
+      const suggestions = generateSearchSuggestions(value);
+      setSearchSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0);
+    } else {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+  
+  // Aplica a busca quando o usuário clica em uma sugestão ou pressiona Enter
+  const applySearch = (value = null) => {
+    const searchValue = value !== null ? value : localSearchTerm;
+    
+    setIsSearching(true);
+    
+    // Atualiza a URL com o novo termo de busca
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set('page', '1');
+    
+    if (selectedFormat) newSearchParams.set('format', selectedFormat);
+    if (selectedTheme) newSearchParams.set('theme', selectedTheme);
+    
+    if (searchValue) {
+      newSearchParams.set('search', searchValue);
+    }
+    
+    // Navega para a nova URL
+    navigate(`${location.pathname}?${newSearchParams.toString()}`);
+    
+    // Fecha as sugestões
+    setShowSuggestions(false);
+    setIsSearching(false);
+  };
+  
+  // Aplica a busca quando o usuário pressiona Enter
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      applySearch();
+    }
   };
 
   // Limpar todos os filtros aplicados
@@ -183,14 +255,53 @@ function Studies() {
         {/* Campo de busca */}
         <div className="filter-group">
           <label htmlFor="search-filter">Buscar:</label>
-          <input
-            id="search-filter"
-            type="text"
-            placeholder="Buscar por título, tema, descrição..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="search-input"
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              id="search-filter"
+              type="text"
+              placeholder="Buscar por título, descrição..."
+              value={localSearchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => localSearchTerm.length > 1 && setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              className={`search-input ${localSearchTerm ? 'search-active' : ''}`}
+              autoComplete="off"
+            />
+            <div className="search-icon-container">
+              {isSearching ? (
+                <div className="spinner-border spinner-border-sm text-muted" role="status">
+                  <span className="visually-hidden">Carregando...</span>
+                </div>
+              ) : (
+                <i className="fas fa-search"></i>
+              )}
+            </div>
+            
+            {/* Sugestões de busca */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="search-suggestions visible">
+                {searchSuggestions.map((suggestion, index) => (
+                  <div 
+                    key={index}
+                    className="suggestion-item"
+                    onMouseDown={() => {
+                      setLocalSearchTerm(suggestion);
+                      applySearch(suggestion);
+                    }}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {showSuggestions && searchSuggestions.length === 0 && localSearchTerm.length > 1 && (
+              <div className="search-suggestions visible">
+                <div className="search-loading">Nenhuma sugestão encontrada</div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filtro por formato */}

@@ -12,6 +12,7 @@ const {
   UpdateStudyDTO,
   StudyResponseDTO,
   StudySearchDTO,
+  StudySuggestionsDTO,
   ApiResponseDTO,
   PaginationDTO
 } = require('../dto');
@@ -327,6 +328,46 @@ router.delete('/:id',
       next(error);
     }
   });
+
+// ========== ROTA DE SUGESTÕES ==========
+// GET /api/studies/suggestions - Buscar sugestões de estudos por termo
+router.get('/suggestions', 
+  cacheMiddleware('suggestions'),
+  async (req, res, next) => {
+    try {
+      const { term, limit = 5 } = req.query;
+      
+      if (!term || term.trim().length < 2) {
+        return res.json(
+          ApiResponseDTO.success(
+            new StudySuggestionsDTO({
+              titles: [],
+              themes: [],
+              references: [],
+              formats: []
+            }).transform(),
+            'Sugestões vazias - termo muito curto'
+          )
+        );
+      }
+
+      const suggestions = await StudyService.findSuggestions(term, parseInt(limit));
+      
+      // Aplica o DTO para garantir a estrutura correta
+      const suggestionsDTO = new StudySuggestionsDTO(suggestions);
+      
+      res.json(
+        ApiResponseDTO.success(
+          suggestionsDTO.transform(),
+          'Sugestões encontradas com sucesso'
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao buscar sugestões de estudos:', error);
+      next(error);
+    }
+  }
+);
 
 // ========== ROTA DE BUSCA ==========
 // GET /api/studies/search/:term - Buscar estudos por termo

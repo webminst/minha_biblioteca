@@ -38,6 +38,10 @@ function Books() {
   const [pagination, setPagination] = useState(null);
   const [uniqueAreas, setUniqueAreas] = useState([]);
   const [uniqueAuthors, setUniqueAuthors] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
 
   // Busca dados dos livros na API com filtros e paginação
   useEffect(() => {
@@ -45,24 +49,27 @@ function Books() {
       try {
         setLoading(true);
 
-        // Constrói parâmetros da query
+        // Constrói parâmetros da query a partir da URL
+        const query = new URLSearchParams(location.search);
+        const searchParam = query.get('search') || '';
+        const areaParam = query.get('area') || '';
+        const authorParam = query.get('author') || '';
+        const pageParam = query.get('page') || '1';
+
         const params = {
-          page: pageFromUrl,
+          page: pageParam,
           limit: ITEMS_PER_PAGE
         };
 
-        if (selectedArea) params.area = selectedArea;
-        if (selectedAuthor) params.author = selectedAuthor;
-        if (searchTerm) params.search = searchTerm;
+        if (areaParam) params.area = areaParam;
+        if (authorParam) params.author = authorParam;
+        if (searchParam) params.search = searchParam;
 
         const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
-
-        // Usa helper para extrair dados de forma compatível
-        console.log('[Books] API response:', response.data);
+        
         const booksData = extractBooks(response.data);
         const paginationData = extractPagination(response.data);
-        console.log('[Books] booksData:', booksData);
-        console.log('[Books] paginationData:', paginationData);
+        
         setBooks(booksData);
         setPagination(paginationData);
       } catch (err) {
@@ -73,31 +80,82 @@ function Books() {
       }
     };
     fetchBooks();
-  }, [pageFromUrl, selectedArea, selectedAuthor, searchTerm]);
+  }, [location.search]); // Agora só depende de location.search
 
   // Inicializa filtros a partir da URL
   useEffect(() => {
     const query = new URLSearchParams(location.search);
+    const urlSearchTerm = query.get('search') || '';
+    
+    // Atualiza o estado local quando a URL muda
+    if (urlSearchTerm !== searchTerm) {
+      setSearchTerm(urlSearchTerm);
+      setLocalSearchTerm(urlSearchTerm);
+    }
+    
+    // Atualiza outros filtros
     setSelectedArea(query.get('area') || '');
     setSelectedAuthor(query.get('author') || '');
-    setSearchTerm(query.get('search') || '');
   }, [location.search]);
 
   // Busca listas únicas para filtros via API
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const [areasResponse, authorsResponse] = await Promise.all([
-          axios.get(`${API_ENDPOINTS.BOOKS.BASE}/areas`),
-          axios.get(`${API_ENDPOINTS.BOOKS.BASE}/authors`)
-        ]);
-
-        // Extrai dados dos filtros, verificando se é DTO ou formato antigo  
+        console.log('Buscando opções de filtro...');
+        
+        // Buscando as áreas
+        const areasResponse = await axios.get(`${API_ENDPOINTS.BOOKS.BASE}/areas`);
+        console.log('Resposta da API - Áreas (raw):', areasResponse);
+        
+        // Buscando os livros para extrair os autores
+        const booksResponse = await axios.get(API_ENDPOINTS.BOOKS.BASE);
+        console.log('Resposta completa da API de livros:', JSON.stringify(booksResponse.data, null, 2));
+        
+        // Extrai as áreas da resposta
         const areas = areasResponse.data.success ? areasResponse.data.data : (areasResponse.data || []);
-        const authors = authorsResponse.data.success ? authorsResponse.data.data : (authorsResponse.data || []);
+        
+        // Extrai os livros da resposta - agora acessando corretamente a propriedade data
+        const books = booksResponse.data.data || [];
+        console.log('Lista de livros extraída:', books);
+        
+        // Extrai os autores únicos dos livros
+        const authors = [
+          ...new Set(
+            books
+              .map(book => {
+                console.log('Livro atual:', book);
+                return book.author;
+              })
+              .filter(author => {
+                const isValid = author && typeof author === 'string' && author.trim() !== '';
+                console.log('Autor:', author, 'é válido?', isValid);
+                return isValid;
+              })
+          )
+        ].sort(); // Ordena os autores alfabeticamente
+        
+        console.log('Autores extraídos dos livros:', authors);
 
-        setUniqueAreas(Array.isArray(areas) ? areas : []);
-        setUniqueAuthors(Array.isArray(authors) ? authors : []);
+        console.log('Tipo de áreas:', typeof areas, 'É array?', Array.isArray(areas));
+        console.log('Tipo de autores:', typeof authors, 'É array?', Array.isArray(authors));
+        
+        // Usando JSON.stringify para ver o conteúdo completo dos arrays
+        console.log('Conteúdo completo de áreas:', JSON.stringify(areas, null, 2));
+        console.log('Conteúdo completo de autores:', JSON.stringify(authors, null, 2));
+        
+        console.log('Primeiros 5 itens de áreas:', areas.slice(0, 5));
+        console.log('Primeiros 5 itens de autores:', authors.slice(0, 5));
+
+        // Garantir que estamos lidando com arrays e que os itens são strings
+        const areasArray = Array.isArray(areas) ? areas.filter(a => a && typeof a === 'string').map(a => a.trim()) : [];
+        const authorsArray = Array.isArray(authors) ? authors.filter(a => a && typeof a === 'string').map(a => a.trim()) : [];
+
+        console.log('Áreas após limpeza:', JSON.stringify(areasArray, null, 2));
+        console.log('Autores após limpeza:', JSON.stringify(authorsArray, null, 2));
+
+        setUniqueAreas(areasArray);
+        setUniqueAuthors(authorsArray);
       } catch (err) {
         console.error('Erro ao buscar opções de filtro:', err);
         // Em caso de erro, mantém arrays vazios
@@ -123,14 +181,90 @@ function Books() {
     navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${e.target.value ? `&author=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
+  // Gera sugestões de busca com base no termo digitado
+  const generateSearchSuggestions = (term) => {
+    if (!term.trim()) return [];
+    
+    const lowerTerm = term.toLowerCase();
+    const suggestions = new Set();
+    
+    // Adiciona sugestões de títulos
+    books.forEach(book => {
+      if (book.title.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(book.title);
+      }
+      
+      // Adiciona sugestões de autores
+      if (book.author && book.author.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(book.author);
+      }
+      
+      // Adiciona sugestões de áreas
+      if (book.area) {
+        const areas = book.area.split(',').map(a => a.trim());
+        areas.forEach(area => {
+          if (area.toLowerCase().includes(lowerTerm)) {
+            suggestions.add(area);
+          }
+        });
+      }
+    });
+    
+    return Array.from(suggestions).slice(0, 5); // Limita a 5 sugestões
+  };
+
+  // Atualiza o termo de busca local
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    // Aplica busca com debounce
-    if (searchTimeout) clearTimeout(searchTimeout);
-    const timeout = setTimeout(() => {
-      navigate(`${location.pathname}?page=1${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}${e.target.value ? `&search=${e.target.value}` : ''}`);
-    }, 500);
-    setSearchTimeout(timeout);
+    const value = e.target.value;
+    setLocalSearchTerm(value);
+    
+    // Gera sugestões em tempo real
+    if (value.length > 1) {
+      const suggestions = generateSearchSuggestions(value);
+      setSearchSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0);
+    } else {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+  
+  // Aplica a busca quando o usuário clica em uma sugestão ou pressiona Enter
+  const applySearch = (value = null) => {
+    const searchValue = value !== null ? value : localSearchTerm;
+    
+    setIsSearching(true);
+    
+    // Atualiza a URL com o novo termo de busca
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set('page', '1');
+    
+    if (selectedArea) newSearchParams.set('area', selectedArea);
+    if (selectedAuthor) newSearchParams.set('author', selectedAuthor);
+    
+    if (searchValue) {
+      newSearchParams.set('search', searchValue);
+    }
+    
+    // Navega para a nova URL
+    navigate(`${location.pathname}?${newSearchParams.toString()}`);
+    
+    // Fecha as sugestões
+    setShowSuggestions(false);
+    setIsSearching(false);
+  };
+  
+  // Aplica a busca quando o usuário pressiona Enter
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      applySearch();
+    }
+  };
+  
+  // Seleciona uma sugestão de busca
+  const handleSuggestionClick = (suggestion) => {
+    setLocalSearchTerm(suggestion);
+    applySearch(suggestion);
   };
 
   // Limpar todos os filtros aplicados
@@ -170,17 +304,53 @@ function Books() {
 
       {/* Controles de filtro */}
       <div className="filter-controls">
-        {/* Campo de busca */}
-        <div className="filter-group">
+        {/* Campo de busca aprimorado */}
+        <div className="filter-group search-container">
           <label htmlFor="search-filter">Buscar:</label>
-          <input
-            id="search-filter"
-            type="text"
-            placeholder="Buscar por título, autor, descrição..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="search-input"
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              id="search-filter"
+              type="text"
+              placeholder="Buscar por título, autor, descrição..."
+              value={localSearchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => localSearchTerm.length > 1 && setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              className={`search-input ${localSearchTerm ? 'search-active' : ''}`}
+              autoComplete="off"
+            />
+            <div className="search-icon-container">
+              {isSearching ? (
+                <div className="spinner-border spinner-border-sm text-muted" role="status">
+                  <span className="visually-hidden">Carregando...</span>
+                </div>
+              ) : (
+                <i className="fas fa-search"></i>
+              )}
+            </div>
+            
+            {/* Sugestões de busca */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="search-suggestions visible">
+                {searchSuggestions.map((suggestion, index) => (
+                  <div 
+                    key={index}
+                    className="suggestion-item"
+                    onMouseDown={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {showSuggestions && searchSuggestions.length === 0 && searchTerm.length > 1 && (
+              <div className="search-suggestions visible">
+                <div className="search-loading">Nenhuma sugestão encontrada</div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filtro por área */}
@@ -221,11 +391,11 @@ function Books() {
               key={book._id}
               title={book.title}
               type="Resumo de Livro"
-              reference={`Por ${book.author}`}
+              author={book.author}
               description={book.description}
               detailsUrl={`/livros/${book._id}`}
               pdfUrl={book.pdfUrl}
-              coverImageUrl={book.imageUrl}
+              coverImageUrl={book.coverImageUrl}
               book={book}
             />
           ))

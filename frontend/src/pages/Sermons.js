@@ -36,11 +36,15 @@ function Sermons() {
   const [selectedSeries, setSelectedSeries] = useState('');
   const [selectedSpeaker, setSelectedSpeaker] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [uniqueBooks, setUniqueBooks] = useState([]);
   const [uniqueSeries, setUniqueSeries] = useState([]);
   const [uniqueSpeakers, setUniqueSpeakers] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Busca dados dos sermões na API com filtros e paginação
   useEffect(() => {
@@ -69,6 +73,9 @@ function Sermons() {
         console.log('[Sermons] paginationData:', paginationData);
         setSermons(sermonsData);
         setPagination(paginationData);
+        
+        // Não é mais necessário extrair livros bíblicos aqui, pois já são buscados diretamente da API
+        console.log('Dados dos sermões carregados:', sermonsData);
       } catch (err) {
         setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar sermões:', err);
@@ -83,15 +90,93 @@ function Sermons() {
   // Inicializa filtros a partir da URL
   useEffect(() => {
     const query = new URLSearchParams(location.search);
+    const urlSearchTerm = query.get('search') || '';
+    
+    // Atualiza o estado local quando a URL muda
+    if (urlSearchTerm !== searchTerm) {
+      setSearchTerm(urlSearchTerm);
+      setLocalSearchTerm(urlSearchTerm);
+    }
+    
+    // Atualiza outros filtros
     setSelectedBook(query.get('book') || '');
     setSelectedSeries(query.get('series') || '');
     setSelectedSpeaker(query.get('speaker') || '');
-    setSearchTerm(query.get('search') || '');
   }, [location.search]);
 
   // Função para navegar entre páginas mantendo filtros
   const goToPage = (pageNumber) => {
     navigate(`${location.pathname}?page=${pageNumber}${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  };
+
+  // Busca sugestões de busca no backend ou usa busca local como fallback
+  const generateSearchSuggestions = async (term) => {
+    if (!term.trim()) return [];
+    
+    const lowerTerm = term.toLowerCase();
+    
+    try {
+      // Tenta buscar sugestões no backend primeiro
+      const response = await axios.get(`${API_ENDPOINTS.SERMONS.BASE}/suggestions`, {
+        params: { q: term, limit: 5 },
+        // Não rejeita a promise em caso de erro 404 (endpoint não encontrado)
+        validateStatus: status => status >= 200 && status < 500
+      });
+      
+      // Verifica se a resposta tem o formato esperado
+      if (response.status === 200) {
+        if (Array.isArray(response.data)) {
+          return response.data;
+        } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
+          return response.data.data;
+        }
+      }
+      
+      // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
+      // Usa busca local como fallback
+      console.warn('Usando busca local para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.');
+      return generateLocalSearchSuggestions(term);
+      
+    } catch (error) {
+      console.error('Erro ao buscar sugestões:', error);
+      // Em caso de erro, usa busca local como fallback
+      return generateLocalSearchSuggestions(term);
+    }
+  };
+  
+  // Gera sugestões localmente (usado como fallback)
+  const generateLocalSearchSuggestions = (term) => {
+    if (!term.trim() || !sermons || sermons.length === 0) return [];
+    
+    const lowerTerm = term.toLowerCase();
+    const suggestions = new Set();
+    
+    // Limita a busca aos primeiros 100 itens para performance
+    const maxItems = Math.min(100, sermons.length);
+    
+    for (let i = 0; i < maxItems; i++) {
+      const sermon = sermons[i];
+      
+      // Adiciona sugestões de títulos
+      if (sermon.title && sermon.title.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(sermon.title);
+      }
+      
+      // Adiciona sugestões de séries
+      if (sermon.series && sermon.series.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(sermon.series);
+      }
+      
+      // Adiciona sugestões de pregadores
+      if (sermon.speaker && sermon.speaker.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(sermon.speaker);
+      }
+      
+      // Limita a 5 sugestões para melhor desempenho
+      if (suggestions.size >= 5) break;
+    }
+    
+    return Array.from(suggestions);
   };
 
   // Handlers para mudança de filtros
@@ -110,14 +195,61 @@ function Sermons() {
     navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${e.target.value ? `&speaker=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    // Aplica busca com debounce
-    if (searchTimeout) clearTimeout(searchTimeout);
-    const timeout = setTimeout(() => {
-      navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${e.target.value ? `&search=${e.target.value}` : ''}`);
-    }, 500);
-    setSearchTimeout(timeout);
+  // Atualiza o termo de busca local
+  const handleSearchChange = async (e) => {
+    const value = e.target.value;
+    setLocalSearchTerm(value);
+    
+    // Gera sugestões em tempo real
+    if (value.length > 1) {
+      try {
+        setIsSearching(true);
+        const suggestions = await generateSearchSuggestions(value);
+        setSearchSuggestions(suggestions);
+        setShowSuggestions(suggestions.length > 0);
+      } catch (error) {
+        console.error('Erro ao gerar sugestões:', error);
+        setSearchSuggestions([]);
+      } finally {
+        setIsSearching(false);
+      }
+    } else {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+  
+  // Aplica a busca quando o usuário clica em uma sugestão ou pressiona Enter
+  const applySearch = (value = null) => {
+    const searchValue = value !== null ? value : localSearchTerm;
+    
+    setIsSearching(true);
+    
+    // Atualiza a URL com o novo termo de busca
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set('page', '1');
+    
+    if (selectedBook) newSearchParams.set('book', selectedBook);
+    if (selectedSeries) newSearchParams.set('series', selectedSeries);
+    if (selectedSpeaker) newSearchParams.set('speaker', selectedSpeaker);
+    
+    if (searchValue) {
+      newSearchParams.set('search', searchValue);
+    }
+    
+    // Navega para a nova URL
+    navigate(`${location.pathname}?${newSearchParams.toString()}`);
+    
+    // Fecha as sugestões
+    setShowSuggestions(false);
+    setIsSearching(false);
+  };
+  
+  // Aplica a busca quando o usuário pressiona Enter
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      applySearch();
+    }
   };
 
   // Limpar todos os filtros aplicados
@@ -133,23 +265,37 @@ function Sermons() {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const [booksResponse, seriesResponse, speakersResponse] = await Promise.all([
-          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/books`),
+        console.log('Buscando opções de filtro...');
+        // Busca séries, pregadores e livros bíblicos diretamente dos endpoints da API
+        const [seriesResponse, speakersResponse, booksResponse] = await Promise.all([
           axios.get(`${API_ENDPOINTS.SERMONS.BASE}/series`),
-          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/speakers`)
+          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/speakers`),
+          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/books`)
         ]);
 
-        // Extrai dados dos filtros, verificando se é DTO ou formato antigo
-        const books = booksResponse.data.success ? booksResponse.data.data : (booksResponse.data || []);
-        const series = seriesResponse.data.success ? seriesResponse.data.data : (seriesResponse.data || []);
-        const speakers = speakersResponse.data.success ? speakersResponse.data.data : (speakersResponse.data || []);
+        console.log('Resposta da API - Séries:', seriesResponse);
+        console.log('Resposta da API - Pregadores:', speakersResponse);
+        console.log('Resposta da API - Livros:', booksResponse);
 
-        setUniqueBooks(Array.isArray(books) ? books : []);
-        setUniqueSeries(Array.isArray(series) ? series : []);
-        setUniqueSpeakers(Array.isArray(speakers) ? speakers : []);
+        // Extrai dados dos filtros, verificando se é DTO ou formato antigo
+        const series = seriesResponse.data.success ? seriesResponse.data.data : (Array.isArray(seriesResponse.data) ? seriesResponse.data : []);
+        const speakers = speakersResponse.data.success ? speakersResponse.data.data : (Array.isArray(speakersResponse.data) ? speakersResponse.data : []);
+        const books = booksResponse.data.success ? booksResponse.data.data : (Array.isArray(booksResponse.data) ? booksResponse.data : []);
+
+        console.log('Séries extraídas:', series);
+        console.log('Pregadores extraídos:', speakers);
+        console.log('Livros bíblicos extraídos:', books);
+
+        // Atualiza os estados com os dados obtidos
+        setUniqueSeries(series);
+        setUniqueSpeakers(speakers);
+        setUniqueBooks(books);
       } catch (err) {
         console.error('Erro ao buscar opções de filtro:', err);
         // Em caso de erro, mantém arrays vazios
+        setUniqueSeries([]);
+        setUniqueSpeakers([]);
+        setUniqueBooks([]);
       }
     };
 
@@ -189,14 +335,53 @@ function Sermons() {
         {/* Campo de busca */}
         <div className="filter-group">
           <label htmlFor="search-filter">Buscar:</label>
-          <input
-            id="search-filter"
-            type="text"
-            placeholder="Buscar por título, pregador, descrição..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="search-input"
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              id="search-filter"
+              type="text"
+              placeholder="Buscar por título, pregador, referência..."
+              value={localSearchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => localSearchTerm.length > 1 && setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              className={`search-input ${localSearchTerm ? 'search-active' : ''}`}
+              autoComplete="off"
+            />
+            <div className="search-icon-container">
+              {isSearching ? (
+                <div className="spinner-border spinner-border-sm text-muted" role="status">
+                  <span className="visually-hidden">Carregando...</span>
+                </div>
+              ) : (
+                <i className="fas fa-search"></i>
+              )}
+            </div>
+            
+            {/* Sugestões de busca */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="search-suggestions visible">
+                {searchSuggestions.map((suggestion, index) => (
+                  <div 
+                    key={index}
+                    className="suggestion-item"
+                    onMouseDown={() => {
+                      setLocalSearchTerm(suggestion);
+                      applySearch(suggestion);
+                    }}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {showSuggestions && searchSuggestions.length === 0 && localSearchTerm.length > 1 && (
+              <div className="search-suggestions visible">
+                <div className="search-loading">Nenhuma sugestão encontrada</div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filtro por livro bíblico */}

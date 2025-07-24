@@ -1,5 +1,6 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
+import './config/fontAwesome'; // Importa a configuração do Font Awesome
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
 // Componentes de infraestrutura

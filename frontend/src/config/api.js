@@ -31,6 +31,10 @@ export const API_ENDPOINTS = {
         LATEST: `${API_BASE_URL}/api/sermons/latest`,
         BY_ID: (id) => `${API_BASE_URL}/api/sermons/${id}`,
         SEARCH: (term) => `${API_BASE_URL}/api/sermons/search/${term}`,
+        SUGGESTIONS: `${API_BASE_URL}/api/sermons/suggestions`,
+        SERIES: `${API_BASE_URL}/api/sermons/series`,
+        SPEAKERS: `${API_BASE_URL}/api/sermons/speakers`,
+        BOOKS: `${API_BASE_URL}/api/sermons/books`,
     },
 
     // Studies endpoints

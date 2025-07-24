@@ -6,7 +6,7 @@ import { faFilePdf, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import './ContentCard.css';
 
 const ContentCard = ({
-  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book, author, area, speaker
+  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book, author, speaker
 }) => {
   // Use o objeto que estiver disponível
   const content = sermon || study || book;
@@ -17,7 +17,6 @@ const ContentCard = ({
       return (
         <>
           {author && <div className="card-author">Por: {author}</div>}
-          {area && <div className="card-area">Área: {area}</div>}
         </>
       );
     } else if (type === 'Sermão') {

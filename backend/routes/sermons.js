@@ -120,6 +120,23 @@ router.get('/books', cacheMiddleware('stats'), async (req, res, next) => {
   }
 });
 
+// GET /api/sermons/suggestions - Busca sugestões de busca
+router.get('/suggestions', cacheMiddleware('suggestions'), async (req, res, next) => {
+  try {
+    const { q: searchTerm, limit = 5 } = req.query;
+    
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      return res.json(ApiResponseDTO.success([], 'Forneça um termo de busca com pelo menos 2 caracteres'));
+    }
+    
+    const suggestions = await SermonService.findSuggestions(searchTerm, parseInt(limit));
+    res.json(ApiResponseDTO.success(suggestions, 'Sugestões de busca obtidas com sucesso'));
+  } catch (error) {
+    console.error('Erro ao buscar sugestões:', error);
+    next(error);
+  }
+});
+
 // GET /api/sermons/series/:name - Sermões por série específica
 router.get('/series/:name', cacheMiddleware('filter'), async (req, res, next) => {
   try {
@@ -149,9 +166,25 @@ router.get('/search/:term', cacheMiddleware('filter'), async (req, res, next) =>
     res.json(ApiResponseDTO.success({
       searchTerm,
       count: result.sermons.length,
-      data: result.sermons,
+      data: result.sReplacementChunksermons,
       pagination: result.pagination
     }, `Busca por '${searchTerm}' realizada com sucesso`));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/suggestions - Busca sugestões de busca
+router.get('/suggestions', cacheMiddleware('suggestions'), async (req, res, next) => {
+  try {
+    const { q: query, limit = 5 } = req.query;
+    
+    if (!query || query.length < 2) {
+      return res.json(ApiResponseDTO.success([], 'Forneça pelo menos 2 caracteres para busca'));
+    }
+    
+    const suggestions = await SermonService.findSuggestions(query, parseInt(limit));
+    res.json(ApiResponseDTO.success(suggestions, 'Sugestões encontradas'));
   } catch (error) {
     next(error);
   }

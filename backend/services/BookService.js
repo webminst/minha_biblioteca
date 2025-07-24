@@ -143,8 +143,15 @@ class BookService {
             }
         }
 
+        // Mapeia o campo 'summary' para 'content' se existir
+        const bookDataMapped = { ...bookData };
+        if ('summary' in bookDataMapped) {
+            bookDataMapped.content = bookDataMapped.summary;
+            delete bookDataMapped.summary;
+        }
+
         const book = new Book({
-            ...bookData,
+            ...bookDataMapped,
             createdBy: userId
         });
 
@@ -166,62 +173,66 @@ class BookService {
             throw new AppError('Livro não encontrado', 404);
         }
 
+        // Mapeia o campo 'summary' para 'content' se existir
+        const updateDataMapped = { ...updateData };
+        if ('summary' in updateDataMapped) {
+            updateDataMapped.content = updateDataMapped.summary;
+            delete updateDataMapped.summary;
+        }
+
         // Se fornecido título e autor, verifica duplicação
-        if (updateData.title) {
-            const query = { _id: { $ne: id }, title: updateData.title };
+        if (updateDataMapped.title) {
+            const query = { _id: { $ne: id }, title: updateDataMapped.title };
 
             // Se tem autor, inclui na verificação
-            if (updateData.author) {
-                query.author = updateData.author;
+            if (updateDataMapped.author) {
+                query.author = updateDataMapped.author;
             }
 
             const existingBook = await Book.findOne(query);
 
             if (existingBook) {
-                const errorMsg = updateData.author
+                const errorMsg = updateDataMapped.author
                     ? 'Já existe outro livro com este título e autor'
                     : 'Já existe outro livro com este título';
                 throw new AppError(errorMsg, 409);
             }
         }
 
-        const updatedBook = await Book.findByIdAndUpdate(
-            id,
-            {
-                ...updateData,
-                updatedBy: userId,
-                updatedAt: new Date()
-            },
-            {
-                new: true,
-                runValidators: true
+        try {
+            const updatedBook = await Book.findByIdAndUpdate(
+                id,
+                {
+                    ...updateDataMapped,
+                    updatedBy: userId,
+                    updatedAt: new Date()
+                },
+                {
+                    new: true,
+                    runValidators: true,
+                    context: 'query'
+                }
+            );
+
+            if (!updatedBook) {
+                throw new AppError('Falha ao atualizar o livro: livro não encontrado após a atualização', 500);
             }
-        );
 
-        return updatedBook;
-    }
-
-    /**
-     * Exclui livro
-     * @param {string} id - ID do livro
-     * @returns {Object} - Livro excluído
-     */
-    async delete(id) {
-        const book = await Book.findById(id);
-
-        if (!book) {
-            throw new AppError('Livro não encontrado', 404);
+            return updatedBook;
+        } catch (error) {
+            console.error('Erro ao atualizar livro:', error);
+            
+            if (error.name === 'ValidationError') {
+                const errors = Object.values(error.errors).map(err => err.message);
+                throw new AppError(`Erro de validação: ${errors.join(', ')}`, 400);
+            } else if (error.name === 'CastError') {
+                throw new AppError('ID do livro inválido', 400);
+            } else if (error.name === 'MongoError' && error.code === 11000) {
+                throw new AppError('Já existe um livro com este título e/ou autor', 409);
+            }
+            
+            throw new AppError(`Erro ao atualizar o livro: ${error.message}`, 500);
         }
-
-        await Book.findByIdAndDelete(id);
-
-        return {
-            message: 'Livro excluído com sucesso',
-            deletedBook: {
-                _id: book._id,
-                title: book.title
-            }
-        };
     }
 
     /**
@@ -427,6 +438,39 @@ class BookService {
             .select('title author area description coverImageUrl tags');
 
         return popularBooks;
+    }
+
+    /**
+     * Exclui um livro pelo ID
+     * @param {string} id - ID do livro a ser excluído
+     * @returns {Object} - Objeto com informações sobre a exclusão
+     */
+    async delete(id) {
+        try {
+            const book = await Book.findByIdAndDelete(id);
+            
+            if (!book) {
+                throw new AppError('Livro não encontrado', 404);
+            }
+
+            return {
+                success: true,
+                message: 'Livro excluído com sucesso',
+                data: {
+                    id: book._id,
+                    title: book.title,
+                    author: book.author
+                }
+            };
+        } catch (error) {
+            console.error('Erro ao excluir livro:', error);
+            
+            if (error.name === 'CastError') {
+                throw new AppError('ID do livro inválido', 400);
+            }
+            
+            throw new AppError(`Erro ao excluir o livro: ${error.message}`, 500);
+        }
     }
 
     /**

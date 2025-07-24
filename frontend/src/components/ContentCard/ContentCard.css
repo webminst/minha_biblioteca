@@ -207,13 +207,6 @@
 
 .content-reference {
   font-size: 1rem;
-  color: var(--color-gray-medium, #666);
-  margin-bottom: 0.5rem;
-  margin-top: -0.3rem;
-}
-
-.card-author,
-.card-area {
   font-size: 0.95rem;
   color: var(--color-gray-medium, #666);
   margin-bottom: 0.2rem;

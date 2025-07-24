@@ -57,8 +57,12 @@ class CachedBookService extends BookService {
     async create(bookData, userId) {
         const result = await super.create(bookData, userId);
 
-        // Invalida caches relacionados
-        await this.invalidateRelatedCaches('create');
+        // Invalida caches relacionados, incluindo o cache específico do livro criado
+        if (result && result._id) {
+            await this.invalidateRelatedCaches('create', { id: result._id });
+        } else {
+            await this.invalidateRelatedCaches('create');
+        }
 
         return result;
     }
@@ -69,9 +73,8 @@ class CachedBookService extends BookService {
     async update(id, updateData, userId) {
         const result = await super.update(id, updateData, userId);
 
-        // Invalida cache específico e relacionados
-        await cacheService.delete(`books:${id}`);
-        await this.invalidateRelatedCaches('update');
+        // Invalida caches relacionados, incluindo o cache específico
+        await this.invalidateRelatedCaches('update', { id });
 
         return result;
     }
@@ -82,9 +85,8 @@ class CachedBookService extends BookService {
     async delete(id) {
         const result = await super.delete(id);
 
-        // Invalida cache específico e relacionados
-        await cacheService.delete(`books:${id}`);
-        await this.invalidateRelatedCaches('delete');
+        // Invalida caches relacionados, incluindo o cache específico
+        await this.invalidateRelatedCaches('delete', { id });
 
         return result;
     }
@@ -221,18 +223,38 @@ class CachedBookService extends BookService {
 
     /**
      * 🧹 Invalida caches relacionados
+     * @param {string} operation - Tipo de operação: 'create', 'update', 'delete'
+     * @param {Object} [data] - Dados adicionais para invalidação específica
      */
-    async invalidateRelatedCaches(operation = 'update') {
-        console.log(`🧹 Invalidating book caches for operation: ${operation}`);
+    async invalidateRelatedCaches(operation = 'update', data = {}) {
+        console.log(`🧹 Invalidating book caches for operation: ${operation}`, data);
 
-        // Invalida todos os caches de books
+        // Invalida caches específicos de books
         await cacheService.invalidateRelated('books', operation);
 
-        // Se for operação que afeta contadores, invalida estatísticas
+        // Invalida caches de listagem e busca
+        await cacheService.invalidatePattern('books:list*');
+        await cacheService.invalidatePattern('books:search*');
+        await cacheService.invalidatePattern('books:filters*');
+
+        // Se houver um ID específico, invalida o cache detalhado
+        if (data.id) {
+            await cacheService.delete(`books:${data.id}`);
+        }
+
+        // Invalida caches de estatísticas e home para operações que afetam contadores
         if (['create', 'delete'].includes(operation)) {
             await cacheService.invalidatePattern('stats:*');
             await cacheService.invalidatePattern('home:*');
         }
+
+        // Invalida caches de filtros e listagens relacionadas
+        await cacheService.invalidatePattern('books:areas*');
+        await cacheService.invalidatePattern('books:authors*');
+        await cacheService.invalidatePattern('books:publishers*');
+        await cacheService.invalidatePattern('books:tags*');
+        
+        console.log('✅ Caches de livros invalidados com sucesso');
     }
 
     /**

@@ -293,6 +293,35 @@ class CachedStudyService {
     }
 
     /**
+     * Busca sugestões de estudos com base em um termo de busca, com cache
+     * @param {string} term - Termo de busca
+     * @param {number} limit - Limite de sugestões por categoria
+     * @returns {Object} - Objeto com sugestões agrupadas por categoria
+     */
+    async findSuggestions(term, limit = 5) {
+        // Se o termo for muito curto, retorna vazio sem cache
+        if (!term || term.trim().length < 2) {
+            return {
+                titles: [],
+                themes: [],
+                references: [],
+                formats: []
+            };
+        }
+
+        const searchTerm = term.trim().toLowerCase();
+        const cacheKey = `${this.cachePrefix}:suggestions:${searchTerm}:${limit}`;
+
+        return await this.cacheService.getOrSet(
+            cacheKey,
+            () => this.studyService.findSuggestions(searchTerm, limit),
+            this.cacheService.getTTLForType('suggestions'),
+            // Invalida o cache se houver alguma alteração nos dados
+            [`${this.cachePrefix}:list*`, `${this.cachePrefix}:stats*`]
+        );
+    }
+
+    /**
      * Aquece cache com dados frequentemente acessados
      */
     async warmUp() {

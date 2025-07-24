@@ -15,6 +15,17 @@ function BookForm() {
     const [date, setDate] = useState('');
     const [local, setLocal] = useState('');
     const [area, setArea] = useState('');
+    const areaOptions = [
+        'Teologia Sistemática',
+        'Teologia Bíblica',
+        'Comentários Bíblicos',
+        'Vida Cristã',
+        'Apologética',
+        'História da Igreja',
+        'Biografias',
+        'Devocionais',
+        'Outros'
+    ];
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [audioUrl, setAudioUrl] = useState('');
@@ -79,27 +90,46 @@ function BookForm() {
         setError(null);
         setSuccess(null);
 
-        // Converte a string de tags de volta para um array para enviar ao backend
-        const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+        // Validação do tamanho máximo do conteúdo
+        const MAX_SUMMARY_LENGTH = 10000;
+        if (content && content.length > MAX_SUMMARY_LENGTH) {
+            setError(`O resumo não pode ter mais de ${MAX_SUMMARY_LENGTH} caracteres. Atualmente tem ${content.length} caracteres.`);
+            setLoading(false);
+            return;
+        }
 
+        // Verifica se o usuário está autenticado
+        const token = localStorage.getItem('userToken');
+        if (!token) {
+            setError('Usuário não autenticado. Redirecionando para login...');
+            setTimeout(() => navigate('/login'), 2000);
+            return;
+        }
+
+        // Prepara os dados do livro de acordo com o UpdateBookDTO
         const bookData = {
-            title,
-            series,
-            tags: tagsArray, // Envia como array
-            author,
-            date,
-            local,
-            area,
-            description,
-            content,
-            audioUrl,
-            videoUrl,
-            imageUrl,
-            pdfUrl,
+            title: title || undefined,
+            author: author || undefined,
+            description: description || undefined,
+            summary: content || undefined,
+            area: area || undefined,
+            tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : undefined,
+            series: series || undefined,
+            imageUrl: imageUrl || undefined,
+            pdfUrl: pdfUrl || undefined,
+            videoUrl: videoUrl || undefined,
+            audioUrl: audioUrl || undefined,
+            // Inclui apenas os campos que têm valor
         };
 
+        // Remove campos undefined do objeto
+        Object.keys(bookData).forEach(key => {
+            if (bookData[key] === undefined) {
+                delete bookData[key];
+            }
+        });
+
         try {
-            const token = localStorage.getItem('userToken');
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -108,9 +138,11 @@ function BookForm() {
             };
 
             if (isEditing) {
-                await axios.patch(API_ENDPOINTS.BOOKS.BY_ID(id), bookData, config);
+                // Usa PUT para atualização, conforme esperado pelo backend
+                await axios.put(API_ENDPOINTS.BOOKS.BY_ID(id), bookData, config);
                 setSuccess('Livro atualizado com sucesso!');
             } else {
+                // Para criação, mantém o POST
                 await axios.post(API_ENDPOINTS.BOOKS.BASE, bookData, config);
                 setSuccess('Livro criado com sucesso!');
                 // Limpa o formulário após a criação
@@ -131,14 +163,40 @@ function BookForm() {
             // Opcional: redirecionar para a lista de livros após sucesso
             navigate('/admin/livros');
         } catch (err) {
-            setError('Erro ao salvar livro: ' + (err.response?.data?.message || err.message));
-            console.error('Erro ao salvar livro:', err);
+            const errorMessage = err.response?.data?.message || 
+                               err.response?.data?.error?.message ||
+                               err.response?.data?.error ||
+                               err.message || 
+                               'Erro ao processar a requisição';
+            
+            setError(`Erro ao salvar livro: ${errorMessage}`);
+            
+            // Log detalhado no console para depuração
+            console.error('Erro detalhado:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status,
+                statusText: err.response?.statusText,
+                config: {
+                    url: err.config?.url,
+                    method: err.config?.method,
+                    data: err.config?.data
+                }
+            });
+            
+            // Se o token estiver inválido, redireciona para o login
+            if (err.response?.status === 401) {
+                localStorage.removeItem('userToken');
+                setTimeout(() => navigate('/login'), 2000);
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading && isEditing) return <p>Carregando dados do livro...</p>;
+
+    if (loading && isEditing && !error) return <p>Carregando dados do livro...</p>;
+    // Se houver erro, mostra o formulário com a mensagem de erro
 
     return (
         <div className="form-container">
@@ -163,8 +221,13 @@ function BookForm() {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="area">Área (opcional):</label>
-                    <input type="text" id="area" value={area} onChange={(e) => setArea(e.target.value)} disabled={loading} />
+                    <label htmlFor="area">Área:</label>
+                    <select id="area" value={area} onChange={e => setArea(e.target.value)} disabled={loading} required>
+                        <option value="">Selecione uma área</option>
+                        {areaOptions.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="form-group">
@@ -174,7 +237,17 @@ function BookForm() {
 
                 <div className="form-group">
                     <label htmlFor="content">Conteúdo (resumo/trecho em Markdown, opcional):</label>
-                    <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows="10" disabled={loading}></textarea>
+                    <textarea 
+                        id="content" 
+                        value={content} 
+                        onChange={(e) => setContent(e.target.value)} 
+                        rows="10" 
+                        disabled={loading}
+                        maxLength={10000}
+                    ></textarea>
+                    <div className="character-count">
+                        {content.length}/10000 caracteres
+                    </div>
                     <small>Use sintaxe Markdown para formatação.</small>
                 </div>
 

@@ -42,7 +42,12 @@
 
 .admin-form textarea {
     resize: vertical;
-    /* Permite redimensionar verticalmente */
+    min-height: 120px;
+    /* Altura mínima maior para melhor usabilidade */
+    font-family: inherit;
+    /* Mantém a fonte consistente */
+    line-height: 1.5;
+    /* Melhora a legibilidade */
 }
 
 .admin-form small {

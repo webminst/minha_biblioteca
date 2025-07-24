@@ -201,12 +201,42 @@ class CachedSermonService {
      * Busca todos os livros com cache
      */
     async getAllBooks() {
-        const cacheKey = `${this.cachePrefix}:books:all`;
-
-        return await this.cacheService.getOrSet(
+        const cacheKey = `${this.cachePrefix}:all:books`;
+        return this.cacheService.getOrSet(
             cacheKey,
             () => this.sermonService.getAllBooks(),
             this.cacheService.getTTLForType('stats')
+        );
+    }
+
+    /**
+     * Busca os livros bíblicos únicos
+     */
+    async findUniqueBooks() {
+        const cacheKey = `${this.cachePrefix}:unique:books`;
+        return this.cacheService.getOrSet(
+            cacheKey,
+            () => this.sermonService.findUniqueBooks(),
+            this.cacheService.getTTLForType('stats')
+        );
+    }
+
+    /**
+     * Busca sugestões de busca com cache
+     * @param {string} term - Termo de busca
+     * @param {number} [limit=5] - Limite de sugestões
+     * @returns {Promise<Array>} - Lista de sugestões
+     */
+    async findSuggestions(term, limit = 5) {
+        if (!term || term.length < 2) {
+            return [];
+        }
+        
+        const cacheKey = `${this.cachePrefix}:suggestions:${term.toLowerCase()}:${limit}`;
+        return this.cacheService.getOrSet(
+            cacheKey,
+            () => this.sermonService.findSuggestions(term, limit),
+            this.cacheService.getTTLForType('suggestions')
         );
     }
 

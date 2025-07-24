@@ -391,6 +391,70 @@ class StudyService {
         const references = await Study.distinct('reference');
         return references.filter(r => r && r.trim() !== '');
     }
+
+    /**
+     * Busca sugestões de estudos com base em um termo de busca
+     * @param {string} term - Termo de busca
+     * @param {number} limit - Limite de sugestões por categoria
+     * @returns {Object} - Objeto com sugestões agrupadas por categoria
+     */
+    async findSuggestions(term, limit = 5) {
+        if (!term || term.trim().length < 2) {
+            return {
+                titles: [],
+                themes: [],
+                references: [],
+                formats: []
+            };
+        }
+
+        const searchTerm = term.trim().toLowerCase();
+        const regex = new RegExp(searchTerm, 'i');
+
+        try {
+            // Busca em paralelo por diferentes categorias
+            const [titles, themes, references, formats] = await Promise.all([
+                // Títulos que contêm o termo
+                Study.find({ title: { $regex: regex } })
+                    .limit(limit)
+                    .select('title')
+                    .then(studies => studies.map(s => s.title)),
+                
+                // Temas que contêm o termo
+                Study.find({ theme: { $regex: regex } })
+                    .distinct('theme')
+                    .then(themes => themes.filter(t => t && t.toLowerCase().includes(searchTerm)))
+                    .then(themes => themes.slice(0, limit)),
+                
+                // Referências que contêm o termo
+                Study.find({ reference: { $regex: regex } })
+                    .distinct('reference')
+                    .then(refs => refs.filter(r => r && r.toLowerCase().includes(searchTerm)))
+                    .then(refs => refs.slice(0, limit)),
+                
+                // Formatos que contêm o termo
+                Study.find({ format: { $regex: regex } })
+                    .distinct('format')
+                    .then(fmts => fmts.filter(f => f && f.toLowerCase().includes(searchTerm)))
+                    .then(fmts => fmts.slice(0, limit))
+            ]);
+
+            return {
+                titles: [...new Set(titles)].slice(0, limit),
+                themes: [...new Set(themes)].slice(0, limit),
+                references: [...new Set(references)].slice(0, limit),
+                formats: [...new Set(formats)].slice(0, limit)
+            };
+        } catch (error) {
+            console.error('Erro ao buscar sugestões de estudos:', error);
+            return {
+                titles: [],
+                themes: [],
+                references: [],
+                formats: []
+            };
+        }
+    }
 }
 
 module.exports = new StudyService();

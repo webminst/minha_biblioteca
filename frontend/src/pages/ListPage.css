@@ -59,15 +59,90 @@
   background-color: var(--color-white);
 }
 
+/* Container do campo de busca */
+.search-container {
+  position: relative;
+  flex-grow: 1;
+  min-width: 250px;
+}
+
 /* Input de busca */
 .filter-group .search-input {
-  padding: 0.7rem;
+  padding: 0.7rem 2.5rem 0.7rem 0.7rem;
   border: 1px solid var(--color-gray-medium);
   border-radius: 5px;
   font-size: 1rem;
   font-family: inherit;
   background-color: var(--color-white);
-  min-width: 250px;
+  width: 100%;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Container do ícone de busca */
+.search-icon-container {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gray-medium);
+  pointer-events: none;
+}
+
+/* Container das sugestões de busca */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-medium);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+}
+
+.search-suggestions.visible {
+  display: block;
+}
+
+/* Itens da lista de sugestões */
+.suggestion-item {
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+  color: var(--color-gray-dark);
+  border-bottom: 1px solid var(--color-gray-light);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.highlighted {
+  background-color: var(--color-gray-light);
+  color: var(--color-green-ipb);
+}
+
+/* Indicador de carregamento */
+.search-loading {
+  padding: 0.7rem 1rem;
+  color: var(--color-gray-medium);
+  font-size: 0.9rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Feedback visual para busca ativa */
+.search-active {
+  border-color: var(--color-green-ipb) !important;
+  box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.2) !important;
 }
 
 /* Foco nos selects e inputs */

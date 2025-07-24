@@ -216,6 +216,7 @@ class CacheService {
 
             // Busca e filtros
             'search': 600,        // 10 minutos
+            'suggestions': 1800,  // 30 minutos
             'filters': 1800,      // 30 minutos
 
             // Autenticação

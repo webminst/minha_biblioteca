@@ -455,9 +455,35 @@ class StudySearchDTO extends BaseDTO {
     }
 }
 
+/**
+ * DTO para sugestões de estudos
+ */
+class StudySuggestionsDTO extends BaseDTO {
+    constructor(data) {
+        super(data);
+        this.schema = Joi.object({
+            titles: Joi.array().items(Joi.string()).default([]),
+            themes: Joi.array().items(Joi.string()).default([]),
+            references: Joi.array().items(Joi.string()).default([]),
+            formats: Joi.array().items(Joi.string()).default([])
+        });
+    }
+
+    transform() {
+        const data = this.validatedData || this.data;
+        return {
+            titles: data.titles || [],
+            themes: data.themes || [],
+            references: data.references || [],
+            formats: data.formats || []
+        };
+    }
+}
+
 module.exports = {
     CreateStudyDTO,
     UpdateStudyDTO,
     StudyResponseDTO,
-    StudySearchDTO
+    StudySearchDTO,
+    StudySuggestionsDTO
 };
