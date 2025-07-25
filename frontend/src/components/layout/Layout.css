@@ -2,10 +2,20 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: var(--layout-bg, #fff);
 }
 
 .main-content {
   flex-grow: 1;
   padding: 2rem;
-  background-color: #FFFFFF;
+  background-color: var(--main-bg, #fff);
+}
+
+/* Tema escuro para layout */
+.dark .layout-container {
+  --layout-bg: #181a1b;
+}
+
+.dark .main-content {
+  --main-bg: #181a1b;
 }

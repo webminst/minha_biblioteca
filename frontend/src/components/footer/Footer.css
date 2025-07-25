@@ -1,11 +1,17 @@
 /* src/components/Footer/Footer.css */
 .app-footer {
   padding: 0.5rem 0.5rem;
-  background-color: var(--color-gray-dark);
-  color: var(--color-gray-light);
+  background-color: var(--footer-bg, var(--color-gray-dark));
+  color: var(--footer-color, var(--color-gray-light));
   text-align: center;
   margin-top: auto;
   font-size: 0.9rem;
+}
+
+/* Tema escuro para o footer */
+.dark .app-footer {
+  --footer-bg: #181a1b;
+  --footer-color: #b2bec3;
 }
 
 .app-footer a {
