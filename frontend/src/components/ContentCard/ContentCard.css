@@ -12,6 +12,26 @@
   flex-direction: column;
 }
 
+/* Tema escuro para os cards */
+.dark .content-card {
+  background-color: #444a51;
+  border: 1px solid #23272b;
+}
+
+.dark .card-title,
+.dark .card-title a {
+  color: var(--color-green-ipb);
+}
+
+.dark .card-description {
+  color: var(--color-gray-dark);
+}
+
+.dark .card-type {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+}
+
 .content-card:hover {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   transform: scale(1.02);

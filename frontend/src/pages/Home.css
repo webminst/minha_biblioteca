@@ -15,13 +15,12 @@
 
 /* ========== SEÇÃO HERO ========== */
 /* Seção principal de apresentação */
+/* Suporte a tema escuro: use variável para fundo da hero-section */
 .hero-section {
   padding: 3rem 0;
   margin-bottom: 4rem;
-  background-color: var(--color-gray-medium);
-  /* Adiciona fundo cinza médio */
+  background-color: var(--home-hero-bg, var(--color-gray-medium));
   border-radius: 12px;
-  /* Opcional: adiciona bordas arredondadas */
 }
 
 /* Layout flexível para texto e imagem */
@@ -127,12 +126,22 @@
 }
 
 /* ========== SEÇÃO CHAMADA PARA AÇÃO ========== */
+/* Suporte a tema escuro: use variável para fundo da cta-section */
 .cta-section {
   text-align: center;
   padding: 3rem 2rem;
-  background-color: var(--color-gray-light);
+  background-color: var(--home-cta-bg, var(--color-gray-light));
   border-radius: 12px;
   margin-bottom: 3rem;
+}
+
+/* Tema escuro para Home */
+.dark .hero-section {
+  --home-hero-bg: #23272b;
+}
+
+.dark .cta-section {
+  --home-cta-bg: #23272b;
 }
 
 /* Título da seção CTA */
@@ -160,6 +169,7 @@
 }
 
 /* Botões individuais de CTA */
+
 .cta-button {
   background-color: var(--color-white);
   color: var(--color-green-ipb);
@@ -172,6 +182,41 @@
   transition: all 0.3s ease;
   min-width: 150px;
   text-align: center;
+}
+
+/* Ajuste de textos para modo escuro */
+.dark .hero-text h1,
+.dark .featured-section h2,
+.dark .cta-section h2 {
+  color: var(--color-green-ipb);
+}
+
+.dark .hero-subtitle,
+.dark .hero-text p,
+.dark .cta-section p {
+  color: var(--color-gray-dark);
+}
+
+/* Botões principais e CTA no modo escuro */
+.dark .hero-button {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
+}
+
+.dark .hero-button:hover {
+  background-color: var(--color-green-dark);
+  color: var(--color-white);
+}
+
+.dark .cta-button {
+  background-color: var(--color-gray-lighter);
+  color: var(--color-green-ipb);
+  border: 2px solid var(--color-green-ipb);
+}
+
+.dark .cta-button:hover {
+  background-color: var(--color-green-ipb);
+  color: var(--color-white);
 }
 
 .cta-button:hover {

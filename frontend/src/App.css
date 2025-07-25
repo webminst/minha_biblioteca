@@ -4,6 +4,7 @@
  */
 
 /* ========== VARIÁVEIS CSS GLOBAIS ========== */
+/* Tema claro (padrão) */
 :root {
     /* Paleta de cores principal */
     --color-green-ipb: #006a4e;
@@ -61,6 +62,29 @@
     --transition-fast: 0.15s ease-in-out;
     --transition-normal: 0.3s ease-in-out;
     --transition-slow: 0.5s ease-in-out;
+}
+
+/* Tema escuro */
+.dark {
+    --color-green-ipb: #00b894;
+    --color-green-dark: #005a3c;
+    --color-green-light: #22332e;
+
+    --color-gray-dark: #ecf0f1;
+    --color-gray-medium: #b2bec3;
+    --color-gray-light: #636e72;
+    --color-gray-lighter: #2d3436;
+
+    --color-white: #181a1b;
+    --color-black: #ffffff;
+
+    --color-success: #00b894;
+    --color-error: #ff7675;
+    --color-warning: #fdcb6e;
+    --color-info: #74b9ff;
+
+    background-color: var(--color-white);
+    color: var(--color-gray-dark);
 }
 
 /* ========== RESET E ESTILOS BASE ========== */

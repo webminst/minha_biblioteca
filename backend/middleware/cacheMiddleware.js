@@ -214,6 +214,17 @@ const cacheStrategies = {
         keyGenerator: (req) => {
             return cacheService.generateKey(`${entityType}`, 'filters', req.query);
         }
+    }),
+    
+    // Cache para sugestões
+    suggestions: (entityType) => cacheMiddleware({
+        cacheType: 'suggestions',
+        ttl: 300, // 5 minutos
+        keyGenerator: (req) => {
+            const searchParams = { ...req.query };
+            delete searchParams.nocache;
+            return cacheService.generateKey(`${entityType}`, 'suggestions', searchParams);
+        }
     })
 };
 

@@ -1,8 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import App from './App';
 import './index.css';
+
+// Configuração do histórico personalizado
+const history = createBrowserHistory({
+  // Configuração para o futuro do React Router
+  future: {
+    v7_startTransition: true, // Habilita o uso de startTransition
+    v7_relativeSplatPath: true // Habilita o comportamento futuro para rotas splat
+  }
+});
 
 /**
  * Ponto de entrada da aplicação React
@@ -30,7 +40,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/* Router para navegação SPA (Single Page Application) */}
-    <Router>
+    <Router 
+      history={history}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       {/* Componente principal da aplicação */}
       <App />
     </Router>
