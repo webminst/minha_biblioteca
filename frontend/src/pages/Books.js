@@ -75,10 +75,10 @@ function Books() {
         if (searchParam) params.search = searchParam;
 
         const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
-        
+
         const booksData = extractBooks(response.data);
         const paginationData = extractPagination(response.data);
-        
+
         setBooks(booksData);
         setPagination(paginationData);
       } catch (err) {
@@ -95,13 +95,13 @@ function Books() {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const urlSearchTerm = query.get('search') || '';
-    
+
     // Atualiza o estado local quando a URL muda
     if (urlSearchTerm !== searchTerm) {
       setSearchTerm(urlSearchTerm);
       setLocalSearchTerm(urlSearchTerm);
     }
-    
+
     // Atualiza outros filtros
     setSelectedArea(query.get('area') || '');
     setSelectedAuthor(query.get('author') || '');
@@ -112,22 +112,22 @@ function Books() {
     const fetchFilterOptions = async () => {
       try {
         console.log('Buscando opções de filtro...');
-        
+
         // Buscando as áreas
         const areasResponse = await axios.get(`${API_ENDPOINTS.BOOKS.BASE}/areas`);
         console.log('Resposta da API - Áreas (raw):', areasResponse);
-        
+
         // Buscando os livros para extrair os autores
         const booksResponse = await axios.get(API_ENDPOINTS.BOOKS.BASE);
         console.log('Resposta completa da API de livros:', JSON.stringify(booksResponse.data, null, 2));
-        
+
         // Extrai as áreas da resposta
         const areas = areasResponse.data.success ? areasResponse.data.data : (areasResponse.data || []);
-        
+
         // Extrai os livros da resposta - agora acessando corretamente a propriedade data
         const books = booksResponse.data.data || [];
         console.log('Lista de livros extraída:', books);
-        
+
         // Extrai os autores únicos dos livros
         const authors = [
           ...new Set(
@@ -143,16 +143,16 @@ function Books() {
               })
           )
         ].sort(); // Ordena os autores alfabeticamente
-        
+
         console.log('Autores extraídos dos livros:', authors);
 
         console.log('Tipo de áreas:', typeof areas, 'É array?', Array.isArray(areas));
         console.log('Tipo de autores:', typeof authors, 'É array?', Array.isArray(authors));
-        
+
         // Usando JSON.stringify para ver o conteúdo completo dos arrays
         console.log('Conteúdo completo de áreas:', JSON.stringify(areas, null, 2));
         console.log('Conteúdo completo de autores:', JSON.stringify(authors, null, 2));
-        
+
         console.log('Primeiros 5 itens de áreas:', areas.slice(0, 5));
         console.log('Primeiros 5 itens de autores:', authors.slice(0, 5));
 
@@ -191,52 +191,121 @@ function Books() {
   };
 
   // Busca sugestões globais com base no termo digitado
+  // Função para buscar sugestões de busca (autocomplete) com fallback local (igual Sermons)
   const fetchSearchSuggestions = async (term) => {
-    if (!term.trim() || term.trim().length < 2) {
-      setSuggestionCategories({
-        titles: [],
-        authors: [],
-        areas: [],
-        publishers: []
-      });
+    if (!term.trim()) {
       setSearchSuggestions([]);
       setShowSuggestions(false);
       return;
     }
-
-    // Gera um novo ID para a requisição atual
-    const requestId = ++lastRequestId.current;
-    setIsLoadingSuggestions(true);
-    
     try {
-      const suggestions = await BookService.getSuggestions(term, 5);
-      
-      // Verifica se ainda é a requisição mais recente
-      if (requestId !== lastRequestId.current) return;
-      
-      setSuggestionCategories(suggestions);
-      
-      // Combina todas as sugestões em uma única lista
-      const allSuggestions = [
-        ...(suggestions.titles || []).map(s => ({ text: s, type: 'título' })),
-        ...(suggestions.authors || []).map(s => ({ text: s, type: 'autor' })),
-        ...(suggestions.areas || []).map(s => ({ text: s, type: 'área' })),
-        ...(suggestions.publishers || []).map(s => ({ text: s, type: 'editora' }))
-      ].slice(0, 10); // Limita a 10 sugestões no total
-      
-      setSearchSuggestions(allSuggestions);
-      setShowSuggestions(allSuggestions.length > 0);
+      // Tenta buscar sugestões no backend primeiro
+      const response = await axios.get(`${API_ENDPOINTS.BOOKS.BASE}/suggestions`, {
+        params: { q: term, limit: 5 },
+        validateStatus: status => status >= 200 && status < 500
+      });
+
+      // Verifica se a resposta tem o formato esperado
+      if (response.status === 200) {
+        if (Array.isArray(response.data)) {
+          setSearchSuggestions(response.data.map(s => ({ text: s, type: 'Sugestão' })));
+          setShowSuggestions(response.data.length > 0);
+          return;
+        } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
+          setSearchSuggestions(response.data.data.map(s => ({ text: s, type: 'Sugestão' })));
+          setShowSuggestions(response.data.data.length > 0);
+          return;
+        }
+      }
+
+      // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
+      // Usa busca global como fallback
+      console.warn('Usando busca global para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.');
+      const globalSuggestions = await generateGlobalSearchSuggestions(term);
+      setSearchSuggestions(globalSuggestions);
+      setShowSuggestions(globalSuggestions.length > 0);
     } catch (error) {
       console.error('Erro ao buscar sugestões:', error);
-      setSearchSuggestions([]);
-      setShowSuggestions(false);
-    } finally {
-      if (requestId === lastRequestId.current) {
-        setIsLoadingSuggestions(false);
-      }
+      // Em caso de erro, usa busca global como fallback
+      const globalSuggestions = await generateGlobalSearchSuggestions(term);
+      setSearchSuggestions(globalSuggestions);
+      setShowSuggestions(globalSuggestions.length > 0);
     }
   };
-  
+
+  // Busca sugestões globalmente na API (fallback global)
+  const generateGlobalSearchSuggestions = async (term) => {
+    if (!term.trim()) return [];
+    try {
+      // Busca os primeiros 100 livros que contenham o termo
+      const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, {
+        params: { search: term, page: 1, limit: 100 },
+        validateStatus: status => status >= 200 && status < 500
+      });
+      const booksList = Array.isArray(response.data.data) ? response.data.data : [];
+      const lowerTerm = term.toLowerCase();
+      const suggestions = new Set();
+      for (let i = 0; i < booksList.length; i++) {
+        const book = booksList[i];
+        if (book.title && book.title.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(JSON.stringify({ text: book.title, type: 'título' }));
+        }
+        if (book.author && book.author.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(JSON.stringify({ text: book.author, type: 'autor' }));
+        }
+        if (book.reference && book.reference.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(JSON.stringify({ text: book.reference, type: 'referência' }));
+        }
+        if (suggestions.size >= 10) break;
+      }
+      return Array.from(suggestions).map(s => JSON.parse(s));
+    } catch (error) {
+      console.error('Erro ao buscar sugestões globais:', error);
+      return [];
+    }
+  };
+
+  // Gera sugestões localmente (usado como fallback)
+  const generateLocalSearchSuggestions = (term) => {
+    if (!term.trim() || !books || books.length === 0) return [];
+
+    const lowerTerm = term.toLowerCase();
+    const suggestions = new Set();
+
+    // Limita a busca aos primeiros 100 itens para performance
+    const maxItems = Math.min(100, books.length);
+
+    for (let i = 0; i < maxItems; i++) {
+      const book = books[i];
+
+      // Adiciona sugestões de títulos
+      if (book.title && book.title.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(JSON.stringify({ text: book.title, type: 'título' }));
+      }
+
+      // Adiciona sugestões de autores
+      if (book.author && book.author.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(JSON.stringify({ text: book.author, type: 'autor' }));
+      }
+
+      // Adiciona sugestões de áreas
+      if (book.area && book.area.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(JSON.stringify({ text: book.area, type: 'área' }));
+      }
+
+      // Adiciona sugestões de editoras
+      if (book.publisher && book.publisher.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(JSON.stringify({ text: book.publisher, type: 'editora' }));
+      }
+
+      // Limita a 10 sugestões para melhor desempenho
+      if (suggestions.size >= 10) break;
+    }
+
+    // Converte de volta para objetos
+    return Array.from(suggestions).map(s => JSON.parse(s));
+  };
+
   // Debounce para evitar muitas chamadas à API
   const debouncedFetchSuggestions = useMemo(
     () => {
@@ -255,7 +324,7 @@ function Books() {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setLocalSearchTerm(value);
-    
+
     // Busca sugestões em tempo real
     if (value.trim().length > 1) {
       debouncedFetchSuggestions(value.trim());
@@ -264,43 +333,43 @@ function Books() {
       setShowSuggestions(false);
     }
   };
-  
+
   // Aplica a busca quando o usuário clica em uma sugestão ou pressiona Enter
   const applySearch = (value = null) => {
     const searchValue = value !== null ? value : localSearchTerm;
-    
+
     // Se o valor for vazio, não faz nada
     if (!searchValue || !searchValue.trim()) return;
-    
+
     setIsSearching(true);
-    
+
     // Atualiza a URL com o novo termo de busca
     const newSearchParams = new URLSearchParams();
     newSearchParams.set('page', '1');
-    
+
     // Limpa outros filtros ao aplicar uma busca por sugestão
     // Isso evita conflitos entre os filtros
     if (selectedArea) newSearchParams.set('area', '');
     if (selectedAuthor) newSearchParams.set('author', '');
-    
+
     // Adiciona o termo de busca
     newSearchParams.set('search', searchValue.trim());
-    
+
     // Navega para a nova URL
     navigate(`${location.pathname}?${newSearchParams.toString()}`);
-    
+
     // Fecha as sugestões
     setShowSuggestions(false);
     setIsSearching(false);
   };
-  
+
   // Aplica a busca quando o usuário pressiona Enter
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       applySearch();
     }
   };
-  
+
   // Seleciona uma sugestão de busca
   const handleSuggestionClick = (suggestion) => {
     setLocalSearchTerm(suggestion);
@@ -371,7 +440,7 @@ function Books() {
                 <i className="fas fa-search"></i>
               )}
             </div>
-            
+
             {/* Sugestões de busca */}
             {showSuggestions && (
               <div className="search-suggestions visible">
@@ -385,7 +454,7 @@ function Books() {
                 ) : searchSuggestions.length > 0 ? (
                   <>
                     {searchSuggestions.map((suggestion, index) => (
-                      <div 
+                      <div
                         key={index}
                         className="suggestion-item"
                         data-type={suggestion.type}

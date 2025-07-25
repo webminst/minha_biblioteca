@@ -73,7 +73,7 @@ function Sermons() {
         console.log('[Sermons] paginationData:', paginationData);
         setSermons(sermonsData);
         setPagination(paginationData);
-        
+
         // Não é mais necessário extrair livros bíblicos aqui, pois já são buscados diretamente da API
         console.log('Dados dos sermões carregados:', sermonsData);
       } catch (err) {
@@ -91,13 +91,13 @@ function Sermons() {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const urlSearchTerm = query.get('search') || '';
-    
+
     // Atualiza o estado local quando a URL muda
     if (urlSearchTerm !== searchTerm) {
       setSearchTerm(urlSearchTerm);
       setLocalSearchTerm(urlSearchTerm);
     }
-    
+
     // Atualiza outros filtros
     setSelectedBook(query.get('book') || '');
     setSelectedSeries(query.get('series') || '');
@@ -112,17 +112,14 @@ function Sermons() {
   // Busca sugestões de busca no backend ou usa busca local como fallback
   const generateSearchSuggestions = async (term) => {
     if (!term.trim()) return [];
-    
-    const lowerTerm = term.toLowerCase();
-    
+
     try {
       // Tenta buscar sugestões no backend primeiro
       const response = await axios.get(`${API_ENDPOINTS.SERMONS.BASE}/suggestions`, {
         params: { q: term, limit: 5 },
-        // Não rejeita a promise em caso de erro 404 (endpoint não encontrado)
         validateStatus: status => status >= 200 && status < 500
       });
-      
+
       // Verifica se a resposta tem o formato esperado
       if (response.status === 200) {
         if (Array.isArray(response.data)) {
@@ -131,52 +128,48 @@ function Sermons() {
           return response.data.data;
         }
       }
-      
+
       // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
-      // Usa busca local como fallback
-      console.warn('Usando busca local para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.');
-      return generateLocalSearchSuggestions(term);
-      
+      // Usa busca global como fallback
+      console.warn('Usando busca global para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.');
+      return await generateGlobalSearchSuggestions(term);
     } catch (error) {
       console.error('Erro ao buscar sugestões:', error);
-      // Em caso de erro, usa busca local como fallback
-      return generateLocalSearchSuggestions(term);
+      // Em caso de erro, usa busca global como fallback
+      return await generateGlobalSearchSuggestions(term);
     }
   };
-  
-  // Gera sugestões localmente (usado como fallback)
-  const generateLocalSearchSuggestions = (term) => {
-    if (!term.trim() || !sermons || sermons.length === 0) return [];
-    
-    const lowerTerm = term.toLowerCase();
-    const suggestions = new Set();
-    
-    // Limita a busca aos primeiros 100 itens para performance
-    const maxItems = Math.min(100, sermons.length);
-    
-    for (let i = 0; i < maxItems; i++) {
-      const sermon = sermons[i];
-      
-      // Adiciona sugestões de títulos
-      if (sermon.title && sermon.title.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(sermon.title);
+
+  // Busca sugestões globalmente na API (fallback global)
+  const generateGlobalSearchSuggestions = async (term) => {
+    if (!term.trim()) return [];
+    try {
+      // Busca os primeiros 100 sermões que contenham o termo
+      const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, {
+        params: { search: term, page: 1, limit: 100 },
+        validateStatus: status => status >= 200 && status < 500
+      });
+      const sermonsList = Array.isArray(response.data.data) ? response.data.data : [];
+      const lowerTerm = term.toLowerCase();
+      const suggestions = new Set();
+      for (let i = 0; i < sermonsList.length; i++) {
+        const sermon = sermonsList[i];
+        if (sermon.title && sermon.title.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(sermon.title);
+        }
+        if (sermon.series && sermon.series.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(sermon.series);
+        }
+        if (sermon.speaker && sermon.speaker.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(sermon.speaker);
+        }
+        if (suggestions.size >= 5) break;
       }
-      
-      // Adiciona sugestões de séries
-      if (sermon.series && sermon.series.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(sermon.series);
-      }
-      
-      // Adiciona sugestões de pregadores
-      if (sermon.speaker && sermon.speaker.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(sermon.speaker);
-      }
-      
-      // Limita a 5 sugestões para melhor desempenho
-      if (suggestions.size >= 5) break;
+      return Array.from(suggestions);
+    } catch (error) {
+      console.error('Erro ao buscar sugestões globais:', error);
+      return [];
     }
-    
-    return Array.from(suggestions);
   };
 
   // Handlers para mudança de filtros
@@ -199,7 +192,7 @@ function Sermons() {
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setLocalSearchTerm(value);
-    
+
     // Gera sugestões em tempo real
     if (value.length > 1) {
       try {
@@ -218,33 +211,33 @@ function Sermons() {
       setShowSuggestions(false);
     }
   };
-  
+
   // Aplica a busca quando o usuário clica em uma sugestão ou pressiona Enter
   const applySearch = (value = null) => {
     const searchValue = value !== null ? value : localSearchTerm;
-    
+
     setIsSearching(true);
-    
+
     // Atualiza a URL com o novo termo de busca
     const newSearchParams = new URLSearchParams();
     newSearchParams.set('page', '1');
-    
+
     if (selectedBook) newSearchParams.set('book', selectedBook);
     if (selectedSeries) newSearchParams.set('series', selectedSeries);
     if (selectedSpeaker) newSearchParams.set('speaker', selectedSpeaker);
-    
+
     if (searchValue) {
       newSearchParams.set('search', searchValue);
     }
-    
+
     // Navega para a nova URL
     navigate(`${location.pathname}?${newSearchParams.toString()}`);
-    
+
     // Fecha as sugestões
     setShowSuggestions(false);
     setIsSearching(false);
   };
-  
+
   // Aplica a busca quando o usuário pressiona Enter
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -357,12 +350,12 @@ function Sermons() {
                 <i className="fas fa-search"></i>
               )}
             </div>
-            
+
             {/* Sugestões de busca */}
             {showSuggestions && searchSuggestions.length > 0 && (
               <div className="search-suggestions visible">
                 {searchSuggestions.map((suggestion, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="suggestion-item"
                     onMouseDown={() => {
@@ -375,7 +368,7 @@ function Sermons() {
                 ))}
               </div>
             )}
-            
+
             {showSuggestions && searchSuggestions.length === 0 && localSearchTerm.length > 1 && (
               <div className="search-suggestions visible">
                 <div className="search-loading">Nenhuma sugestão encontrada</div>

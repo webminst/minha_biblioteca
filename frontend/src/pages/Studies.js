@@ -85,13 +85,13 @@ function Studies() {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const urlSearchTerm = query.get('search') || '';
-    
+
     // Atualiza o estado local quando a URL muda
     if (urlSearchTerm !== searchTerm) {
       setSearchTerm(urlSearchTerm);
       setLocalSearchTerm(urlSearchTerm);
     }
-    
+
     // Atualiza outros filtros
     setSelectedFormat(query.get('format') || '');
     setSelectedTheme(query.get('theme') || '');
@@ -125,32 +125,102 @@ function Studies() {
     navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
   };
 
-  // Gera sugestões de busca com base no termo digitado
+  // Gera sugestões de busca com fallback local (igual Sermons)
   const generateSearchSuggestions = async (term) => {
-    if (!term.trim() || term.trim().length < 2) return [];
-    
+    if (!term.trim()) return [];
+
     try {
-      setIsSearching(true);
-      const suggestionsData = await StudyService.getSuggestions(term.trim(), 5);
-      
-      // Combina todas as sugestões em um único array e remove duplicatas
-      const allSuggestions = [
-        ...(suggestionsData.titles || []),
-        ...(suggestionsData.themes || []),
-        ...(suggestionsData.references || []),
-        ...(suggestionsData.formats || [])
-      ];
-      
-      // Remove duplicatas e limita a 5 sugestões
-      const uniqueSuggestions = [...new Set(allSuggestions)].slice(0, 5);
-      
-      return uniqueSuggestions;
+      // Tenta buscar sugestões no backend primeiro
+      const response = await axios.get(`${API_ENDPOINTS.STUDIES.BASE}/suggestions`, {
+        params: { q: term, limit: 5 },
+        validateStatus: status => status >= 200 && status < 500
+      });
+
+      // Verifica se a resposta tem o formato esperado
+      if (response.status === 200) {
+        if (Array.isArray(response.data)) {
+          return response.data;
+        } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
+          return response.data.data;
+        }
+      }
+
+      // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
+      // Usa busca global como fallback
+      console.warn('Usando busca global para sugestões. Considerar implementar o endpoint /suggestions no backend para melhor desempenho.');
+      return await generateGlobalSearchSuggestions(term);
     } catch (error) {
       console.error('Erro ao buscar sugestões:', error);
-      return [];
-    } finally {
-      setIsSearching(false);
+      // Em caso de erro, usa busca global como fallback
+      return await generateGlobalSearchSuggestions(term);
     }
+  };
+
+  // Busca sugestões globalmente na API (fallback global)
+  const generateGlobalSearchSuggestions = async (term) => {
+    if (!term.trim()) return [];
+    try {
+      // Busca os primeiros 100 estudos que contenham o termo
+      const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, {
+        params: { search: term, page: 1, limit: 100 },
+        validateStatus: status => status >= 200 && status < 500
+      });
+      const studiesList = Array.isArray(response.data.data) ? response.data.data : [];
+      const lowerTerm = term.toLowerCase();
+      const suggestions = new Set();
+      for (let i = 0; i < studiesList.length; i++) {
+        const study = studiesList[i];
+        if (study.title && study.title.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(study.title);
+        }
+        if (study.author && study.author.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(study.author);
+        }
+        if (study.reference && study.reference.toLowerCase().includes(lowerTerm)) {
+          suggestions.add(study.reference);
+        }
+        if (suggestions.size >= 5) break;
+      }
+      return Array.from(suggestions);
+    } catch (error) {
+      console.error('Erro ao buscar sugestões globais:', error);
+      return [];
+    }
+  };
+
+  // Gera sugestões localmente (usado como fallback)
+  const generateLocalSearchSuggestions = (term) => {
+    if (!term.trim() || !studies || studies.length === 0) return [];
+
+    const lowerTerm = term.toLowerCase();
+    const suggestions = new Set();
+
+    // Limita a busca aos primeiros 100 itens para performance
+    const maxItems = Math.min(100, studies.length);
+
+    for (let i = 0; i < maxItems; i++) {
+      const study = studies[i];
+
+      // Adiciona sugestões de títulos
+      if (study.title && study.title.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(study.title);
+      }
+
+      // Adiciona sugestões de temas
+      if (study.theme && study.theme.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(study.theme);
+      }
+
+      // Adiciona sugestões de referências
+      if (study.reference && study.reference.toLowerCase().includes(lowerTerm)) {
+        suggestions.add(study.reference);
+      }
+
+      // Limita a 5 sugestões para melhor desempenho
+      if (suggestions.size >= 5) break;
+    }
+
+    return Array.from(suggestions);
   };
 
   // Handlers para mudança de filtros
@@ -168,7 +238,7 @@ function Studies() {
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setLocalSearchTerm(value);
-    
+
     // Gera sugestões em tempo real
     if (value.length > 1) {
       const suggestions = await generateSearchSuggestions(value);
@@ -179,32 +249,32 @@ function Studies() {
       setShowSuggestions(false);
     }
   };
-  
+
   // Aplica a busca quando o usuário clica em uma sugestão ou pressiona Enter
   const applySearch = (value = null) => {
     const searchValue = value !== null ? value : localSearchTerm;
-    
+
     setIsSearching(true);
-    
+
     // Atualiza a URL com o novo termo de busca
     const newSearchParams = new URLSearchParams();
     newSearchParams.set('page', '1');
-    
+
     if (selectedFormat) newSearchParams.set('format', selectedFormat);
     if (selectedTheme) newSearchParams.set('theme', selectedTheme);
-    
+
     if (searchValue) {
       newSearchParams.set('search', searchValue);
     }
-    
+
     // Navega para a nova URL
     navigate(`${location.pathname}?${newSearchParams.toString()}`);
-    
+
     // Fecha as sugestões
     setShowSuggestions(false);
     setIsSearching(false);
   };
-  
+
   // Aplica a busca quando o usuário pressiona Enter
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -274,12 +344,12 @@ function Studies() {
                 <i className="fas fa-search"></i>
               )}
             </div>
-            
+
             {/* Sugestões de busca */}
             {showSuggestions && searchSuggestions.length > 0 && (
               <div className="search-suggestions visible">
                 {searchSuggestions.map((suggestion, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="suggestion-item"
                     onMouseDown={() => {
@@ -292,7 +362,7 @@ function Studies() {
                 ))}
               </div>
             )}
-            
+
             {showSuggestions && searchSuggestions.length === 0 && localSearchTerm.length > 1 && (
               <div className="search-suggestions visible">
                 <div className="search-loading">Nenhuma sugestão encontrada</div>
