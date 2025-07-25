@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
+import StarRating from '../components/StarRating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
@@ -422,16 +423,20 @@ function Sermons() {
       <div className="content-list">
         {sermons.length > 0 ? (
           sermons.map((sermon) => (
-            <ContentCard
-              key={sermon._id}
-              title={sermon.title}
-              type="Sermão"
-              description={sermon.description}
-              detailsUrl={`/sermoes/${sermon._id}`}
-              pdfUrl={sermon.pdfUrl}
-              reference={sermon.bibleReference}
-              sermon={sermon}
-            />
+            <div key={sermon._id} style={{ marginBottom: 24 }}>
+              <ContentCard
+                title={sermon.title}
+                type="Sermão"
+                description={sermon.description}
+                detailsUrl={`/sermoes/${sermon._id}`}
+                pdfUrl={sermon.pdfUrl}
+                reference={sermon.bibleReference}
+                sermon={sermon}
+              />
+              <div style={{ marginTop: 8, marginLeft: 8 }}>
+                <StarRating bookId={sermon._id} userToken={null} apiBase="/api/sermons" />
+              </div>
+            </div>
           ))
         ) : (
           <p>Nenhum sermão encontrado com os filtros selecionados.</p>

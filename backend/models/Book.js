@@ -108,7 +108,16 @@ const BookSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: false
-  }
+  },
+
+  // Avaliações por estrelas
+  ratings: [
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      stars: { type: Number, min: 1, max: 5, required: true },
+      ratedAt: { type: Date, default: Date.now }
+    }
+  ]
 }, {
   timestamps: true // Adiciona createdAt e updatedAt automaticamente
 });

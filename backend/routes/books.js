@@ -249,7 +249,7 @@ router.get('/suggestions',
   async (req, res, next) => {
     try {
       const { term, limit = 5 } = req.query;
-      
+
       if (!term || term.trim().length < 2) {
         return res.json(ApiResponseDTO.success({
           titles: [],
@@ -260,7 +260,7 @@ router.get('/suggestions',
       }
 
       const suggestions = await CachedBookService.findSuggestions(term, parseInt(limit));
-      
+
       res.json(ApiResponseDTO.success(
         suggestions,
         'Sugestões de livros encontradas com sucesso'
@@ -306,6 +306,39 @@ router.get('/:id',
     }
   }
 );
+// ========== AVALIAÇÃO POR ESTRELAS ==========
+// POST /api/books/:id/rate - Avaliar ou atualizar avaliação de um livro
+router.post('/:id/rate', protect, validateId, async (req, res, next) => {
+  try {
+    const { stars } = req.body;
+    if (!stars || stars < 1 || stars > 5) {
+      return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
+    }
+    const book = await Book.findById(req.params.id);
+    if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
+    // Remove avaliação anterior do usuário, se existir
+    book.ratings = book.ratings.filter(r => r.user.toString() !== req.user._id.toString());
+    // Adiciona nova avaliação
+    book.ratings.push({ user: req.user._id, stars });
+    await book.save();
+    res.json({ message: 'Avaliação registrada com sucesso.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/books/:id/ratings - Obter média e total de avaliações
+router.get('/:id/ratings', validateId, async (req, res, next) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
+    const total = book.ratings.length;
+    const avg = total > 0 ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(2) : null;
+    res.json({ average: avg, total });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // ========== ROTAS PROTEGIDAS (ADMIN) COM INVALIDAÇÃO DE CACHE ==========
 

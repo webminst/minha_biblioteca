@@ -124,11 +124,11 @@ router.get('/books', cacheMiddleware('stats'), async (req, res, next) => {
 router.get('/suggestions', cacheMiddleware('suggestions'), async (req, res, next) => {
   try {
     const { q: searchTerm, limit = 5 } = req.query;
-    
+
     if (!searchTerm || searchTerm.trim().length < 2) {
       return res.json(ApiResponseDTO.success([], 'Forneça um termo de busca com pelo menos 2 caracteres'));
     }
-    
+
     const suggestions = await SermonService.findSuggestions(searchTerm, parseInt(limit));
     res.json(ApiResponseDTO.success(suggestions, 'Sugestões de busca obtidas com sucesso'));
   } catch (error) {
@@ -178,11 +178,11 @@ router.get('/search/:term', cacheMiddleware('filter'), async (req, res, next) =>
 router.get('/suggestions', cacheMiddleware('suggestions'), async (req, res, next) => {
   try {
     const { q: query, limit = 5 } = req.query;
-    
+
     if (!query || query.length < 2) {
       return res.json(ApiResponseDTO.success([], 'Forneça pelo menos 2 caracteres para busca'));
     }
-    
+
     const suggestions = await SermonService.findSuggestions(query, parseInt(limit));
     res.json(ApiResponseDTO.success(suggestions, 'Sugestões encontradas'));
   } catch (error) {
@@ -199,6 +199,37 @@ router.get('/:id', validateId, async (req, res) => {
     res.status(error.statusCode || 500).json(
       ApiResponseDTO.error(error.message || 'Erro interno', null, error.statusCode || 500)
     );
+  }
+});
+// ========== AVALIAÇÃO POR ESTRELAS ==========
+// POST /api/sermons/:id/rate - Avaliar ou atualizar avaliação de um sermão
+router.post('/:id/rate', protect, validateId, async (req, res, next) => {
+  try {
+    const { stars } = req.body;
+    if (!stars || stars < 1 || stars > 5) {
+      return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
+    }
+    const sermon = await Sermon.findById(req.params.id);
+    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado.' });
+    sermon.ratings = sermon.ratings.filter(r => r.user.toString() !== req.user._id.toString());
+    sermon.ratings.push({ user: req.user._id, stars });
+    await sermon.save();
+    res.json({ message: 'Avaliação registrada com sucesso.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/sermons/:id/ratings - Obter média e total de avaliações
+router.get('/:id/ratings', validateId, async (req, res, next) => {
+  try {
+    const sermon = await Sermon.findById(req.params.id);
+    if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado.' });
+    const total = sermon.ratings.length;
+    const avg = total > 0 ? (sermon.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(2) : null;
+    res.json({ average: avg, total });
+  } catch (error) {
+    next(error);
   }
 });
 

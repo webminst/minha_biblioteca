@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import StudyService from '../services/studyService';
 import ContentCard from '../components/ContentCard/ContentCard';
+import StarRating from '../components/StarRating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
@@ -405,16 +406,20 @@ function Studies() {
       <div className="content-list">
         {studies.length > 0 ? (
           studies.map((study) => (
-            <ContentCard
-              key={study._id}
-              title={study.title}
-              type={study.format || 'Estudo'}
-              reference={study.reference}
-              description={study.description}
-              detailsUrl={`/estudos/${study._id}`}
-              pdfUrl={study.pdfUrl}
-              study={study}
-            />
+            <div key={study._id} style={{ marginBottom: 24 }}>
+              <ContentCard
+                title={study.title}
+                type={study.format || 'Estudo'}
+                reference={study.reference}
+                description={study.description}
+                detailsUrl={`/estudos/${study._id}`}
+                pdfUrl={study.pdfUrl}
+                study={study}
+              />
+              <div style={{ marginTop: 8, marginLeft: 8 }}>
+                <StarRating bookId={study._id} userToken={null} apiBase="/api/studies" />
+              </div>
+            </div>
           ))
         ) : (
           <p>Nenhum estudo encontrado com os filtros selecionados.</p>

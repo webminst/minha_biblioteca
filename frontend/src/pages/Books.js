@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
+import StarRating from '../components/StarRating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
@@ -507,17 +508,21 @@ function Books() {
       <div className="content-list">
         {books.length > 0 ? (
           books.map((book) => (
-            <ContentCard
-              key={book._id}
-              title={book.title}
-              type="Resumo de Livro"
-              author={book.author}
-              description={book.description}
-              detailsUrl={`/livros/${book._id}`}
-              pdfUrl={book.pdfUrl}
-              coverImageUrl={book.coverImageUrl}
-              book={book}
-            />
+            <div key={book._id} style={{ marginBottom: 24 }}>
+              <ContentCard
+                title={book.title}
+                type="Resumo de Livro"
+                author={book.author}
+                description={book.description}
+                detailsUrl={`/livros/${book._id}`}
+                pdfUrl={book.pdfUrl}
+                coverImageUrl={book.coverImageUrl}
+                book={book}
+              />
+              <div style={{ marginTop: 8, marginLeft: 8 }}>
+                <StarRating bookId={book._id} userToken={null} />
+              </div>
+            </div>
           ))
         ) : (
           <p>Nenhum resumo encontrado com os filtros selecionados.</p>

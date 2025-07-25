@@ -5,8 +5,6 @@ const Study = require('../models/Study');
 const StudyService = require('../services/CachedStudyService');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 const { cacheMiddleware } = require('../middleware/cacheMiddleware');
-
-// Importa DTOs e middlewares de validação - NOVO
 const {
   CreateStudyDTO,
   UpdateStudyDTO,
@@ -16,13 +14,45 @@ const {
   ApiResponseDTO,
   PaginationDTO
 } = require('../dto');
-
 const {
   validateInput,
   validateId,
   transformOutput,
   handleValidationErrors
 } = require('../middleware/dtoValidation');
+
+// ========== AVALIAÇÃO POR ESTRELAS ==========
+// POST /api/studies/:id/rate - Avaliar ou atualizar avaliação de um estudo
+router.post('/:id/rate', protect, validateId, async (req, res, next) => {
+  try {
+    const { stars } = req.body;
+    if (!stars || stars < 1 || stars > 5) {
+      return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
+    }
+    const study = await Study.findById(req.params.id);
+    if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
+    study.ratings = study.ratings.filter(r => r.user.toString() !== req.user._id.toString());
+    study.ratings.push({ user: req.user._id, stars });
+    await study.save();
+    res.json({ message: 'Avaliação registrada com sucesso.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/studies/:id/ratings - Obter média e total de avaliações
+router.get('/:id/ratings', validateId, async (req, res, next) => {
+  try {
+    const study = await Study.findById(req.params.id);
+    if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
+    const total = study.ratings.length;
+    const avg = total > 0 ? (study.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(2) : null;
+    res.json({ average: avg, total });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 /**
  * Rotas para gerenciamento de estudos bíblicos
@@ -274,17 +304,17 @@ router.patch('/:id',
       console.log('Body:', req.body);
       console.log('Validated Input:', req.validatedInput);
       console.log('Usuário autenticado ID:', req.user?._id);
-      
+
       const updateData = req.validatedInput || req.body;
       console.log('Dados para atualização:', updateData);
-      
+
       if (!updateData || Object.keys(updateData).length === 0) {
         console.warn('Nenhum dado fornecido para atualização');
         return res.status(400).json(ApiResponseDTO.error('Nenhum dado fornecido para atualização', null, 400));
       }
 
       const updatedStudy = await StudyService.update(req.params.id, updateData, req.user._id);
-      
+
       console.log('Estudo atualizado com sucesso:', updatedStudy ? 'Sim' : 'Não');
       if (!updatedStudy) {
         console.warn('O serviço não retornou o estudo atualizado');
@@ -331,12 +361,12 @@ router.delete('/:id',
 
 // ========== ROTA DE SUGESTÕES ==========
 // GET /api/studies/suggestions - Buscar sugestões de estudos por termo
-router.get('/suggestions', 
+router.get('/suggestions',
   cacheMiddleware('suggestions'),
   async (req, res, next) => {
     try {
       const { term, limit = 5 } = req.query;
-      
+
       if (!term || term.trim().length < 2) {
         return res.json(
           ApiResponseDTO.success(
@@ -352,10 +382,10 @@ router.get('/suggestions',
       }
 
       const suggestions = await StudyService.findSuggestions(term, parseInt(limit));
-      
+
       // Aplica o DTO para garantir a estrutura correta
       const suggestionsDTO = new StudySuggestionsDTO(suggestions);
-      
+
       res.json(
         ApiResponseDTO.success(
           suggestionsDTO.transform(),

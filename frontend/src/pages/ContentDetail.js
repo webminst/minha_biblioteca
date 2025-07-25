@@ -1,5 +1,6 @@
 // src/pages/ContentDetail.js
 import React, { useEffect, useState } from 'react';
+import StarRating from '../components/StarRating';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
@@ -132,6 +133,18 @@ const ContentDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Avaliação por estrelas para livros e estudos */}
+      {sermon.type === 'Resumo de Livro' && (
+        <div style={{ margin: '16px 0' }}>
+          <StarRating bookId={sermon._id} userToken={null} />
+        </div>
+      )}
+      {(['Estudo', 'Estudo Bíblico', 'estudo'].includes(sermon.type)) && (
+        <div style={{ margin: '16px 0' }}>
+          <StarRating bookId={sermon._id} userToken={null} apiBase="/api/studies" />
+        </div>
+      )}
 
       {/* Metadados para sermões e estudos - aparecem acima do título */}
       {(['Sermão', 'Estudo', 'sermão', 'estudo'].includes(sermon.type)) && (
