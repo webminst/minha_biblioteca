@@ -19,7 +19,6 @@ const booksRouter = require('./routes/books');
 const authRouter = require('./routes/auth');
 const auth2faRouter = require('./routes/auth2fa'); // NOVO: Rotas 2FA
 const securityRouter = require('./routes/security');
-const testRouter = require('./routes/test');
 const auditRouter = require('./routes/audit'); // NOVO: Rotas de auditoria
 
 // Importa middlewares de erro
@@ -148,7 +147,6 @@ app.use('/api/books', booksRouter);     // Todas as rotas em booksRouter serão 
 app.use('/api/auth', authRouter); // Usa as rotas de autenticação (ex: /api/auth/login, /api/auth/register)
 app.use('/api/auth/2fa', auth2faRouter); // NOVO: Rotas de autenticação 2FA
 app.use('/api/security', securityRouter); // NOVO: Rotas de monitoramento de segurança
-app.use('/api/test', testRouter); // NOVO: Rotas de teste para rate limiting
 app.use('/api/audit', auditRouter); // NOVO: Rotas de auditoria
 
 // --- Middlewares de Erro (devem vir depois das rotas) ---

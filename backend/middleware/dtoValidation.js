@@ -27,14 +27,14 @@ const validateInput = (DTOClass, source = 'body') => {
             if (!result.success) {
                 console.log('❌ Validação falhou:');
                 console.log('Erros:', JSON.stringify(result.errors, null, 2));
-
-                return res.status(400).json(
+                res.status(400).json(
                     ApiResponseDTO.error(
                         'Dados de entrada inválidos',
                         result.errors,
                         400
                     )
                 );
+                return; // Garante que não chama next()
             }
 
             console.log('✅ Validação bem-sucedida');
@@ -47,13 +47,14 @@ const validateInput = (DTOClass, source = 'body') => {
             next();
         } catch (error) {
             console.error('Erro na validação DTO:', error);
-            return res.status(500).json(
+            res.status(500).json(
                 ApiResponseDTO.error(
                     'Erro interno na validação',
                     null,
                     500
                 )
             );
+            return; // Garante que não chama next()
         }
     };
 };
