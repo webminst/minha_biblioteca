@@ -1,3 +1,5 @@
+// Força uso do mock global de AuditService definido em __mocks__
+jest.mock('../../services/AuditService');
 const { auditLogger, auditAdminActions, auditAuthActions, auditCriticalActions, auditUserContext, auditErrorLogger, auditStatsCollector, createCustomAuditLogger } = require('../../middleware/auditLogger');
 
 describe('auditLogger middlewares', () => {

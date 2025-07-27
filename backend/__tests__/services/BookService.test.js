@@ -1,3 +1,5 @@
+// Força uso do mock global de AuditService definido em __mocks__
+jest.mock('../../services/AuditService');
 
 jest.mock('../../models/Book');
 const Book = require('../../models/Book');
