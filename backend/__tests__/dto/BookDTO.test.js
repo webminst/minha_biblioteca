@@ -1,4 +1,4 @@
-const { CreateBookDTO } = require('../../dto/books/BookDTO');
+import { CreateBookDTO } from '../../dto/books/BookDTO';
 
 describe('CreateBookDTO', () => {
     it('valida dados válidos corretamente', () => {

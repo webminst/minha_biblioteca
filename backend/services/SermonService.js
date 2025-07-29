@@ -98,11 +98,11 @@ class SermonService {
         const sermon = await Sermon.findOne()
             .sort({ createdAt: -1 })
             .select('title bibleReference series description date');
-            
+
         if (!sermon) {
             throw new AppError('Nenhum sermão encontrado', 404);
         }
-        
+
         return sermon;
     }
 
@@ -124,7 +124,7 @@ class SermonService {
         }
 
         const regex = new RegExp(term, 'i');
-        
+
         // Busca em múltiplos campos usando agregação para obter resultados únicos
         const suggestions = await Sermon.aggregate([
             {
@@ -193,7 +193,7 @@ class SermonService {
 
         // Extrai apenas o campo 'text' de cada sugestão e remove duplicatas
         const uniqueSuggestions = [...new Set(suggestions.map(s => s.text))];
-        
+
         return uniqueSuggestions.filter(Boolean); // Remove valores nulos ou vazios
     }
 
@@ -399,7 +399,7 @@ class SermonService {
         try {
             const searchRegex = new RegExp(term, 'i');
             console.log(`🔍 Buscando sugestões para o termo: ${term}`);
-            
+
             // Usa aggregation para buscar todas as sugestões em uma única consulta
             const results = await Sermon.aggregate([
                 {
@@ -428,7 +428,7 @@ class SermonService {
 
             // Combina e remove duplicatas
             const suggestions = new Set();
-            
+
             // Adiciona sugestões de cada campo
             results.forEach(item => {
                 if (item.title && item.title.match(searchRegex)) {
@@ -443,7 +443,7 @@ class SermonService {
                 if (item.speaker && item.speaker.match(searchRegex)) {
                     suggestions.add(item.speaker);
                 }
-                
+
                 // Limita o número de itens processados se já tivermos sugestões suficientes
                 if (suggestions.size >= limit * 2) {
                     return; // Sai do forEach
@@ -462,7 +462,7 @@ class SermonService {
 
             console.log(`✅ ${sortedSuggestions.length} sugestões encontradas para: ${term}`);
             return sortedSuggestions;
-            
+
         } catch (error) {
             console.error('❌ Erro ao buscar sugestões:', error);
             return []; // Retorna array vazio em caso de erro

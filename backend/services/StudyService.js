@@ -419,19 +419,19 @@ class StudyService {
                     .limit(limit)
                     .select('title')
                     .then(studies => studies.map(s => s.title)),
-                
+
                 // Temas que contêm o termo
                 Study.find({ theme: { $regex: regex } })
                     .distinct('theme')
                     .then(themes => themes.filter(t => t && t.toLowerCase().includes(searchTerm)))
                     .then(themes => themes.slice(0, limit)),
-                
+
                 // Referências que contêm o termo
                 Study.find({ reference: { $regex: regex } })
                     .distinct('reference')
                     .then(refs => refs.filter(r => r && r.toLowerCase().includes(searchTerm)))
                     .then(refs => refs.slice(0, limit)),
-                
+
                 // Formatos que contêm o termo
                 Study.find({ format: { $regex: regex } })
                     .distinct('format')
