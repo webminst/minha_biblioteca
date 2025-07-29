@@ -31,6 +31,7 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 ## ✨ Funcionalidades
 
 ### 🏠 Frontend Público
+
 - ✅ **Página Inicial** - Últimos conteúdos em destaque
 - ✅ **Navegação Intuitiva** - Sermões, estudos e livros organizados
 - ✅ **Busca Avançada** - Pesquisa integrada em todo o conteúdo
@@ -38,6 +39,7 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 - ✅ **Sistema de Newsletter** - Cadastro para receber atualizações
 
 ### 🎛️ Painel Administrativo
+
 - ✅ **Dashboard Inteligente** - Visão geral com contadores dinâmicos
 - ✅ **CRUD Completo** - Criar, editar, visualizar e deletar conteúdo
 - ✅ **Paginação Avançada** - Controle flexível de itens por página (5, 10, 20, 50)
@@ -45,6 +47,7 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 - ✅ **Interface Otimizada** - Layout horizontal e cores consistentes
 
 ### 🔒 Sistema de Segurança
+
 - ✅ **Autenticação JWT** - Sistema seguro com refresh tokens
 - ✅ **Variáveis de Ambiente** - Proteção de credenciais sensíveis
 - ✅ **Rate Limiting** - Proteção contra ataques de força bruta
@@ -53,6 +56,7 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 ## 🚀 Tecnologias
 
 ### Frontend
+
 | Tecnologia | Versão | Descrição |
 |------------|--------|-----------|
 | **React** | 19.1.0 | Framework principal |
@@ -62,6 +66,7 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 | **React Markdown** | 10.1.0 | Renderização markdown |
 
 ### Backend
+
 | Tecnologia | Versão | Descrição |
 |------------|--------|-----------|
 | **Node.js** + **Express** | 5.1.0 | Servidor web |
@@ -72,6 +77,7 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 | **Joi** | 17.x | **NOVO:** Validação de dados DTOs |
 
 ### Arquitetura DTO (v3.0.0)
+
 | Componente | Função | Status |
 |------------|--------|---------|
 | **BaseDTO** | Classe base para todos os DTOs | ✅ Implementado |
@@ -83,11 +89,13 @@ O Pastor Portfolio é uma plataforma web completa que permite ao Pastor comparti
 ## 🛠️ Instalação e Configuração
 
 ### Pré-requisitos
+
 - **Node.js** 18+ instalado
 - **MongoDB** local ou MongoDB Atlas
 - **Git** para controle de versão
 
 ### 1. Clone e Prepare o Projeto
+
 ```bash
 # Clone o repositório
 git clone https://github.com/SEU_USUARIO/pastor-portfolio.git
@@ -98,6 +106,7 @@ npm install
 ```
 
 ### 2. Configure o Backend
+
 ```bash
 # Navegue para o backend
 cd backend
@@ -111,6 +120,7 @@ cp .env.example .env
 ```
 
 ### 3. Configure o Frontend
+
 ```bash
 # Volte para a raiz
 cd ..
@@ -121,6 +131,7 @@ cp .env.local.example .env.local
 ```
 
 ### 4. Inicie o Sistema
+
 ```bash
 # Opção 1: Inicie tudo simultaneamente (recomendado)
 npm run dev
@@ -131,25 +142,30 @@ npm run dev:backend   # Backend na porta 3001
 ```
 
 ### 5. Acesse o Sistema
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:3001
-- **Admin Dashboard:** http://localhost:3000/admin/dashboard
+
+- **Frontend:** <http://localhost:3000>
+- **Backend API:** <http://localhost:3001>
+- **Admin Dashboard:** <http://localhost:3000/admin/dashboard>
 
 ## 📖 Como Usar
 
 ### Primeiro Acesso
+
 1. Acesse `/admin/dashboard`
 2. Crie sua conta de administrador
 3. Faça login no sistema
 4. Comece a adicionar conteúdo
 
 ### Gerenciando Conteúdo
+
 - **Sermões:** `/admin/sermoes` - Adicione pregações com referências bíblicas
 - **Estudos:** `/admin/estudos` - Crie material para grupos de estudo
 - **Livros:** `/admin/livros` - Publique resumos de obras teológicas
 
 ### Upload de Arquivos
+
 Suporte para múltiplas plataformas:
+
 - ✅ **Google Drive:** `https://drive.google.com/file/d/ID/view`
 - ✅ **Dropbox:** `https://www.dropbox.com/s/ID/file.pdf`
 - ✅ **OneDrive:** `https://1drv.ms/b/s!ID`
@@ -157,6 +173,7 @@ Suporte para múltiplas plataformas:
 ## 🔧 Comandos Disponíveis
 
 ### Scripts de Desenvolvimento
+
 ```bash
 npm run dev                 # Frontend + Backend simultaneamente
 npm run dev:frontend        # Apenas frontend (porta 3000)
@@ -166,6 +183,7 @@ npm start                   # Servidor de produção
 ```
 
 ### Scripts de Teste
+
 ```bash
 # Verificar conexão com banco
 node backend/test-db.js
@@ -177,6 +195,7 @@ curl http://localhost:3001/api/studies
 ```
 
 ### Comandos MongoDB
+
 ```bash
 # Conectar ao banco local
 mongo pastor-portfolio
@@ -190,6 +209,7 @@ db.books.countDocuments()
 ## ⚙️ Configuração de Ambiente
 
 ### Backend (.env)
+
 ```env
 # Servidor
 PORT=3001
@@ -209,6 +229,7 @@ NODE_ENV=development
 ```
 
 ### Frontend (.env.local)
+
 ```env
 # API
 REACT_APP_API_URL=http://localhost:3001
@@ -226,6 +247,7 @@ REACT_APP_ACCOUNT_HOLDER=Nome_do_Titular
 A documentação técnica completa está em [`docs/README.md`](./docs/README.md):
 
 ### Documentos Principais
+
 - **[API_CENTRALIZATION.md](./docs/API_CENTRALIZATION.md)** - Configuração centralizada de endpoints
 - **[JWT_SECURITY_ENHANCEMENT.md](./docs/JWT_SECURITY_ENHANCEMENT.md)** - Melhorias de segurança JWT
 - **[PIX_SECURITY_FIX.md](./docs/PIX_SECURITY_FIX.md)** - Correção de credenciais expostas
@@ -233,12 +255,14 @@ A documentação técnica completa está em [`docs/README.md`](./docs/README.md)
 - **[SECURITY.md](./docs/SECURITY.md)** - Guia de segurança completo
 
 ### 🆕 Documentação DTO v3.0.0
+
 - **[DTO_MIGRATION_COMPLETE.md](./docs/DTO_MIGRATION_COMPLETE.md)** - Relatório completo da migração
 - **[SERVICE_INTEGRATION_COMPLETE.md](./docs/SERVICE_INTEGRATION_COMPLETE.md)** - Integração de serviços finalizada
 - **[API_UPGRADE_GUIDE.md](./docs/API_UPGRADE_GUIDE.md)** - Guia de upgrade para DTOs
 - **[EXAMPLES_IMPLEMENTATION.js](./docs/EXAMPLES_IMPLEMENTATION.js)** - Exemplos práticos de uso
 
 ### Arquivos de Referência Técnica
+
 - **[IMPROVEMENTS_ANALYSIS.md](./docs/IMPROVEMENTS_ANALYSIS.md)** - Análise de melhorias implementadas
 - **[PROJECT_CLEANUP.md](./docs/PROJECT_CLEANUP.md)** - Limpeza e organização do código
 
@@ -247,6 +271,7 @@ A documentação técnica completa está em [`docs/README.md`](./docs/README.md)
 ### Problemas Comuns
 
 #### Backend não inicia
+
 ```bash
 # Verifique se a porta está livre
 netstat -ano | findstr :3001
@@ -256,12 +281,14 @@ npm cache clean --force
 ```
 
 #### Erro de autenticação
+
 ```bash
 # Limpe o localStorage do navegador
 localStorage.clear()
 ```
 
 #### Erro "Invalid Date"
+
 ```javascript
 // Execute no MongoDB para corrigir documentos sem data
 db.sermons.updateMany({}, {$set: {createdAt: new Date()})
@@ -270,20 +297,22 @@ db.books.updateMany({}, {$set: {createdAt: new Date()})
 ```
 
 #### MongoDB não conecta
+
 - Verifique se o MongoDB está rodando localmente
 - Confirme a string de conexão no `.env`
 - Para MongoDB Atlas, verifique credenciais e whitelist de IP
 
 ## 📊 Status do Projeto
 
-### ✅ Versão 3.0.0 - Migração DTO Completa
+### ✅ Versão 3.1.0 — Cobertura de Testes e Robustez
 
 **Funcionalidades Implementadas:**
+
 - ✅ Sistema completo frontend + backend
-- ✅ **NOVO:** Arquitetura DTO (Data Transfer Objects) implementada
-- ✅ **NOVO:** Sistema de validação Joi integrado
-- ✅ **NOVO:** Respostas API padronizadas com ApiResponseDTO
-- ✅ **NOVO:** Sistema de paginação unificado com PaginationDTO
+- ✅ Arquitetura DTO (Data Transfer Objects) implementada
+- ✅ Sistema de validação Joi integrado
+- ✅ Respostas API padronizadas com ApiResponseDTO
+- ✅ Sistema de paginação unificado com PaginationDTO
 - ✅ Autenticação JWT segura com refresh tokens
 - ✅ Interface administrativa com paginação avançada
 - ✅ Upload de arquivos para múltiplas plataformas
@@ -292,21 +321,60 @@ db.books.updateMany({}, {$set: {createdAt: new Date()})
 - ✅ Logs detalhados e sistema de debug
 - ✅ Configuração de segurança implementada
 - ✅ Documentação técnica completa
+- ✅ **Frontend React 18+** com hooks customizados, contexto global, feedback visual (Toast, Skeleton, Spinner), navegação protegida, integração 2FA e layout responsivo
+- ✅ **Cobertura de Testes Automatizados:**
+  - Backend: 100% dos módulos (rotas, serviços, middlewares, DTOs e endpoints de health check) testados com Jest e Supertest
+  - Frontend: Cobertura de todos os principais componentes (autenticação, rotas protegidas, dashboard, utilitários, layout, feedback/contexto, loading, newsletter, hooks)
+  - Testes robustos com @testing-library/react, jest-dom, user-event, mocks de serviços, hooks, timers reais e eliminação de warnings/erros
 
-**Migração DTO v3.0.0 - Concluída 100%:**
-- ✅ **Backend Completo:** Todos os módulos (Books, Studies, Sermons) migrados
-- ✅ **DTOs Implementados:** CreateDTO, UpdateDTO, ListDTO para cada módulo
-- ✅ **Validação Automática:** Middleware dtoValidation.js com Joi
-- ✅ **Frontend Compatível:** Sistema de helpers para compatibilidade total
-- ✅ **Admin Panel:** Todas as interfaces administrativas funcionais
-- ✅ **Busca e Detalhes:** Páginas de conteúdo e resultados otimizadas
-- ✅ **Zero Breaking Changes:** Migração transparente sem impacto no usuário
+**Migração DTO v3.0.0 — Concluída 100%:**
+
+- ✅ Backend: Todos os módulos (Books, Studies, Sermons) migrados
+- ✅ DTOs Implementados: CreateDTO, UpdateDTO, ListDTO para cada módulo
+- ✅ Validação Automática: Middleware dtoValidation.js com Joi
+- ✅ Frontend Compatível: Helpers e hooks para integração total
+- ✅ Admin Panel: Todas as interfaces administrativas funcionais
+- ✅ Busca e Detalhes: Páginas de conteúdo e resultados otimizadas
+- ✅ Zero Breaking Changes: Migração transparente sem impacto no usuário
+
+### 🩺 Monitoramento e Health Check
+
+- O backend expõe o endpoint `/health` para monitoramento externo de disponibilidade e dependências (MongoDB, Redis, versão, timestamp).
+- Recomenda-se configurar um serviço como **UptimeRobot** ou **StatusCake** apontando para `https://SEU_DOMINIO/health` para alertas automáticos de indisponibilidade.
+- Para monitoramento de cache, utilize também `/cache-status`.
+- Não é necessário alterar o backend para integração com esses serviços.
+
+#### Exemplo: Configurando UptimeRobot
+
+1. Crie uma conta gratuita em <https://uptimerobot.com/>
+2. Clique em "Add New Monitor"
+3. Tipo: HTTP(s)
+4. Friendly Name: Pastor Portfolio Health
+5. URL: `https://SEU_DOMINIO/health`
+6. Intervalo: 5 minutos (ou conforme desejado)
+7. Salve e ative alertas por e-mail/Telegram/Slack
+
+Se desejar monitorar o cache, repita o processo para `https://SEU_DOMINIO/cache-status`.
+
+### 🧪 Testes Automatizados — Estado Atual
+
+- **Backend:**
+  - Cobertura total de rotas, serviços, middlewares, DTOs e integrações
+  - Testes de integração com MongoDB e Redis usando mocks e teardown seguro
+- **Frontend:**
+  - Testes para todos os principais componentes (Login, 2FA, ProtectedRoute, Dashboard, TokenStatus, Header, Footer, Toast, ToastContainer, LoadingSpinner, SkeletonLoader, NewsletterForm, Layout, ContentCard, BibleVerse, BibleSearch, ScrollToTop, StarRating)
+  - Testes de hooks customizados (useAuth, useApi)
+  - Uso de timers reais para feedback visual, mocks isolados para dependências externas
+  - Eliminação de warnings/erros de act(), timers e ambiente
+  - Ambiente de testes atualizado para React 18+
 
 ### 🐛 Bugs Conhecidos
+
 - Nenhum bug crítico identificado na versão atual
-- Sistema totalmente funcional e testado
+- Sistema totalmente funcional, testado e robusto
 
 ### 📋 Roadmap Futuro
+
 - [ ] Sistema de notificações push
 - [ ] Cache Redis para performance
 - [ ] Backup automático do banco
@@ -314,20 +382,23 @@ db.books.updateMany({}, {$set: {createdAt: new Date()})
 - [ ] Integração com redes sociais
 - [ ] Versionamento de API (v2)
 - [ ] WebSockets para updates em tempo real
+- [ ] Testes E2E automatizados (Cypress/Playwright)
 
 ### 📚 Documentação DTO
 
 **Nova Documentação v3.0.0:**
+
 - **[DTO_MIGRATION.md](./docs/DTO_MIGRATION.md)** - Guia completo da migração DTO
 - **[API_DTO_EXAMPLES.md](./docs/API_DTO_EXAMPLES.md)** - Exemplos de uso dos DTOs
 - **[VALIDATION_GUIDE.md](./docs/VALIDATION_GUIDE.md)** - Guia de validação Joi
 
 **Principais Benefícios da Migração DTO:**
-- ✅ **Validação Consistente:** Todos os dados validados automaticamente
-- ✅ **Respostas Padronizadas:** Estrutura uniforme em toda API
-- ✅ **Melhor Performance:** Apenas dados necessários transferidos
-- ✅ **Manutenibilidade:** Código mais organizando e testável
-- ✅ **Compatibilidade:** Zero breaking changes para o frontend
+
+- ✅ Validação consistente e automática
+- ✅ Respostas padronizadas em toda API
+- ✅ Melhor performance e payload enxuto
+- ✅ Código mais organizado, testável e seguro
+- ✅ Zero breaking changes para o frontend
 
 ## 🏗️ Arquitetura do Projeto
 
@@ -369,11 +440,13 @@ pastor-portfolio/
 ### 🏛️ Arquitetura DTO (v3.0.0)
 
 **Fluxo de Dados:**
+
 ```
 Cliente → Request → dtoValidation → Controller → Service → Model → Response DTO → Cliente
 ```
 
 **Principais Componentes:**
+
 - **DTOs de Entrada:** CreateDTO, UpdateDTO para validação
 - **DTOs de Saída:** Dados formatados e paginação
 - **Middleware:** Validação automática com Joi
@@ -388,6 +461,7 @@ Cliente → Request → dtoValidation → Controller → Service → Model → R
 5. Abra um **Pull Request**
 
 ### Diretrizes de Contribuição
+
 - Siga os padrões de código existentes
 - Adicione testes para novas funcionalidades
 - Atualize a documentação quando necessário
@@ -399,8 +473,8 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-**🚀 Pastor Portfolio v3.0.0 - Arquitetura DTO Completa**
+**🚀 Pastor Portfolio v3.1.0 — Arquitetura DTO, Testes Automatizados e Frontend Moderno**
 
 **Desenvolvido com ❤️ para o ministério do Pastor Giovanni Moreira Guimarães**
 
-*Última atualização: Janeiro 2025 - Sistema DTO implementado, validação robusta e performance otimizada*
+*Última atualização: Julho 2025 — Cobertura de testes automatizados, frontend React 18+, integração 2FA, feedback visual, ambiente robusto e performance otimizada*

@@ -3,8 +3,13 @@
 require('dotenv').config();
 
 const express = require('express');
+
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+// Swagger (documentação automática)
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 // NOVO: Importa configuração Redis
 const { redis, getRedisStatus } = require('./config/redis');
@@ -33,9 +38,13 @@ const {
 } = require('./middleware/auditLogger');
 
 
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI;
+
+// --- Documentação Swagger ---
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // --- Middlewares ---
 app.use(cors());
@@ -53,37 +62,36 @@ app.use(auditLogger());         // Log de auditoria principal
 const { applySecurityHeaders } = require('./middleware/jwtSecurity');
 app.use(applySecurityHeaders);
 
-// --- Conexão com o MongoDB ---
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('✅ Conectado ao MongoDB!');
 
-    // NOVO: Inicializa conexão Redis após MongoDB
-    return redis.connect();
-  })
-  .then(() => {
-    console.log('🚀 Todas as conexões estabelecidas!');
-
-    // NOVO: Warm-up do cache em background
-    setTimeout(async () => {
-      try {
-        console.log('🔥 Iniciando warm-up dos caches...');
-
-        await Promise.allSettled([
-          CachedBookService.warmUpCache(),
-          CachedSermonService.warmUp(),
-          CachedStudyService.warmUp()
-        ]);
-
-        console.log('✅ Warm-up de todos os caches concluído!');
-      } catch (err) {
-        console.error('❌ Erro no warm-up:', err.message);
-      }
-    }, 2000);
-  })
-  .catch(err => {
-    console.error('❌ Erro nas conexões:', err);
-  });
+// --- Conexão com o MongoDB e Redis, e warm-up de cache ---
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(MONGODB_URI)
+    .then(() => {
+      console.log('✅ Conectado ao MongoDB!');
+      // Inicializa conexão Redis após MongoDB
+      return redis.connect();
+    })
+    .then(() => {
+      console.log('🚀 Todas as conexões estabelecidas!');
+      // Warm-up do cache em background
+      setTimeout(async () => {
+        try {
+          console.log('🔥 Iniciando warm-up dos caches...');
+          await Promise.allSettled([
+            CachedBookService.warmUpCache(),
+            CachedSermonService.warmUp(),
+            CachedStudyService.warmUp()
+          ]);
+          console.log('✅ Warm-up de todos os caches concluído!');
+        } catch (err) {
+          console.error('❌ Erro no warm-up:', err.message);
+        }
+      }, 2000);
+    })
+    .catch(err => {
+      console.error('❌ Erro nas conexões:', err);
+    });
+}
 
 // --- Rotas da API ---
 app.get('/', (req, res) => {
@@ -159,7 +167,14 @@ app.use(notFound);
 // Middleware global de tratamento de erros
 app.use(globalErrorHandler);
 
-// --- Iniciar o Servidor ---
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+
+// --- Iniciar o Servidor (apenas fora de teste) ---
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Documentação Swagger disponível em http://localhost:${PORT}/api-docs`);
+  });
+}
+
+// Exporta o app para testes
+module.exports = app;

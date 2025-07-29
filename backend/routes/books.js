@@ -1,3 +1,75 @@
+/**
+ * @swagger
+ * /api/books/search/{term}:
+ *   get:
+ *     summary: Buscar livros por termo
+ *     tags: [Books]
+ *     parameters:
+ *       - in: path
+ *         name: term
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Termo de busca
+ *     responses:
+ *       200:
+ *         description: Lista de livros encontrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 searchTerm:
+ *                   type: string
+ *                 count:
+ *                   type: integer
+ *                 books:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Book'
+ */
+
+/**
+ * @swagger
+ * /api/books/authors:
+ *   get:
+ *     summary: Lista todos os autores
+ *     tags: [Books]
+ *     responses:
+ *       200:
+ *         description: Lista de autores
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ */
+
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   get:
+ *     summary: Detalhes de um livro por ID
+ *     tags: [Books]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do livro
+ *     responses:
+ *       200:
+ *         description: Detalhes do livro
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Book'
+ *       404:
+ *         description: Livro não encontrado
+ */
+
 // routes/books.js
 const express = require('express');
 const router = express.Router();
@@ -44,12 +116,30 @@ router.use(cacheStatsMiddleware());
 
 // ========== ROTAS PÚBLICAS COM CACHE ==========
 
-// GET /api/books/count - Conta total de livros (COM CACHE)
+
+/**
+ * @swagger
+ * /api/books/count:
+ *   get:
+ *     summary: Conta total de livros
+ *     tags: [Books]
+ *     responses:
+ *       200:
+ *         description: Contagem de livros obtida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 42
+ */
 router.get('/count',
-  cacheStrategies.stats(), // NOVO: Cache de estatísticas
+  cacheStrategies.stats(),
   async (req, res, next) => {
     try {
-      const stats = await CachedBookService.getStats(); // NOVO: Usa service com cache
+      const stats = await CachedBookService.getStats();
       res.json(ApiResponseDTO.success(
         { count: stats.totalBooks },
         'Contagem de livros obtida com sucesso'
@@ -60,33 +150,69 @@ router.get('/count',
   }
 );
 
-// GET /api/books - Lista todos os livros (COM CACHE)
+
+/**
+ * @swagger
+ * /api/books:
+ *   get:
+ *     summary: Lista todos os livros
+ *     tags: [Books]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Página da listagem
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Quantidade de itens por página
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Termo de busca
+ *     responses:
+ *       200:
+ *         description: Lista paginada de livros
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Book'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ */
 router.get('/',
-  validateSearch(BookSearchDTO), // Valida parâmetros de busca
-  cacheStrategies.contentList('books'), // NOVO: Cache para lista
+  validateSearch(BookSearchDTO),
+  cacheStrategies.contentList('books'),
   async (req, res, next) => {
     try {
-      // Usa dados validados e service com cache
       const options = req.validatedData;
-      const result = await CachedBookService.findAll(options); // NOVO: Service com cache
-
-
-      // Corrigido: usa o campo correto de total de itens
+      const result = await CachedBookService.findAll(options);
       const totalItems = (result.pagination && result.pagination.total) || result.total || 0;
       const pagination = new PaginationDTO({
         page: options.page,
         limit: options.limit,
         totalItems
       });
-
       const paginationResult = pagination.validate();
       if (!paginationResult.isValid) {
         throw new Error('Erro na paginação');
       }
-
       const paginationData = pagination.transform();
-
-      // NOVO: Resposta padronizada com paginação
       res.json(ApiResponseDTO.paginated(
         result.books,
         paginationData,

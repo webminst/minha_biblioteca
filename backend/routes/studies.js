@@ -1,3 +1,27 @@
+/**
+ * @swagger
+ * /api/studies/{id}:
+ *   get:
+ *     summary: Detalhes de um estudo por ID
+ *     tags: [Studies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do estudo
+ *     responses:
+ *       200:
+ *         description: Detalhes do estudo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Study'
+ *       404:
+ *         description: Estudo não encontrado
+ */
+
 // routes/studies.js
 const express = require('express');
 const router = express.Router();
@@ -60,11 +84,28 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
  */
 
 // ========== ROTAS PÚBLICAS ==========
-// GET /api/studies/count - Conta total de estudos
+
+/**
+ * @swagger
+ * /api/studies/count:
+ *   get:
+ *     summary: Conta total de estudos
+ *     tags: [Studies]
+ *     responses:
+ *       200:
+ *         description: Contagem de estudos obtida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 50
+ */
 router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const stats = await StudyService.getStats();
-
     res.json(
       ApiResponseDTO.success(
         { count: stats.totalStudies },
@@ -76,7 +117,51 @@ router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
   }
 });
 
-// GET /api/studies - Lista todos os estudos
+
+/**
+ * @swagger
+ * /api/studies:
+ *   get:
+ *     summary: Lista todos os estudos
+ *     tags: [Studies]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Página da listagem
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Quantidade de itens por página
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Termo de busca
+ *     responses:
+ *       200:
+ *         description: Lista paginada de estudos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Study'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ */
 router.get('/', cacheMiddleware('list'), async (req, res, next) => {
   try {
     const options = {
@@ -89,11 +174,7 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
       reference: req.query.reference,
       search: req.query.search
     };
-
     const result = await StudyService.findAll(options);
-
-    // Cria objeto de paginação padronizado
-    // Corrigido: usa o campo correto de total de itens
     const totalItems = (result.pagination && result.pagination.total) || result.total || 0;
     const pagination = new PaginationDTO({
       page: options.page,
@@ -105,8 +186,6 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
       throw new Error('Erro na paginação');
     }
     const paginationData = pagination.transform();
-
-    // Resposta padronizada com paginação
     res.json(
       ApiResponseDTO.paginated(
         result.studies || result.data || result,

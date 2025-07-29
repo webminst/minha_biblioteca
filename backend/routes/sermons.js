@@ -1,3 +1,44 @@
+/**
+ * @swagger
+ * /api/sermons/{id}:
+ *   get:
+ *     summary: Detalhes de um sermão por ID
+ *     tags: [Sermons]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do sermão
+ *     responses:
+ *       200:
+ *         description: Detalhes do sermão
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Sermon'
+ *       404:
+ *         description: Sermão não encontrado
+ */
+
+/**
+ * @swagger
+ * /api/sermons/series:
+ *   get:
+ *     summary: Lista todas as séries de sermões
+ *     tags: [Sermons]
+ *     responses:
+ *       200:
+ *         description: Lista de séries
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ */
+
 const express = require('express');
 const router = express.Router();
 const Sermon = require('../models/Sermon');
@@ -18,7 +59,25 @@ const { validateInput, validateId, transformOutput } = require('../middleware/dt
  */
 
 // ========== ROTAS PÚBLICAS ==========
-// GET /api/sermons/count - Conta total de sermões
+
+/**
+ * @swagger
+ * /api/sermons/count:
+ *   get:
+ *     summary: Conta total de sermões
+ *     tags: [Sermons]
+ *     responses:
+ *       200:
+ *         description: Contagem de sermões obtida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 100
+ */
 router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
   try {
     const stats = await SermonService.getStats();
@@ -28,7 +87,51 @@ router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
   }
 });
 
-// GET /api/sermons - Lista todos os sermões
+
+/**
+ * @swagger
+ * /api/sermons:
+ *   get:
+ *     summary: Lista todos os sermões
+ *     tags: [Sermons]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Página da listagem
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Quantidade de itens por página
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Termo de busca
+ *     responses:
+ *       200:
+ *         description: Lista paginada de sermões
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Sermon'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ */
 router.get('/', cacheMiddleware('list'), async (req, res, next) => {
   try {
     const options = {
@@ -41,25 +144,18 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
       speaker: req.query.speaker,
       search: req.query.search
     };
-
     const result = await SermonService.findAll(options);
-
-    // Criar paginação padronizada
-    // Corrigido: usa o campo correto de total de itens
     const totalItems = (result.pagination && result.pagination.total) || result.total || result.totalSermons || 0;
     const pagination = new PaginationDTO({
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 10,
       totalItems
     });
-
     const paginationResult = pagination.validate();
     if (!paginationResult.isValid) {
       throw new Error('Erro na paginação');
     }
-
     const paginationData = pagination.transform();
-
     res.json(ApiResponseDTO.paginated(
       result.sermons,
       paginationData,
