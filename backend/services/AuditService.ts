@@ -45,8 +45,32 @@ class LogBuffer {
     }
 }
 
+
 class AuditServiceClass {
-    // ...implementar métodos principais conforme necessário...
+    async log(logData: any): Promise<boolean> {
+        // Validação e lógica simplificada para TypeScript
+        const validation = validateAuditLog(logData);
+        if (!validation.isValid) {
+            console.warn('⚠️ Log de auditoria inválido:', validation.errors);
+            return false;
+        }
+        if (!shouldLog(
+            logData.action.method,
+            logData.action.endpoint,
+            logData.request.userAgent?.raw,
+            logData.request.ip
+        )) {
+            return false;
+        }
+        logData.metadata = logData.metadata || {};
+        logData.metadata.logId = generateTraceId();
+        logData.metadata.loggedAt = formatTimestamp();
+        // Aqui você pode adicionar lógica de armazenamento (Redis/MongoDB/etc)
+        // Exemplo: await redis.set(...)
+        // Por enquanto, apenas imprime no console
+        console.log('📝 Audit log registrado:', logData);
+        return true;
+    }
 }
 
 export const LogBufferInstance = new LogBuffer();
