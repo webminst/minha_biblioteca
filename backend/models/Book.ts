@@ -38,7 +38,7 @@ const BookSchema = new Schema<IBook>({
     area: { type: String, trim: true },
     tags: { type: [String], validate: [arrayLimit, 'Máximo 10 tags permitidas'] },
     description: { type: String, maxlength: 2000 },
-    summary: { type: String, minlength: 50, maxlength: 10000 },
+    summary: { type: String, minlength: 50, maxlength: 20000 },
     keyPoints: { type: [String], maxlength: 20 },
     quotes: [{ text: String, page: Number, chapter: String }],
     publicationYear: { type: Number, min: 1900, max: new Date().getFullYear() },
@@ -55,5 +55,14 @@ const BookSchema = new Schema<IBook>({
     createdBy: { type: String },
     updatedBy: { type: String }
 }, { timestamps: true });
+
+// Método estático para buscar por área única (string)
+BookSchema.statics.findByArea = function (area: string) {
+    if (typeof area === 'string' && area.trim() !== '') {
+        return this.find({ area: area }).sort({ createdAt: -1 });
+    } else {
+        return this.find({}).sort({ createdAt: -1 });
+    }
+};
 
 export default mongoose.model<IBook>('Book', BookSchema);

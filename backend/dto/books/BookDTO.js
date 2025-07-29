@@ -68,11 +68,11 @@ class CreateBookDTO extends BaseDTO {
                 .required()
                 .trim()
                 .min(50)
-                .max(10000)
+                .max(20000)
                 .messages({
                     'string.empty': 'Resumo é obrigatório',
                     'string.min': 'Resumo deve ter pelo menos 50 caracteres',
-                    'string.max': 'Resumo não pode exceder 10000 caracteres'
+                    'string.max': 'Resumo não pode exceder 20000 caracteres'
                 }),
 
             keyPoints: Joi.array()
@@ -179,6 +179,11 @@ class CreateBookDTO extends BaseDTO {
      */
     transform() {
         const data = this.validatedData || this.data;
+
+        // Garante que area nunca seja array
+        if (Array.isArray(data.area)) {
+            throw new Error('O campo area deve ser uma string, não um array.');
+        }
 
         // Normaliza tags removendo duplicatas e convertendo para lowercase
         if (data.tags && data.tags.length > 0) {

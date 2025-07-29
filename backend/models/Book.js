@@ -139,9 +139,14 @@ BookSchema.methods.getShortSummary = function () {
   return this.description || this.content.substring(0, 150) + '...';
 };
 
-// Método estático para buscar por área
+
+// Método estático para buscar por área única (string)
 BookSchema.statics.findByArea = function (area) {
-  return this.find({ area: area }).sort({ createdAt: -1 });
+  if (typeof area === 'string' && area.trim() !== '') {
+    return this.find({ area: area }).sort({ createdAt: -1 });
+  } else {
+    return this.find({}).sort({ createdAt: -1 });
+  }
 };
 
 // ========== MIDDLEWARE ==========

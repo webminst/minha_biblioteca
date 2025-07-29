@@ -57,6 +57,26 @@
   font-size: 1rem;
   font-family: inherit;
   background-color: var(--color-white);
+  min-height: 2.5em;
+  min-width: 160px;
+  max-width: 100%;
+  /* Para múltipla seleção, mostrar mais opções */
+  height: auto;
+  overflow-y: auto;
+}
+
+/* Aparência especial para select múltiplo */
+#area-filter[multiple] {
+  min-height: 120px;
+  max-height: 220px;
+  resize: vertical;
+  cursor: pointer;
+}
+
+/* Destacar opções selecionadas */
+#area-filter option:checked {
+  background-color: var(--color-green-ipb, #006a4e);
+  color: #fff;
 }
 
 /* Container do campo de busca */
@@ -156,19 +176,23 @@
 
 /* Cores diferentes para cada tipo de sugestão */
 .suggestion-item[data-type="título"] .suggestion-type {
-  background-color: #2c7be5; /* Azul para títulos */
+  background-color: #2c7be5;
+  /* Azul para títulos */
 }
 
 .suggestion-item[data-type="autor"] .suggestion-type {
-  background-color: #00a854; /* Verde para autores */
+  background-color: #00a854;
+  /* Verde para autores */
 }
 
 .suggestion-item[data-type="área"] .suggestion-type {
-  background-color: #f0ad4e; /* Laranja para áreas */
+  background-color: #f0ad4e;
+  /* Laranja para áreas */
 }
 
 .suggestion-item[data-type="editora"] .suggestion-type {
-  background-color: #d9534f; /* Vermelho para editoras */
+  background-color: #d9534f;
+  /* Vermelho para editoras */
 }
 
 /* Melhorias visuais para o estado de hover */

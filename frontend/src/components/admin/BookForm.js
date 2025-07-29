@@ -26,6 +26,7 @@ function BookForm() {
         'Devocionais',
         'Outros'
     ];
+
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [audioUrl, setAudioUrl] = useState('');
@@ -66,7 +67,15 @@ function BookForm() {
                     setAuthor(bookData.author || '');
                     setDate(bookData.date ? new Date(bookData.date).toISOString().split('T')[0] : '');
                     setLocal(bookData.local || '');
-                    setArea(bookData.area || '');
+                    // Log para depuração do valor retornado pelo backend
+                    console.log('Valor retornado de bookData.area:', bookData.area);
+                    let areaValue = typeof bookData.area === 'string' ? bookData.area : '';
+                    // Garante que o valor está entre as opções válidas
+                    if (!areaOptions.includes(areaValue)) {
+                        console.warn('Área recebida não está entre as opções válidas:', areaValue);
+                        areaValue = '';
+                    }
+                    setArea(areaValue);
                     setDescription(bookData.description || '');
                     setContent(bookData.content || '');
                     setAudioUrl(bookData.audioUrl || '');
@@ -90,8 +99,8 @@ function BookForm() {
         setError(null);
         setSuccess(null);
 
-        // Validação do tamanho máximo do conteúdo
-        const MAX_SUMMARY_LENGTH = 10000;
+        // Validação do tamanho máximo do conteúdo (igual ao backend)
+        const MAX_SUMMARY_LENGTH = 20000;
         if (content && content.length > MAX_SUMMARY_LENGTH) {
             setError(`O resumo não pode ter mais de ${MAX_SUMMARY_LENGTH} caracteres. Atualmente tem ${content.length} caracteres.`);
             setLoading(false);
@@ -163,14 +172,14 @@ function BookForm() {
             // Opcional: redirecionar para a lista de livros após sucesso
             navigate('/admin/livros');
         } catch (err) {
-            const errorMessage = err.response?.data?.message || 
-                               err.response?.data?.error?.message ||
-                               err.response?.data?.error ||
-                               err.message || 
-                               'Erro ao processar a requisição';
-            
+            const errorMessage = err.response?.data?.message ||
+                err.response?.data?.error?.message ||
+                err.response?.data?.error ||
+                err.message ||
+                'Erro ao processar a requisição';
+
             setError(`Erro ao salvar livro: ${errorMessage}`);
-            
+
             // Log detalhado no console para depuração
             console.error('Erro detalhado:', {
                 message: err.message,
@@ -183,7 +192,7 @@ function BookForm() {
                     data: err.config?.data
                 }
             });
-            
+
             // Se o token estiver inválido, redireciona para o login
             if (err.response?.status === 401) {
                 localStorage.removeItem('userToken');
@@ -237,11 +246,11 @@ function BookForm() {
 
                 <div className="form-group">
                     <label htmlFor="content">Conteúdo (resumo/trecho em Markdown, opcional):</label>
-                    <textarea 
-                        id="content" 
-                        value={content} 
-                        onChange={(e) => setContent(e.target.value)} 
-                        rows="10" 
+                    <textarea
+                        id="content"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        rows="10"
                         disabled={loading}
                         maxLength={10000}
                     ></textarea>

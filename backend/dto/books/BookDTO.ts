@@ -27,10 +27,10 @@ export class CreateBookDTO extends BaseDTO {
                 'string.min': 'Descrição deve ter pelo menos 10 caracteres',
                 'string.max': 'Descrição não pode exceder 2000 caracteres'
             }),
-            summary: Joi.string().required().trim().min(50).max(10000).messages({
+            summary: Joi.string().required().trim().min(50).max(20000).messages({
                 'string.empty': 'Resumo é obrigatório',
                 'string.min': 'Resumo deve ter pelo menos 50 caracteres',
-                'string.max': 'Resumo não pode exceder 10000 caracteres'
+                'string.max': 'Resumo não pode exceder 20000 caracteres'
             }),
             keyPoints: Joi.array().items(Joi.string().trim().min(5).max(500)).max(20).default([]).messages({
                 'array.max': 'Máximo de 20 pontos-chave permitidos'
@@ -88,7 +88,7 @@ export class CreateBookDTO extends BaseDTO {
 export class UpdateBookDTO extends BaseDTO {
     constructor(data: any) {
         super(data);
-        const createSchema = new CreateBookDTO({}).schema;
+        const createSchema = new CreateBookDTO({}).schema as Joi.ObjectSchema;
         this.schema = createSchema.fork(
             Object.keys(createSchema.describe().keys),
             (schema: any) => schema.optional()

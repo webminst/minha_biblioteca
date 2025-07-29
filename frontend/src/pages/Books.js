@@ -90,7 +90,7 @@ function Books() {
       }
     };
     fetchBooks();
-  }, [location.search]); // Agora só depende de location.search
+  }, [location.search]);
 
   // Inicializa filtros a partir da URL
   useEffect(() => {
@@ -104,7 +104,8 @@ function Books() {
     }
 
     // Atualiza outros filtros
-    setSelectedArea(query.get('area') || '');
+    const areaParam = query.get('area') || '';
+    setSelectedArea(areaParam);
     setSelectedAuthor(query.get('author') || '');
   }, [location.search]);
 
@@ -177,13 +178,24 @@ function Books() {
 
   // Função para navegar entre páginas mantendo filtros
   const goToPage = (pageNumber) => {
-    navigate(`${location.pathname}?page=${pageNumber}${selectedArea ? `&area=${selectedArea}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    const params = new URLSearchParams();
+    params.set('page', pageNumber);
+    if (selectedArea) params.set('area', selectedArea);
+    if (selectedAuthor) params.set('author', selectedAuthor);
+    if (searchTerm) params.set('search', searchTerm);
+    navigate(`${location.pathname}?${params.toString()}`);
   };
 
   // Handlers para mudança de filtros
   const handleAreaChange = (e) => {
-    setSelectedArea(e.target.value);
-    navigate(`${location.pathname}?page=1${e.target.value ? `&area=${e.target.value}` : ''}${selectedAuthor ? `&author=${selectedAuthor}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    const value = e.target.value;
+    setSelectedArea(value);
+    const params = new URLSearchParams();
+    params.set('page', 1);
+    if (value) params.set('area', value);
+    if (selectedAuthor) params.set('author', selectedAuthor);
+    if (searchTerm) params.set('search', searchTerm);
+    navigate(`${location.pathname}?${params.toString()}`);
   };
 
   const handleAuthorChange = (e) => {
@@ -474,7 +486,7 @@ function Books() {
           </div>
         </div>
 
-        {/* Filtro por área */}
+        {/* Filtro por área (seleção única) */}
         <div className="filter-group">
           <label htmlFor="area-filter">Área:</label>
           <select id="area-filter" value={selectedArea} onChange={handleAreaChange}>
