@@ -398,7 +398,7 @@ class SermonService {
 
         try {
             const searchRegex = new RegExp(term, 'i');
-            console.log(`🔍 Buscando sugestões para o termo: ${term}`);
+            // ...log removido para limpeza...
 
             // Usa aggregation para buscar todas as sugestões em uma única consulta
             const results = await Sermon.aggregate([
@@ -460,11 +460,11 @@ class SermonService {
                 })
                 .slice(0, limit);
 
-            console.log(`✅ ${sortedSuggestions.length} sugestões encontradas para: ${term}`);
+            // ...log removido para limpeza...
             return sortedSuggestions;
 
         } catch (error) {
-            console.error('❌ Erro ao buscar sugestões:', error);
+            // ...log removido para limpeza...
             return []; // Retorna array vazio em caso de erro
         }
     }

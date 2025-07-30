@@ -188,7 +188,11 @@ function Books() {
 
   // Handlers para mudança de filtros
   const handleAreaChange = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    // Sanitiza: só permite string única, sem vírgula ou múltiplos valores
+    if (typeof value === 'string' && value.includes(',')) {
+      value = value.split(',')[0].trim();
+    }
     setSelectedArea(value);
     const params = new URLSearchParams();
     params.set('page', 1);

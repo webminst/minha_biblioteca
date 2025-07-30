@@ -26,7 +26,6 @@ class StudyService {
             search
         } = options;
 
-        // Constrói filtros
         const filters = {};
         if (theme) filters.theme = { $regex: theme, $options: 'i' };
         if (format) filters.format = { $regex: format, $options: 'i' };
@@ -43,11 +42,9 @@ class StudyService {
             ];
         }
 
-        // Configuração de ordenação
         const sort = {};
         sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
 
-        // Executa busca paginada
         const skip = (page - 1) * limit;
 
         const [studies, total] = await Promise.all([
@@ -58,6 +55,7 @@ class StudyService {
                 .select('title reference theme format description tags createdAt updatedAt'),
             Study.countDocuments(filters)
         ]);
+
 
         return {
             studies,
@@ -118,7 +116,7 @@ class StudyService {
      */
     async create(studyData, userId) {
         if (!studyData) {
-            console.error('ERRO: studyData está undefined no StudyService.create!');
+            // ...log removido para limpeza...
             throw new AppError('Dados do estudo não recebidos pelo backend.', 500);
         }
         // Validações de negócio
@@ -158,7 +156,7 @@ class StudyService {
             const savedStudy = await study.save();
             return savedStudy;
         } catch (err) {
-            console.error('Erro ao salvar estudo no MongoDB:', err.message, err.errors || err);
+            // ...log removido para limpeza...
             throw new AppError('Erro ao salvar estudo: ' + (err.message || 'Erro desconhecido'), 400);
         }
     }
@@ -446,7 +444,7 @@ class StudyService {
                 formats: [...new Set(formats)].slice(0, limit)
             };
         } catch (error) {
-            console.error('Erro ao buscar sugestões de estudos:', error);
+            // ...log removido para limpeza...
             return {
                 titles: [],
                 themes: [],

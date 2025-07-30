@@ -180,9 +180,12 @@ class CreateBookDTO extends BaseDTO {
     transform() {
         const data = this.validatedData || this.data;
 
-        // Garante que area nunca seja array
+        // Garante que area nunca seja array e não contenha vírgula
         if (Array.isArray(data.area)) {
             throw new Error('O campo area deve ser uma string, não um array.');
+        }
+        if (typeof data.area === 'string' && data.area.includes(',')) {
+            throw new Error('O campo area deve ser uma única área, sem vírgulas ou múltiplos valores.');
         }
 
         // Normaliza tags removendo duplicatas e convertendo para lowercase

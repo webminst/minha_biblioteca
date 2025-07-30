@@ -5,9 +5,12 @@ const Joi = require('joi');
  * Classe base para Data Transfer Objects
  * Fornece funcionalidades comuns de validação e transformação
  */
+const sanitizeObject = require('../utils/sanitizeObject');
+
 class BaseDTO {
     constructor(data = {}) {
-        this.data = data;
+        // Sanitiza todos os campos string do objeto recebido
+        this.data = sanitizeObject(data);
         this.errors = [];
     }
 

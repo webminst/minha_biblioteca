@@ -63,16 +63,16 @@ class CacheService {
 
             if (data !== null) {
                 this.stats.hits++;
-                console.log(`📦 Cache HIT: ${key}`);
+                // ...log removido para limpeza...
                 return data;
             } else {
                 this.stats.misses++;
-                console.log(`🔍 Cache MISS: ${key}`);
+                // ...log removido para limpeza...
                 return null;
             }
         } catch (error) {
             this.stats.errors++;
-            console.error(`❌ Cache GET error for ${key}:`, error.message);
+            // ...log removido para limpeza...
             return null;
         }
     }
@@ -89,13 +89,13 @@ class CacheService {
 
             if (success) {
                 this.stats.sets++;
-                console.log(`💾 Cache SET: ${key} (TTL: ${cacheTTL}s)`);
+                // ...log removido para limpeza...
             }
 
             return success;
         } catch (error) {
             this.stats.errors++;
-            console.error(`❌ Cache SET error for ${key}:`, error.message);
+            // ...log removido para limpeza...
             return false;
         }
     }
@@ -111,13 +111,13 @@ class CacheService {
             this.stats.deletes += deleted;
 
             if (deleted > 0) {
-                console.log(`🗑️ Cache DELETE: ${key}`);
+                // ...log removido para limpeza...
             }
 
             return deleted > 0;
         } catch (error) {
             this.stats.errors++;
-            console.error(`❌ Cache DELETE error for ${key}:`, error.message);
+            // ...log removido para limpeza...
             return false;
         }
     }
@@ -133,13 +133,13 @@ class CacheService {
             this.stats.deletes += deleted;
 
             if (deleted > 0) {
-                console.log(`🧹 Cache INVALIDATE PATTERN: ${pattern} (${deleted} keys)`);
+                // ...log removido para limpeza...
             }
 
             return deleted;
         } catch (error) {
             this.stats.errors++;
-            console.error(`❌ Cache INVALIDATE error for ${pattern}:`, error.message);
+            // ...log removido para limpeza...
             return 0;
         }
     }
@@ -156,7 +156,7 @@ class CacheService {
 
         try {
             // Cache miss - busca da fonte
-            console.log(`⚡ Cache-aside: Fetching ${key}`);
+            // ...log removido para limpeza...
             const data = await fetchFunction();
 
             // Salva no cache para próximas consultas
@@ -166,7 +166,7 @@ class CacheService {
 
             return data;
         } catch (error) {
-            console.error(`❌ Cache-aside error for ${key}:`, error.message);
+            // ...log removido para limpeza...
             throw error; // Re-propaga o erro original
         }
     }
@@ -189,7 +189,7 @@ class CacheService {
 
             return data;
         } catch (error) {
-            console.error(`❌ Cache refresh error for ${key}:`, error.message);
+            // ...log removido para limpeza...
             throw error;
         }
     }
@@ -263,7 +263,7 @@ class CacheService {
             totalDeleted += deleted;
         }
 
-        console.log(`🧹 Invalidated ${totalDeleted} related cache entries for ${entityType}`);
+        // ...log removido para limpeza...
         return totalDeleted;
     }
 
