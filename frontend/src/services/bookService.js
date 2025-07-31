@@ -74,11 +74,13 @@ const BookService = {
    * Busca os autores únicos disponíveis
    * @returns {Promise<Array>} - Lista de autores únicos
    */
+  /**
+   * Busca os autores únicos disponíveis
+   * @returns {Promise<Array>} - Lista de autores únicos
+   */
   async getAuthors() {
     try {
-      const response = await axios.get(API_ENDPOINTS.BOOKS.AUTHORS, {
-        headers: authHeader()
-      });
+      const response = await axios.get(API_ENDPOINTS.BOOKS.AUTHORS);
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar autores de livros:', error);
@@ -90,11 +92,13 @@ const BookService = {
    * Busca as áreas únicas disponíveis
    * @returns {Promise<Array>} - Lista de áreas únicas
    */
+  /**
+   * Busca as áreas únicas disponíveis
+   * @returns {Promise<Array>} - Lista de áreas únicas
+   */
   async getAreas() {
     try {
-      const response = await axios.get(API_ENDPOINTS.BOOKS.AREAS, {
-        headers: authHeader()
-      });
+      const response = await axios.get(API_ENDPOINTS.BOOKS.AREAS);
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar áreas de livros:', error);
@@ -108,9 +112,7 @@ const BookService = {
    */
   async getPublishers() {
     try {
-      const response = await axios.get(API_ENDPOINTS.BOOKS.PUBLISHERS, {
-        headers: authHeader()
-      });
+      const response = await axios.get(API_ENDPOINTS.BOOKS.PUBLISHERS);
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar editoras de livros:', error);
@@ -124,9 +126,7 @@ const BookService = {
    */
   async getSeries() {
     try {
-      const response = await axios.get(API_ENDPOINTS.BOOKS.SERIES, {
-        headers: authHeader()
-      });
+      const response = await axios.get(API_ENDPOINTS.BOOKS.SERIES);
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar séries de livros:', error);
@@ -149,6 +149,46 @@ const BookService = {
     } catch (error) {
       console.error('Erro ao buscar livros recentes:', error);
       return [];
+    }
+  },
+
+  /**
+   * Avalia um livro
+   * @param {string} bookId - ID do livro
+   * @param {number} stars - Número de estrelas (1-5)
+   * @param {string} deviceId - ID do dispositivo
+   * @returns {Promise<Object>} - Dados da avaliação
+   */
+  async rateBook(bookId, stars, deviceId) {
+    try {
+      const response = await axios.post(
+        `${API_ENDPOINTS.BOOKS.BASE}/${bookId}/rate`,
+        { stars, deviceId },
+        { headers: authHeader() }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao avaliar o livro:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Obtém as avaliações de um livro
+   * @param {string} bookId - ID do livro
+   * @returns {Promise<Object>} - Dados das avaliações (média e total)
+   */
+  async getBookRatings(bookId) {
+    try {
+      const response = await axios.get(
+        `${API_ENDPOINTS.BOOKS.BASE}/${bookId}/ratings`,
+        { headers: authHeader() }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar avaliações do livro:', error);
+      // Retorna valores padrão em caso de erro
+      return { average: null, total: 0 };
     }
   }
 };

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
-import StarRating from '../components/StarRating';
+import RatingDisplay from '../components/RatingDisplay/RatingDisplay';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
@@ -31,6 +31,7 @@ function Books() {
 
   // Estados para dados e controles
   const [books, setBooks] = useState([]);
+  const [ratings, setRatings] = useState({}); // Armazena as avaliações por livro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedArea, setSelectedArea] = useState('');
@@ -91,6 +92,93 @@ function Books() {
     };
     fetchBooks();
   }, [location.search]);
+
+  // Busca as avaliações de um livro
+  const fetchBookRatings = async (bookId) => {
+    try {
+      const response = await fetch(`${API_ENDPOINTS.BOOKS.BASE}/${bookId}/ratings`);
+      if (!response.ok) {
+        throw new Error(`Erro ao carregar avaliações para o livro ${bookId}`);
+      }
+      const data = await response.json();
+      // Garante que a resposta tem o formato esperado
+      if (data.sucesso === false) {
+        console.error('Erro na resposta da API:', data.mensagem);
+        return { average: null, total: 0 };
+      }
+      return data.dados || { average: null, total: 0 };
+    } catch (err) {
+      console.error(`Erro ao carregar avaliações para o livro ${bookId}:`, err);
+      return { average: null, total: 0 };
+    }
+  };
+
+  // Busca as avaliações para todos os livros
+  const fetchAllRatings = async (booksList) => {
+    if (!Array.isArray(booksList) || booksList.length === 0) {
+      return {};
+    }
+
+    const ratingsMap = {};
+    
+    // Cria um array de promessas para buscar as avaliações em paralelo
+    const ratingPromises = booksList.map(async (book) => {
+      try {
+        const ratingData = await fetchBookRatings(book._id);
+        return { id: book._id, data: ratingData };
+      } catch (error) {
+        console.error(`Erro ao buscar avaliações para o livro ${book._id}:`, error);
+        return { id: book._id, data: { average: null, total: 0 } };
+      }
+    });
+
+    // Aguarda todas as requisições serem concluídas
+    const ratings = await Promise.all(ratingPromises);
+    
+    // Preenche o mapa de avaliações
+    ratings.forEach(({ id, data }) => {
+      ratingsMap[id] = data;
+    });
+    
+    return ratingsMap;
+  };
+
+  // Busca os livros da API
+  const fetchBooks = async (page = 1) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, {
+        params: {
+          page,
+          limit: ITEMS_PER_PAGE,
+          ...(selectedArea && { area: selectedArea }),
+          ...(selectedAuthor && { author: selectedAuthor }),
+          ...(searchTerm && { search: searchTerm })
+        }
+      });
+
+      const { books: booksList, ...paginationData } = extractBooks(response.data);
+      setBooks(booksList);
+      setPagination(paginationData);
+
+      // Busca as avaliações para os livros
+      const ratingsMap = await fetchAllRatings(booksList);
+      setRatings(ratingsMap);
+
+      // Extrai áreas e autores únicos para os filtros
+      const areas = [...new Set(booksList.map(book => book.area).filter(Boolean))];
+      const authors = [...new Set(booksList.map(book => book.author).filter(Boolean))];
+      
+      setUniqueAreas(areas);
+      setUniqueAuthors(authors);
+    } catch (err) {
+      console.error('Erro ao buscar livros:', err);
+      setError('Erro ao carregar os livros. Tente novamente mais tarde.');
+    } finally {
+      setLoading(false);
+    }  
+  };
 
   // Inicializa filtros a partir da URL
   useEffect(() => {
@@ -534,10 +622,11 @@ function Books() {
                 pdfUrl={book.pdfUrl}
                 coverImageUrl={book.coverImageUrl}
                 book={book}
+                rating={ratings[book._id] ? {
+                  average: ratings[book._id].average,
+                  total: ratings[book._id].total
+                } : null}
               />
-              <div style={{ marginTop: 8, marginLeft: 8 }}>
-                <StarRating bookId={book._id} userToken={null} />
-              </div>
             </div>
           ))
         ) : (

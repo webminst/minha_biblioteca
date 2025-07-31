@@ -434,21 +434,216 @@ router.get('/:id',
 );
 // ========== AVALIAÇÃO POR ESTRELAS ==========
 // POST /api/books/:id/rate - Avaliar ou atualizar avaliação de um livro
-router.post('/:id/rate', protect, validateId, async (req, res, next) => {
+router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
-    const { stars } = req.body;
+    const { stars, deviceId } = req.body;
+    
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
+    
+    if (!deviceId) {
+      return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
+    }
+    
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
-    // Remove avaliação anterior do usuário, se existir
-    book.ratings = book.ratings.filter(r => r.user.toString() !== req.user._id.toString());
-    // Adiciona nova avaliação
-    book.ratings.push({ user: req.user._id, stars });
+    
+    // Verifica se o dispositivo já avaliou
+    const existingRatingIndex = book.ratings.findIndex(r => r.deviceId === deviceId);
+    
+    if (existingRatingIndex >= 0) {
+      // Atualiza avaliação existente
+      book.ratings[existingRatingIndex].stars = stars;
+      book.ratings[existingRatingIndex].updatedAt = new Date();
+    } else {
+      // Adiciona nova avaliação
+      book.ratings.push({
+        deviceId,
+        stars,
+        ratedAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+    
     await book.save();
-    res.json({ message: 'Avaliação registrada com sucesso.' });
+    
+    // Calcula a nova média e total
+    const total = book.ratings.length;
+    const average = total > 0 
+      ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : 0;
+    
+    res.json({ 
+      message: 'Avaliação registrada com sucesso.',
+      average: parseFloat(average),
+      total
+    });
   } catch (error) {
+    console.error('Erro ao registrar avaliação:', error);
+    next(error);
+  }
+});
+
+/**
+ * @swagger
+ * /api/books/{id}/ratings:
+ *   get:
+ *     summary: Obter média e total de avaliações de um livro
+ *     description: Retorna a média e o total de avaliações de um livro específico
+ *     tags: [Books]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do livro
+ *     responses:
+ *       200:
+ *         description: Dados de avaliação obtidos com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 average:
+ *                   type: number
+ *                   format: float
+ *                   nullable: true
+ *                   description: Média das avaliações (1-5) ou null se não houver avaliações
+ *                   example: 4.5
+ *                 total:
+ *                   type: integer
+ *                   description: Número total de avaliações
+ *                   example: 3
+ *       404:
+ *         description: Livro não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.get('/:id/ratings', validateId, async (req, res, next) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
+    
+    const total = book.ratings.length;
+    const average = total > 0 
+      ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : null;
+      
+    res.json({ 
+      average: average ? parseFloat(average) : null, 
+      total 
+    });
+  } catch (error) {
+    console.error('Erro ao buscar avaliações:', error);
+    next(error);
+  }
+});
+
+/**
+ * @swagger
+ * /api/books/{id}/rate:
+ *   post:
+ *     summary: Avaliar ou atualizar avaliação de um livro
+ *     description: Permite que um usuário avalie um livro ou atualize sua avaliação existente usando um deviceId
+ *     tags: [Books]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do livro a ser avaliado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - stars
+ *               - deviceId
+ *             properties:
+ *               stars:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 5
+ *                 description: Número de estrelas (1 a 5)
+ *               deviceId:
+ *                 type: string
+ *                 description: ID único do dispositivo do usuário
+ *     responses:
+ *       200:
+ *         description: Avaliação registrada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Avaliação registrada com sucesso.
+ *                 average:
+ *                   type: number
+ *                   format: float
+ *                   example: 4.5
+ *                 total:
+ *                   type: integer
+ *                   example: 2
+ *       400:
+ *         description: Dados inválidos fornecidos
+ *       404:
+ *         description: Livro não encontrado
+ */
+router.post('/:id/rate', validateId, async (req, res, next) => {
+  try {
+    const { stars, deviceId } = req.body;
+    
+    if (!stars || stars < 1 || stars > 5) {
+      return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
+    }
+    
+    if (!deviceId) {
+      return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
+    }
+    
+    const book = await Book.findById(req.params.id);
+    if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
+    
+    // Verifica se o dispositivo já avaliou
+    const existingRatingIndex = book.ratings.findIndex(r => r.deviceId === deviceId);
+    
+    if (existingRatingIndex >= 0) {
+      // Atualiza avaliação existente
+      book.ratings[existingRatingIndex].stars = stars;
+      book.ratings[existingRatingIndex].updatedAt = new Date();
+    } else {
+      // Adiciona nova avaliação
+      book.ratings.push({
+        deviceId,
+        stars,
+        ratedAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+    
+    await book.save();
+    
+    // Calcula a nova média e total
+    const total = book.ratings.length;
+    const average = total > 0 
+      ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : 0;
+    
+    res.json({ 
+      message: 'Avaliação registrada com sucesso.',
+      average: parseFloat(average),
+      total
+    });
+  } catch (error) {
+    console.error('Erro ao registrar avaliação:', error);
     next(error);
   }
 });
@@ -458,16 +653,23 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
+    
     const total = book.ratings.length;
-    const avg = total > 0 ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(2) : null;
-    res.json({ average: avg, total });
+    const average = total > 0 
+      ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : null;
+      
+    res.json({ 
+      average: average ? parseFloat(average) : null, 
+      total 
+    });
   } catch (error) {
+    console.error('Erro ao buscar avaliações:', error);
     next(error);
   }
 });
 
-// ========== ROTAS PROTEGIDAS (ADMIN) COM INVALIDAÇÃO DE CACHE ==========
-
+// ========== ROTAS PROTEGIDAS (ADMIN/EDITOR) ==========
 // POST /api/books - Criar novo livro (COM INVALIDAÇÃO DE CACHE)
 router.post('/',
   protect,

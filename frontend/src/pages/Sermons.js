@@ -31,6 +31,7 @@ function Sermons() {
 
   // Estados para dados e controles
   const [sermons, setSermons] = useState([]);
+  const [ratings, setRatings] = useState({}); // Armazena as avaliações por sermão
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('');
@@ -46,6 +47,56 @@ function Sermons() {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Busca as avaliações de um sermão
+  const fetchSermonRatings = async (sermonId) => {
+    try {
+      const response = await fetch(`${API_ENDPOINTS.SERMONS.BASE}/${sermonId}/ratings`);
+      if (!response.ok) {
+        throw new Error(`Erro ao carregar avaliações para o sermão ${sermonId}`);
+      }
+      const data = await response.json();
+      // Garante que a resposta tem o formato esperado
+      if (data.sucesso === false) {
+        console.error('Erro na resposta da API:', data.mensagem);
+        return { average: null, total: 0 };
+      }
+      return data.dados || { average: null, total: 0 };
+    } catch (err) {
+      console.error(`Erro ao carregar avaliações para o sermão ${sermonId}:`, err);
+      return { average: null, total: 0 };
+    }
+  };
+
+  // Busca as avaliações para todos os sermões
+  const fetchAllRatings = async (sermonsList) => {
+    if (!Array.isArray(sermonsList) || sermonsList.length === 0) {
+      return {};
+    }
+
+    const ratingsMap = {};
+    
+    // Cria um array de promessas para buscar as avaliações em paralelo
+    const ratingPromises = sermonsList.map(async (sermon) => {
+      try {
+        const ratingData = await fetchSermonRatings(sermon._id);
+        return { id: sermon._id, data: ratingData };
+      } catch (error) {
+        console.error(`Erro ao buscar avaliações para o sermão ${sermon._id}:`, error);
+        return { id: sermon._id, data: { average: null, total: 0 } };
+      }
+    });
+
+    // Aguarda todas as requisições serem concluídas
+    const ratings = await Promise.all(ratingPromises);
+    
+    // Preenche o mapa de avaliações
+    ratings.forEach(({ id, data }) => {
+      ratingsMap[id] = data;
+    });
+    
+    return ratingsMap;
+  };
 
   // Busca dados dos sermões na API com filtros e paginação
   useEffect(() => {
@@ -72,10 +123,15 @@ function Sermons() {
         const paginationData = extractPagination(response.data);
         console.log('[Sermons] sermonsData:', sermonsData);
         console.log('[Sermons] paginationData:', paginationData);
+        
+        // Atualiza a lista de sermões e paginação
         setSermons(sermonsData);
         setPagination(paginationData);
 
-        // Não é mais necessário extrair livros bíblicos aqui, pois já são buscados diretamente da API
+        // Busca as avaliações para os sermões
+        const ratingsMap = await fetchAllRatings(sermonsData);
+        setRatings(ratingsMap);
+
         console.log('Dados dos sermões carregados:', sermonsData);
       } catch (err) {
         setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
@@ -252,6 +308,7 @@ function Sermons() {
     setSelectedSeries('');
     setSelectedSpeaker('');
     setSearchTerm('');
+    setLocalSearchTerm('');
     navigate(`${location.pathname}?page=1`);
   };
 
@@ -419,6 +476,30 @@ function Sermons() {
         )}
       </div>
 
+      {/* Controles de paginação */}
+      <div className="pagination-controls">
+        <button onClick={goToPreviousPage} disabled={pageFromUrl === 1} className="pagination-button">
+          <FontAwesomeIcon icon={faChevronLeft} /> Anterior
+        </button>
+
+        {/* Números das páginas */}
+        {getPageNumbers().map(number => (
+          <button
+            key={number}
+            onClick={() => goToPage(number)}
+            className={`pagination-button page-number ${pageFromUrl === number ? 'active' : ''}`}
+            disabled={pageFromUrl === number}
+          >
+            {number}
+          </button>
+        ))}
+
+        {/* Botão próxima página */}
+        <button onClick={goToNextPage} disabled={pageFromUrl === totalPages} className="pagination-button">
+          Próxima <FontAwesomeIcon icon={faChevronRight} />
+        </button>
+      </div>
+
       {/* Lista de sermões */}
       <div className="content-list">
         {sermons.length > 0 ? (
@@ -427,15 +508,16 @@ function Sermons() {
               <ContentCard
                 title={sermon.title}
                 type="Sermão"
+                reference={sermon.reference || sermon.book}
                 description={sermon.description}
                 detailsUrl={`/sermoes/${sermon._id}`}
                 pdfUrl={sermon.pdfUrl}
-                reference={sermon.bibleReference}
                 sermon={sermon}
+                rating={ratings[sermon._id] ? {
+                  average: ratings[sermon._id].average,
+                  total: ratings[sermon._id].total
+                } : null}
               />
-              <div style={{ marginTop: 8, marginLeft: 8 }}>
-                <StarRating bookId={sermon._id} userToken={null} apiBase="/api/sermons" />
-              </div>
             </div>
           ))
         ) : (
@@ -443,33 +525,7 @@ function Sermons() {
         )}
       </div>
 
-      {/* Controles de paginação - só aparecem se houver mais de uma página */}
-      {totalPages > 1 && (
-        <div className="pagination-controls">
-          {/* Botão página anterior */}
-          <button onClick={goToPreviousPage} disabled={pageFromUrl === 1} className="pagination-button">
-            <FontAwesomeIcon icon={faChevronLeft} /> Anterior
-          </button>
-
-          {/* Números das páginas */}
-          {getPageNumbers().map(number => (
-            <button
-              key={number}
-              onClick={() => goToPage(number)}
-              className={`pagination-button page-number ${pageFromUrl === number ? 'active' : ''}`}
-              disabled={pageFromUrl === number}
-            >
-              {number}
-            </button>
-          ))}
-
-          {/* Botão próxima página */}
-          <button onClick={goToNextPage} disabled={pageFromUrl === totalPages} className="pagination-button">
-            Próxima <FontAwesomeIcon icon={faChevronRight} />
-          </button>
-        </div>
-      )}
-
+      {/* Seção de newsletter */}
       <NewsletterSection />
       <SupportSection />
     </div>

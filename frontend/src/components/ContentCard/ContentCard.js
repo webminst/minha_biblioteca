@@ -3,41 +3,45 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import RatingDisplay from '../RatingDisplay/RatingDisplay';
 import './ContentCard.css';
 
 const ContentCard = ({
-  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book, author, speaker
+  title, type, date, reference, description, detailsUrl, pdfUrl, coverImageUrl, sermon, study, book, author, speaker, rating
 }) => {
   // Use o objeto que estiver disponível
   const content = sermon || study || book;
+
+  // Formata a data para exibição
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const options = { day: '2-digit', month: 'long', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
+  };
 
   // Renderiza a meta-informação baseada no tipo
   const renderMetaInfo = () => {
     if (type === 'Resumo de Livro') {
       return (
         <>
-          {author && <div className="card-author">Por: {author}</div>}
+          {author && <div className="card-meta">Por: {author}</div>}
         </>
       );
     } else if (type === 'Sermão') {
+      const sermonDate = date || (content && content.date);
       return (
-        <>
-          {reference && (
-            <div className="card-reference">
-              <span>{reference}</span>
-            </div>
-          )}
-        </>
+        <div className="card-meta">
+          {reference && <span className="card-reference">{reference}</span>}
+          {sermonDate && <span className="card-date">{formatDate(sermonDate)}</span>}
+          {speaker && <span className="card-speaker">Pregador: {speaker}</span>}
+        </div>
       );
     } else if (type === 'Estudo Bíblico' || type === 'Estudo') {
       return (
-        <>
-          {reference && (
-            <div className="card-reference">
-              <span>{reference}</span>
-            </div>
-          )}
-        </>
+        <div className="card-meta">
+          {reference && <span className="card-reference">{reference}</span>}
+          {author && <span className="card-author">Por: {author}</span>}
+        </div>
       );
     }
     return null; // Caso não seja nenhum dos tipos esperados
@@ -55,7 +59,18 @@ const ContentCard = ({
         <h3 className="card-title">
           <Link to={detailsUrl}>{title}</Link>
         </h3>
-        {renderMetaInfo()} {/* Chama a função para renderizar a meta-informação */}
+        {renderMetaInfo()} {/* Chama a função para renderizar a meta-informacao */}
+        
+        {/* Exibe a media de avaliacoes se disponivel */}
+        {rating && rating.average !== null && (
+          <div className="card-rating">
+            <RatingDisplay 
+              average={rating.average} 
+              total={rating.total} 
+              size="small" 
+            />
+          </div>
+        )}
 
         <p className="card-description">{description}</p>
         <div className="card-actions">

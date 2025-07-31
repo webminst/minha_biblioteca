@@ -37,6 +37,23 @@
   transform: scale(1.02);
 }
 
+/* Estilo para o container de avaliação */
+.card-rating {
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo para o texto de avaliação */
+.card-rating .rating-display {
+  font-size: 0.9rem;
+}
+
+/* Ajuste para o tema escuro */
+.dark .card-rating .rating-display {
+  color: #e0e0e0;
+}
+
 .card-type {
   display: inline-block;
   background-color: var(--color-green-ipb);

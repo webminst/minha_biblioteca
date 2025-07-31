@@ -299,19 +299,53 @@ router.get('/:id', validateId, async (req, res) => {
 });
 // ========== AVALIAÇÃO POR ESTRELAS ==========
 // POST /api/sermons/:id/rate - Avaliar ou atualizar avaliação de um sermão
-router.post('/:id/rate', protect, validateId, async (req, res, next) => {
+router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
-    const { stars } = req.body;
+    const { stars, deviceId } = req.body;
+    
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
+    
+    if (!deviceId) {
+      return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
+    }
+    
     const sermon = await Sermon.findById(req.params.id);
     if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado.' });
-    sermon.ratings = sermon.ratings.filter(r => r.user.toString() !== req.user._id.toString());
-    sermon.ratings.push({ user: req.user._id, stars });
+    
+    // Verifica se o dispositivo já avaliou
+    const existingRatingIndex = sermon.ratings.findIndex(r => r.deviceId === deviceId);
+    
+    if (existingRatingIndex >= 0) {
+      // Atualiza avaliação existente
+      sermon.ratings[existingRatingIndex].stars = stars;
+      sermon.ratings[existingRatingIndex].updatedAt = new Date();
+    } else {
+      // Adiciona nova avaliação
+      sermon.ratings.push({
+        deviceId,
+        stars,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+    
     await sermon.save();
-    res.json({ message: 'Avaliação registrada com sucesso.' });
+    
+    // Calcula a nova média e total
+    const total = sermon.ratings.length;
+    const average = total > 0 
+      ? (sermon.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : 0;
+    
+    res.json({ 
+      message: 'Avaliação registrada com sucesso.',
+      average: parseFloat(average),
+      total
+    });
   } catch (error) {
+    console.error('Erro ao registrar avaliação:', error);
     next(error);
   }
 });

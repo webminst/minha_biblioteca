@@ -90,6 +90,21 @@ const BookSchema = new mongoose.Schema({
     }
   },
 
+  // ========== AVALIAÇÕES ==========
+  ratings: [
+    {
+      deviceId: { type: String, required: [true, 'ID do dispositivo é obrigatório'] },
+      stars: { 
+        type: Number, 
+        required: [true, 'Avaliação em estrelas é obrigatória'],
+        min: [1, 'Avaliação mínima é 1 estrela'],
+        max: [5, 'Avaliação máxima é 5 estrelas']
+      },
+      ratedAt: { type: Date, default: Date.now },
+      updatedAt: { type: Date, default: Date.now }
+    }
+  ],
+
   // ========== METADADOS ==========
   type: {
     type: String,
@@ -108,16 +123,7 @@ const BookSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: false
-  },
-
-  // Avaliações por estrelas
-  ratings: [
-    {
-      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-      stars: { type: Number, min: 1, max: 5, required: true },
-      ratedAt: { type: Date, default: Date.now }
-    }
-  ]
+  }
 }, {
   timestamps: true // Adiciona createdAt e updatedAt automaticamente
 });

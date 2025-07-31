@@ -74,11 +74,13 @@ const StudyService = {
    * Busca os temas únicos disponíveis
    * @returns {Promise<Array>} - Lista de temas únicos
    */
+  /**
+   * Busca os temas únicos disponíveis
+   * @returns {Promise<Array>} - Lista de temas únicos
+   */
   async getThemes() {
     try {
-      const response = await axios.get(API_ENDPOINTS.STUDIES.THEMES, {
-        headers: authHeader()
-      });
+      const response = await axios.get(API_ENDPOINTS.STUDIES.THEMES);
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar temas de estudos:', error);
@@ -90,11 +92,13 @@ const StudyService = {
    * Busca os formatos únicos disponíveis
    * @returns {Promise<Array>} - Lista de formatos únicos
    */
+  /**
+   * Busca os formatos únicos disponíveis
+   * @returns {Promise<Array>} - Lista de formatos únicos
+   */
   async getFormats() {
     try {
-      const response = await axios.get(API_ENDPOINTS.STUDIES.FORMATS, {
-        headers: authHeader()
-      });
+      const response = await axios.get(API_ENDPOINTS.STUDIES.FORMATS);
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar formatos de estudos:', error);

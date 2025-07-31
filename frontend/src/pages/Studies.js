@@ -3,7 +3,6 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import StudyService from '../services/studyService';
 import ContentCard from '../components/ContentCard/ContentCard';
-import StarRating from '../components/StarRating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
@@ -31,6 +30,7 @@ function Studies() {
 
   // Estados para dados e controles
   const [studies, setStudies] = useState([]);
+  const [ratings, setRatings] = useState({}); // Armazena as avaliações por estudo
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFormat, setSelectedFormat] = useState('');
@@ -45,35 +45,114 @@ function Studies() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Busca as avaliações de um estudo
+  const fetchStudyRatings = async (studyId) => {
+    if (!studyId) {
+      console.warn('ID do estudo não fornecido para buscar avaliações');
+      return { average: null, total: 0 };
+    }
+
+    try {
+      const response = await fetch(`${API_ENDPOINTS.STUDIES.BASE}/${studyId}/ratings`);
+      
+      if (!response.ok) {
+        // Se a resposta não for 200-299, verifica se é 404 (estudo sem avaliações)
+        if (response.status === 404) {
+          return { average: null, total: 0 };
+        }
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      // Garante que os dados retornados tenham o formato esperado
+      if (typeof data !== 'object' || data === null) {
+        console.warn('Formato de avaliação inválido:', data);
+        return { average: null, total: 0 };
+      }
+      
+      return {
+        average: typeof data.average === 'number' ? data.average : null,
+        total: typeof data.total === 'number' ? data.total : 0
+      };
+      
+    } catch (err) {
+      console.error('Erro ao carregar avaliações para o estudo', studyId, ':', err);
+      return { average: null, total: 0 };
+    }
+  };
+
+  // Busca as avaliações para todos os estudos
+  const fetchAllRatings = async (studiesList) => {
+    const ratingsMap = {};
+    
+    // Verifica se studiesList é um array e tem itens
+    if (!Array.isArray(studiesList) || studiesList.length === 0) {
+      console.warn('Nenhum estudo encontrado para buscar avaliações');
+      return ratingsMap;
+    }
+
+    // Cria um array de promessas para buscar as avaliações em paralelo
+    const ratingPromises = studiesList.map(async (study) => {
+      try {
+        const ratingData = await fetchStudyRatings(study._id);
+        return { id: study._id, data: ratingData };
+      } catch (error) {
+        console.error(`Erro ao buscar avaliações para o estudo ${study._id}:`, error);
+        return { id: study._id, data: { average: null, total: 0 } };
+      }
+    });
+
+    // Aguarda todas as requisições serem concluídas
+    const ratings = await Promise.all(ratingPromises);
+    
+    // Preenche o mapa de avaliações
+    ratings.forEach(({ id, data }) => {
+      ratingsMap[id] = data;
+    });
+    
+    return ratingsMap;
+  };
+
   // Busca dados dos estudos na API com filtros e paginação
   useEffect(() => {
     const fetchStudies = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
+        const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, {
+          params: {
+            page: pageFromUrl,
+            limit: ITEMS_PER_PAGE,
+            ...(selectedFormat && { format: selectedFormat }),
+            ...(selectedTheme && { theme: selectedTheme }),
+            ...(searchTerm && { search: searchTerm })
+          }
+        });
 
-        // Constrói parâmetros da query
-        const params = {
-          page: pageFromUrl,
-          limit: ITEMS_PER_PAGE
-        };
-
-        if (selectedFormat) params.format = selectedFormat;
-        if (selectedTheme) params.theme = selectedTheme;
-        if (searchTerm) params.search = searchTerm;
-
-        const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, { params });
-
-        // Usa helper para extrair dados de forma compatível
-        console.log('[Studies] API response:', response.data);
-        const studiesData = extractStudies(response.data);
-        const paginationData = extractPagination(response.data);
-        console.log('[Studies] studiesData:', studiesData);
-        console.log('[Studies] paginationData:', paginationData);
-        setStudies(studiesData);
+        // Extrai os estudos e garante que seja um array
+        const extractedData = extractStudies(response.data);
+        const studiesList = Array.isArray(extractedData) ? extractedData : [];
+        
+        setStudies(studiesList);
+        
+        // Extrai os dados de paginação
+        const paginationData = extractPagination(response.data) || {};
         setPagination(paginationData);
+
+        // Busca as avaliações para os estudos
+        const ratingsMap = await fetchAllRatings(studiesList);
+        setRatings(ratingsMap);
+
+        // Extrai formatos e temas únicos para os filtros
+        const formats = [...new Set(studiesList.map(study => study?.format).filter(Boolean))];
+        const themes = [...new Set(studiesList.map(study => study?.theme).filter(Boolean))];
+        
+        setUniqueFormats(formats);
+        setUniqueThemes(themes);
       } catch (err) {
-        setError('Erro ao carregar os estudos. Por favor, tente novamente mais tarde.');
         console.error('Erro ao buscar estudos:', err);
+        setError('Erro ao carregar os estudos. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
@@ -415,10 +494,11 @@ function Studies() {
                 detailsUrl={`/estudos/${study._id}`}
                 pdfUrl={study.pdfUrl}
                 study={study}
+                rating={ratings[study._id] ? {
+                  average: ratings[study._id].average,
+                  total: ratings[study._id].total
+                } : null}
               />
-              <div style={{ marginTop: 8, marginLeft: 8 }}>
-                <StarRating bookId={study._id} userToken={null} apiBase="/api/studies" />
-              </div>
             </div>
           ))
         ) : (

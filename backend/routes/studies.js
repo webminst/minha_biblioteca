@@ -47,19 +47,53 @@ const {
 
 // ========== AVALIAÇÃO POR ESTRELAS ==========
 // POST /api/studies/:id/rate - Avaliar ou atualizar avaliação de um estudo
-router.post('/:id/rate', protect, validateId, async (req, res, next) => {
+router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
-    const { stars } = req.body;
+    const { stars, deviceId } = req.body;
+    
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
+    
+    if (!deviceId) {
+      return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
+    }
+    
     const study = await Study.findById(req.params.id);
     if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
-    study.ratings = study.ratings.filter(r => r.user.toString() !== req.user._id.toString());
-    study.ratings.push({ user: req.user._id, stars });
+    
+    // Verifica se o dispositivo já avaliou
+    const existingRatingIndex = study.ratings.findIndex(r => r.deviceId === deviceId);
+    
+    if (existingRatingIndex >= 0) {
+      // Atualiza avaliação existente
+      study.ratings[existingRatingIndex].stars = stars;
+      study.ratings[existingRatingIndex].updatedAt = new Date();
+    } else {
+      // Adiciona nova avaliação
+      study.ratings.push({
+        deviceId,
+        stars,
+        ratedAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+    
     await study.save();
-    res.json({ message: 'Avaliação registrada com sucesso.' });
+    
+    // Calcula a nova média e total
+    const total = study.ratings.length;
+    const average = total > 0 
+      ? (study.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : 0;
+    
+    res.json({ 
+      message: 'Avaliação registrada com sucesso.',
+      average: parseFloat(average),
+      total
+    });
   } catch (error) {
+    console.error('Erro ao registrar avaliação:', error);
     next(error);
   }
 });
@@ -69,10 +103,18 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
   try {
     const study = await Study.findById(req.params.id);
     if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
+    
     const total = study.ratings.length;
-    const avg = total > 0 ? (study.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(2) : null;
-    res.json({ average: avg, total });
+    const average = total > 0 
+      ? (study.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+      : null;
+      
+    res.json({ 
+      average: average ? parseFloat(average) : null, 
+      total 
+    });
   } catch (error) {
+    console.error('Erro ao buscar avaliações:', error);
     next(error);
   }
 });

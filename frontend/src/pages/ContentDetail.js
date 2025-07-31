@@ -134,18 +134,6 @@ const ContentDetail = () => {
         </div>
       </div>
 
-      {/* Avaliação por estrelas para livros e estudos */}
-      {sermon.type === 'Resumo de Livro' && (
-        <div style={{ margin: '16px 0' }}>
-          <StarRating bookId={sermon._id} userToken={null} />
-        </div>
-      )}
-      {(['Estudo', 'Estudo Bíblico', 'estudo'].includes(sermon.type)) && (
-        <div style={{ margin: '16px 0' }}>
-          <StarRating bookId={sermon._id} userToken={null} apiBase="/api/studies" />
-        </div>
-      )}
-
       {/* Metadados para sermões e estudos - aparecem acima do título */}
       {(['Sermão', 'Estudo', 'sermão', 'estudo'].includes(sermon.type)) && (
         <div className="content-meta-above-title">
@@ -174,7 +162,7 @@ const ContentDetail = () => {
         </div>
       )}
 
-      {/* Seção de ações: download e compartilhamento */}
+      {/* Seção de ações: download, avaliação e compartilhamento */}
       <div className="content-actions">
         {/* Botão de download do PDF - só aparece se houver PDF */}
         {sermon.pdfUrl && (
@@ -186,6 +174,20 @@ const ContentDetail = () => {
           >
             <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF
           </a>
+        )}
+
+        {/* Avaliação - aparece para livros, estudos e sermões */}
+        {sermon.type && (
+          <div className="rating-container">
+            <StarRating 
+              bookId={sermon._id} 
+              apiBase={
+                sermon.type === 'Resumo de Livro' ? '/api/books' : 
+                (sermon.type === 'Sermão' || sermon.type === 'sermão') ? '/api/sermons' : 
+                '/api/studies'
+              } 
+            />
+          </div>
         )}
 
         {/* Botões de compartilhamento em redes sociais */}
