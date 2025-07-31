@@ -42,13 +42,15 @@ class LogBuffer {
         this.buffer = [];
 
         try {
-            await AuditService.saveBatch(logsToFlush);
+            const auditService = require('./AuditService');
+            await auditService.saveBatch(logsToFlush);
         } catch (error) {
             console.error('❌ Erro ao fazer flush do buffer de auditoria:', error);
             // Em caso de erro, tenta salvar individualmente
+            const auditService = require('./AuditService');
             for (const log of logsToFlush) {
                 try {
-                    await AuditService.save(log);
+                    await auditService.save(log);
                 } catch (individualError) {
                     console.error('❌ Erro ao salvar log individual:', individualError);
                 }

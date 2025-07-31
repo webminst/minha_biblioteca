@@ -503,7 +503,7 @@ router.put('/:id',
   invalidateCacheMiddleware('books', 'update'), // NOVO: Invalida cache após atualização
   async (req, res, next) => {
     try {
-      const updateData = req.validatedInput;
+      const updateData = req.validatedData;
       const updatedBook = await CachedBookService.update(req.params.id, updateData, req.user._id); // NOVO: Service com cache
 
       res.json(

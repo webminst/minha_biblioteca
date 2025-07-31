@@ -167,17 +167,43 @@ class BookService {
      * @returns {Object} - Livro atualizado
      */
     async update(id, updateData, userId) {
-        const book = await Book.findById(id);
 
+        // LOG: Dados recebidos para update
+        console.log('[BookService.update] id:', id);
+        console.log('[BookService.update] updateData recebido:', JSON.stringify(updateData, null, 2));
+        console.log('[BookService.update] userId:', userId);
+
+        const book = await Book.findById(id);
         if (!book) {
+            console.error('[BookService.update] Livro não encontrado:', id);
             throw new AppError('Livro não encontrado', 404);
         }
 
-        // Mapeia o campo 'summary' para 'content' se existir
+        // Garante que summary e content sempre estejam juntos
         const updateDataMapped = { ...updateData };
-        if ('summary' in updateDataMapped) {
+        if ('summary' in updateDataMapped && !('content' in updateDataMapped)) {
             updateDataMapped.content = updateDataMapped.summary;
-            delete updateDataMapped.summary;
+        }
+        if ('content' in updateDataMapped && !('summary' in updateDataMapped)) {
+            updateDataMapped.summary = updateDataMapped.content;
+        }
+
+
+        // Remove campos nulos/undefined
+        Object.keys(updateDataMapped).forEach(key => {
+            if (updateDataMapped[key] === undefined) {
+                delete updateDataMapped[key];
+            }
+        });
+
+        // LOG: Dados mapeados para update
+        console.log('[BookService.update] updateDataMapped:', JSON.stringify(updateDataMapped, null, 2));
+
+        // Garante que há pelo menos um campo para atualizar (além de updatedBy/updatedAt)
+        const updateKeys = Object.keys(updateDataMapped).filter(k => !['updatedBy', 'updatedAt'].includes(k));
+        if (updateKeys.length === 0) {
+            console.error('[BookService.update] Nenhum campo válido para atualizar. updateDataMapped:', updateDataMapped);
+            throw new AppError('Nenhum campo válido para atualizar.', 400);
         }
 
         // Se fornecido título e autor, verifica duplicação
@@ -195,6 +221,7 @@ class BookService {
                 const errorMsg = updateDataMapped.author
                     ? 'Já existe outro livro com este título e autor'
                     : 'Já existe outro livro com este título';
+                console.error('[BookService.update] Duplicidade:', errorMsg);
                 throw new AppError(errorMsg, 409);
             }
         }
@@ -214,7 +241,11 @@ class BookService {
                 }
             );
 
+            // LOG: Resultado do update
+            console.log('[BookService.update] updatedBook:', updatedBook);
+
             if (!updatedBook) {
+                console.error('[BookService.update] Falha ao atualizar: livro não encontrado após update', id);
                 throw new AppError('Falha ao atualizar o livro: livro não encontrado após a atualização', 500);
             }
 

@@ -1,3 +1,32 @@
+/* Agrupamento de campos pequenos na mesma linha */
+.form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.form-col {
+    flex: 1 1 120px;
+    min-width: 120px;
+}
+
+.form-col label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-col input,
+.form-col select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
 /* src/components/admin/Form.css */
 .form-container {
     max-width: 600px;

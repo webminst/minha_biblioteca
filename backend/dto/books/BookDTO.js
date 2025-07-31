@@ -207,6 +207,10 @@ class CreateBookDTO extends BaseDTO {
  */
 class UpdateBookDTO extends BaseDTO {
     constructor(data) {
+        // Mapeia 'content' para 'summary' se presente
+        if (data && typeof data === 'object' && data.content && !data.summary) {
+            data.summary = data.content;
+        }
         super(data);
 
         // Reutiliza o schema de criação, mas torna todos os campos opcionais

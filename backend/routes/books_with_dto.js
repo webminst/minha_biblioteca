@@ -7,6 +7,7 @@
 const express = require('express');
 const router = express.Router();
 const BookService = require('../services/BookService');
+const bookService = new BookService();
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Importa DTOs e middlewares de validação
@@ -39,7 +40,7 @@ router.get('/count',
     successResponse('Contagem obtida com sucesso'),
     async (req, res, next) => {
         try {
-            const stats = await BookService.getStats();
+            const stats = await bookService.getStats();
             res.json({ count: stats.totalBooks });
         } catch (error) {
             next(error);
@@ -55,7 +56,7 @@ router.get('/',
         try {
             // Usa dados validados do middleware
             const options = req.validatedData;
-            const result = await BookService.findAll(options);
+            const result = await bookService.findAll(options);
 
             // Cria paginação padronizada
             const pagination = PaginationDTO.fromQuery(req.query, result.totalBooks);
@@ -77,7 +78,7 @@ router.get('/:id',
     transformOutput(BookResponseDTO, 'toPublicObject'), // Transforma para formato público completo
     async (req, res, next) => {
         try {
-            const book = await BookService.findById(req.validatedId);
+            const book = await bookService.findById(req.validatedId);
             res.json(ApiResponseDTO.success(book, 'Livro encontrado com sucesso'));
         } catch (error) {
             next(error);
@@ -97,7 +98,7 @@ router.post('/',
         try {
             // Usa dados validados e transformados do middleware
             const bookData = req.validatedData;
-            const savedBook = await BookService.create(bookData, req.user._id);
+            const savedBook = await bookService.create(bookData, req.user._id);
 
             res.status(201).json(ApiResponseDTO.success(
                 savedBook,
@@ -118,9 +119,30 @@ router.put('/:id',
     transformOutput(BookResponseDTO, 'toPublicObject'),
     async (req, res, next) => {
         try {
-            const updatedBook = await BookService.update(
+            // LOG: Dados validados recebidos pelo controller
+            console.log('[Controller][PUT /api/books/:id] req.validatedData:', JSON.stringify(req.validatedData, null, 2));
+            console.log('[Controller][PUT /api/books/:id] req.body:', JSON.stringify(req.body, null, 2));
+
+
+            // Fallback: se req.validatedData estiver vazio, usa req.body
+            let updatePayload = (req.validatedData && Object.keys(req.validatedData).length > 0)
+                ? { ...req.validatedData }
+                : { ...req.body };
+
+            // Garante que summary e content sempre estejam juntos
+            if ('summary' in updatePayload && !('content' in updatePayload)) {
+                updatePayload.content = updatePayload.summary;
+            }
+            if ('content' in updatePayload && !('summary' in updatePayload)) {
+                updatePayload.summary = updatePayload.content;
+            }
+
+            // LOG extra: Confirma updatePayload imediatamente antes da chamada
+            console.log('[Controller][PUT /api/books/:id] updatePayload FINAL antes do serviço:', JSON.stringify(updatePayload, null, 2));
+
+            const updatedBook = await bookService.update(
                 req.validatedId,
-                req.validatedData,
+                updatePayload,
                 req.user._id
             );
 
@@ -142,7 +164,7 @@ router.delete('/:id',
     successResponse('Livro deletado com sucesso'),
     async (req, res, next) => {
         try {
-            const result = await BookService.delete(req.validatedId);
+            const result = await bookService.delete(req.validatedId);
             res.json(result);
         } catch (error) {
             next(error);
