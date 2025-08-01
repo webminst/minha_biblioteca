@@ -26,7 +26,7 @@ const protect = async (req, res, next) => {
 
       // Verifica e decodifica o token JWT usando sistema seguro
       const decoded = verifySecureToken(token, 'access');
-      console.log('🔑 Token decodificado:', { id: decoded.id, role: decoded.role, jti: decoded.jti?.substring(0, 8) + '...' });
+      console.log('🔑 Token decodificado:', { id: decoded.id, role: decoded.role, jti: `${decoded.jti?.substring(0, 8)}...` });
 
       // Busca o usuário e anexa à requisição (sem a senha)
       req.user = await User.findById(decoded.id).select('-password');
@@ -39,8 +39,8 @@ const protect = async (req, res, next) => {
           ApiResponseDTO.error(
             'Token válido, mas usuário não encontrado',
             null,
-            401
-          )
+            401,
+          ),
         );
       }
 
@@ -53,18 +53,18 @@ const protect = async (req, res, next) => {
       // Trata diferentes tipos de erro de token
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json(
-          ApiResponseDTO.error('Token expirado', null, 401)
+          ApiResponseDTO.error('Token expirado', null, 401),
         );
       }
 
       if (error.name === 'JsonWebTokenError') {
         return res.status(401).json(
-          ApiResponseDTO.error('Token inválido', null, 401)
+          ApiResponseDTO.error('Token inválido', null, 401),
         );
       }
 
       return res.status(401).json(
-        ApiResponseDTO.error('Falha na autenticação', null, 401)
+        ApiResponseDTO.error('Falha na autenticação', null, 401),
       );
     }
   }
@@ -75,8 +75,8 @@ const protect = async (req, res, next) => {
       ApiResponseDTO.error(
         'Acesso negado. Token de autenticação necessário',
         null,
-        401
-      )
+        401,
+      ),
     );
   }
 };
@@ -87,7 +87,7 @@ const authorizeRoles = (...roles) => {
     // Verifica se o usuário foi autenticado
     if (!req.user) {
       return res.status(401).json(
-        ApiResponseDTO.error('Usuário não autenticado', null, 401)
+        ApiResponseDTO.error('Usuário não autenticado', null, 401),
       );
     }
 
@@ -97,8 +97,8 @@ const authorizeRoles = (...roles) => {
         ApiResponseDTO.error(
           `Acesso negado. Permissão '${req.user.role}' insuficiente para esta operação`,
           [{ field: 'role', message: `Roles requeridas: ${roles.join(', ')}` }],
-          403
-        )
+          403,
+        ),
       );
     }
 
@@ -129,5 +129,5 @@ module.exports = {
   protect,
   authorizeRoles,
   optionalAuth,
-  addSecurityHeaders
+  addSecurityHeaders,
 };

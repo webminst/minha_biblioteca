@@ -33,7 +33,7 @@ router.get('/', async (req, res, next) => {
       area: req.query.area,
       publisher: req.query.publisher,
       series: req.query.series,
-      search: req.query.search
+      search: req.query.search,
     };
 
     const result = await BookService.findAll(options);
@@ -64,7 +64,7 @@ router.get('/search/:term', async (req, res, next) => {
     res.json({
       searchTerm,
       count: result.books.length,
-      ...result
+      ...result,
     });
   } catch (error) {
     next(error);
@@ -181,7 +181,7 @@ router.post('/', protect, authorizeRoles('admin', 'editor'), async (req, res, ne
     const savedBook = await BookService.create(req.body, req.user._id);
     res.status(201).json({
       ...savedBook.toObject(),
-      message: 'Livro criado com sucesso'
+      message: 'Livro criado com sucesso',
     });
   } catch (error) {
     next(error);
@@ -194,7 +194,7 @@ router.put('/:id', protect, authorizeRoles('admin', 'editor'), async (req, res, 
     const updatedBook = await BookService.update(req.params.id, req.body, req.user._id);
     res.json({
       ...updatedBook.toObject(),
-      message: 'Livro atualizado com sucesso'
+      message: 'Livro atualizado com sucesso',
     });
   } catch (error) {
     next(error);

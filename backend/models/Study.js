@@ -12,61 +12,61 @@ const StudySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Título do estudo é obrigatório'],
     trim: true,
-    maxlength: [200, 'Título não pode exceder 200 caracteres']
+    maxlength: [200, 'Título não pode exceder 200 caracteres'],
   },
 
   reference: {
     type: String,
     required: [true, 'Referência bíblica é obrigatória'],
     trim: true,
-    maxlength: [100, 'Referência bíblica não pode exceder 100 caracteres']
+    maxlength: [100, 'Referência bíblica não pode exceder 100 caracteres'],
   },
 
-  // ========== CATEGORIZAÇÃO ========== 
+  // ========== CATEGORIZAÇÃO ==========
   theme: {
     type: String,
     required: false,
-    trim: true
+    trim: true,
     // Aceita qualquer string, alinhado ao DTO/frontend
   },
 
   format: {
     type: String,
     required: false,
-    trim: true
+    trim: true,
     // Aceita qualquer string, alinhado ao DTO/frontend
   },
 
   tags: {
     type: [String],
     required: false,
-    validate: [arrayLimit, 'Máximo 10 tags permitidas']
+    validate: [arrayLimit, 'Máximo 10 tags permitidas'],
   },
 
   // ========== CONTEÚDO ==========
   description: {
     type: String,
     required: false,
-    maxlength: [500, 'Descrição não pode exceder 500 caracteres']
+    maxlength: [500, 'Descrição não pode exceder 500 caracteres'],
   },
 
   content: {
     type: String,
     required: [true, 'Conteúdo do estudo é obrigatório'],
-    minlength: [100, 'Conteúdo deve ter pelo menos 100 caracteres']
+    minlength: [100, 'Conteúdo deve ter pelo menos 100 caracteres'],
   },
 
   // ========== ESTRUTURA DO ESTUDO ==========
   outline: {
     type: String,
     required: false,
-    maxlength: [1000, 'Esboço não pode exceder 1000 caracteres']
+    maxlength: [1000, 'Esboço não pode exceder 1000 caracteres'],
   },
 
   questions: {
     type: [Object],
     required: false,
-    validate: [questionsLimit, 'Máximo 20 perguntas permitidas']
+    validate: [questionsLimit, 'Máximo 20 perguntas permitidas'],
     // Aceita array de objetos, alinhado ao DTO/frontend
   },
 
@@ -75,74 +75,74 @@ const StudySchema = new mongoose.Schema({
     type: String,
     required: false,
     validate: {
-      validator: function (v) {
+      validator (v) {
         return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(v);
       },
-      message: 'URL da imagem deve ser uma URL válida'
-    }
+      message: 'URL da imagem deve ser uma URL válida',
+    },
   },
 
   pdfUrl: {
     type: String,
     required: false,
     validate: {
-      validator: function (v) {
+      validator (v) {
         return !v || /^https?:\/\/.+/i.test(v);
       },
-      message: 'URL deve ser uma URL válida'
-    }
+      message: 'URL deve ser uma URL válida',
+    },
   },
 
   // ========== AVALIAÇÕES ==========
   ratings: [
     {
       deviceId: { type: String, required: [true, 'ID do dispositivo é obrigatório'] },
-      stars: { 
-        type: Number, 
+      stars: {
+        type: Number,
         required: [true, 'Avaliação em estrelas é obrigatória'],
         min: [1, 'Avaliação mínima é 1 estrela'],
-        max: [5, 'Avaliação máxima é 5 estrelas']
+        max: [5, 'Avaliação máxima é 5 estrelas'],
       },
       ratedAt: { type: Date, default: Date.now },
-      updatedAt: { type: Date, default: Date.now }
-    }
+      updatedAt: { type: Date, default: Date.now },
+    },
   ],
 
   // ========== METADADOS ==========
   type: {
     type: String,
     required: false,
-    trim: true
+    trim: true,
     // Aceita qualquer string, alinhado ao DTO/frontend
   },
 
   difficulty: {
     type: String,
     enum: ['Iniciante', 'Intermediário', 'Avançado'],
-    default: 'Intermediário'
+    default: 'Intermediário',
   },
 
   duration: {
     type: Number, // Duração em minutos
     required: false,
     min: [10, 'Duração mínima de 10 minutos'],
-    max: [300, 'Duração máxima de 5 horas']
+    max: [300, 'Duração máxima de 5 horas'],
   },
 
   // Campos de auditoria (preenchidos automaticamente)
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false
+    required: false,
   },
 
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false
-  }
+    required: false,
+  },
 }, {
-  timestamps: true // Adiciona createdAt e updatedAt automaticamente
+  timestamps: true, // Adiciona createdAt e updatedAt automaticamente
 });
 
 // ========== VALIDAÇÕES CUSTOMIZADAS ==========
@@ -166,7 +166,7 @@ StudySchema.index({ createdAt: -1 });
 // ========== MÉTODOS DO SCHEMA ==========
 // Método para obter resumo curto
 StudySchema.methods.getShortSummary = function () {
-  return this.description || this.content.substring(0, 150) + '...';
+  return this.description || `${this.content.substring(0, 150)}...`;
 };
 
 // Método para contar perguntas
@@ -176,12 +176,12 @@ StudySchema.methods.getQuestionsCount = function () {
 
 // Método estático para buscar por tema
 StudySchema.statics.findByTheme = function (theme) {
-  return this.find({ theme: theme }).sort({ createdAt: -1 });
+  return this.find({ theme }).sort({ createdAt: -1 });
 };
 
 // Método estático para buscar por dificuldade
 StudySchema.statics.findByDifficulty = function (difficulty) {
-  return this.find({ difficulty: difficulty }).sort({ createdAt: -1 });
+  return this.find({ difficulty }).sort({ createdAt: -1 });
 };
 
 // ========== MIDDLEWARE ==========

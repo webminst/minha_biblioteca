@@ -81,7 +81,7 @@ const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 const {
   cacheStrategies,
   invalidateCacheMiddleware,
-  cacheStatsMiddleware
+  cacheStatsMiddleware,
 } = require('../middleware/cacheMiddleware');
 
 // NOVO: Importa middlewares de auditoria
@@ -94,7 +94,7 @@ const {
   BookResponseDTO,
   BookSearchDTO,
   ApiResponseDTO,
-  PaginationDTO
+  PaginationDTO,
 } = require('../dto');
 
 const {
@@ -102,7 +102,7 @@ const {
   transformOutput,
   validateSearch,
   validateId,
-  handleValidationErrors
+  handleValidationErrors,
 } = require('../middleware/dtoValidation');
 
 /**
@@ -142,12 +142,12 @@ router.get('/count',
       const stats = await CachedBookService.getStats();
       res.json(ApiResponseDTO.success(
         { count: stats.totalBooks },
-        'Contagem de livros obtida com sucesso'
+        'Contagem de livros obtida com sucesso',
       ));
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 
@@ -206,7 +206,7 @@ router.get('/',
       const pagination = new PaginationDTO({
         page: options.page,
         limit: options.limit,
-        totalItems
+        totalItems,
       });
       const paginationResult = pagination.validate();
       if (!paginationResult.isValid) {
@@ -216,12 +216,12 @@ router.get('/',
       res.json(ApiResponseDTO.paginated(
         result.books,
         paginationData,
-        'Livros recuperados com sucesso'
+        'Livros recuperados com sucesso',
       ));
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/latest - Busca o livro mais recente (COM CACHE)
@@ -234,12 +234,12 @@ router.get('/latest',
 
       if (!latestBook) {
         return res.status(404).json(
-          ApiResponseDTO.error('Nenhum livro encontrado', [], 404)
+          ApiResponseDTO.error('Nenhum livro encontrado', [], 404),
         );
       }
 
       res.json(
-        ApiResponseDTO.success(latestBook, 'Último livro encontrado')
+        ApiResponseDTO.success(latestBook, 'Último livro encontrado'),
       );
     } catch (error) {
       next(error);
@@ -258,12 +258,12 @@ router.get('/search/:term',
       res.json({
         searchTerm,
         count: result.books.length,
-        ...result
+        ...result,
       });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/stats - Estatísticas dos livros (COM CACHE)
@@ -276,7 +276,7 @@ router.get('/stats',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/authors - Lista todos os autores (COM CACHE)
@@ -301,7 +301,7 @@ router.get('/areas',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/publishers - Lista todas as editoras (COM CACHE)
@@ -314,7 +314,7 @@ router.get('/publishers',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/series - Lista todas as séries (COM CACHE)
@@ -327,7 +327,7 @@ router.get('/series',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/popular - Livros populares (COM CACHE)
@@ -353,7 +353,7 @@ router.get('/author/:name',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/area/:area - Livros por área específica (COM CACHE)
@@ -366,7 +366,7 @@ router.get('/area/:area',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/suggestions - Busca sugestões de livros (COM CACHE)
@@ -381,7 +381,7 @@ router.get('/suggestions',
           titles: [],
           authors: [],
           areas: [],
-          publishers: []
+          publishers: [],
         }, 'Termo de busca muito curto'));
       }
 
@@ -389,12 +389,12 @@ router.get('/suggestions',
 
       res.json(ApiResponseDTO.success(
         suggestions,
-        'Sugestões de livros encontradas com sucesso'
+        'Sugestões de livros encontradas com sucesso',
       ));
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/:id/related - Livros relacionados (COM CACHE)
@@ -408,7 +408,7 @@ router.get('/:id/related',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // GET /api/books/:id - Busca livro específico por ID (COM CACHE)
@@ -425,33 +425,33 @@ router.get('/:id',
       // Resposta padronizada
       res.json(ApiResponseDTO.success(
         book,
-        'Livro encontrado com sucesso'
+        'Livro encontrado com sucesso',
       ));
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 // ========== AVALIAÇÃO POR ESTRELAS ==========
 // POST /api/books/:id/rate - Avaliar ou atualizar avaliação de um livro
 router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
     const { stars, deviceId } = req.body;
-    
+
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
-    
+
     if (!deviceId) {
       return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
     }
-    
+
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
-    
+
     // Verifica se o dispositivo já avaliou
     const existingRatingIndex = book.ratings.findIndex(r => r.deviceId === deviceId);
-    
+
     if (existingRatingIndex >= 0) {
       // Atualiza avaliação existente
       book.ratings[existingRatingIndex].stars = stars;
@@ -462,22 +462,22 @@ router.post('/:id/rate', validateId, async (req, res, next) => {
         deviceId,
         stars,
         ratedAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
-    
+
     await book.save();
-    
+
     // Calcula a nova média e total
     const total = book.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : 0;
-    
-    res.json({ 
+
+    res.json({
       message: 'Avaliação registrada com sucesso.',
       average: parseFloat(average),
-      total
+      total,
     });
   } catch (error) {
     console.error('Erro ao registrar avaliação:', error);
@@ -526,15 +526,15 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
-    
+
     const total = book.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : null;
-      
-    res.json({ 
-      average: average ? parseFloat(average) : null, 
-      total 
+
+    res.json({
+      average: average ? parseFloat(average) : null,
+      total,
     });
   } catch (error) {
     console.error('Erro ao buscar avaliações:', error);
@@ -600,21 +600,21 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
 router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
     const { stars, deviceId } = req.body;
-    
+
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
-    
+
     if (!deviceId) {
       return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
     }
-    
+
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
-    
+
     // Verifica se o dispositivo já avaliou
     const existingRatingIndex = book.ratings.findIndex(r => r.deviceId === deviceId);
-    
+
     if (existingRatingIndex >= 0) {
       // Atualiza avaliação existente
       book.ratings[existingRatingIndex].stars = stars;
@@ -625,22 +625,22 @@ router.post('/:id/rate', validateId, async (req, res, next) => {
         deviceId,
         stars,
         ratedAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
-    
+
     await book.save();
-    
+
     // Calcula a nova média e total
     const total = book.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : 0;
-    
-    res.json({ 
+
+    res.json({
       message: 'Avaliação registrada com sucesso.',
       average: parseFloat(average),
-      total
+      total,
     });
   } catch (error) {
     console.error('Erro ao registrar avaliação:', error);
@@ -653,15 +653,15 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) return res.status(404).json({ message: 'Livro não encontrado.' });
-    
+
     const total = book.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (book.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : null;
-      
-    res.json({ 
-      average: average ? parseFloat(average) : null, 
-      total 
+
+    res.json({
+      average: average ? parseFloat(average) : null,
+      total,
     });
   } catch (error) {
     console.error('Erro ao buscar avaliações:', error);
@@ -686,12 +686,12 @@ router.post('/',
       // Resposta padronizada
       res.status(201).json(ApiResponseDTO.success(
         savedBook,
-        'Livro criado com sucesso'
+        'Livro criado com sucesso',
       ));
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // PUT /api/books/:id - Atualizar livro existente (COM INVALIDAÇÃO DE CACHE)
@@ -709,7 +709,7 @@ router.put('/:id',
       const updatedBook = await CachedBookService.update(req.params.id, updateData, req.user._id); // NOVO: Service com cache
 
       res.json(
-        ApiResponseDTO.success('Livro atualizado com sucesso', updatedBook)
+        ApiResponseDTO.success('Livro atualizado com sucesso', updatedBook),
       );
     } catch (error) {
       next(error);
@@ -734,7 +734,7 @@ router.delete('/:id',
       } else {
         // Caso contrário, padroniza a resposta
         res.json(
-          ApiResponseDTO.success('Livro deletado com sucesso', result)
+          ApiResponseDTO.success('Livro deletado com sucesso', result),
         );
       }
     } catch (error) {
@@ -753,7 +753,7 @@ router.get('/admin/cache-stats',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Middleware de tratamento de erros específico para DTOs - NOVO

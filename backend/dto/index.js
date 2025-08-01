@@ -6,80 +6,80 @@
 
 // DTOs de Autenticação
 const {
-    UserDTO,
-    LoginDTO,
-    AuthResponseDTO,
-    UpdateUserDTO
+  UserDTO,
+  LoginDTO,
+  AuthResponseDTO,
+  UpdateUserDTO,
 } = require('./auth/UserDTO');
 
 // DTOs de Livros
 const {
-    CreateBookDTO,
-    UpdateBookDTO,
-    BookResponseDTO,
-    BookSearchDTO
+  CreateBookDTO,
+  UpdateBookDTO,
+  BookResponseDTO,
+  BookSearchDTO,
 } = require('./books/BookDTO');
 
 // DTOs de Sermões
 const {
-    CreateSermonDTO,
-    UpdateSermonDTO,
-    SermonResponseDTO,
-    SermonSearchDTO
+  CreateSermonDTO,
+  UpdateSermonDTO,
+  SermonResponseDTO,
+  SermonSearchDTO,
 } = require('./sermons/SermonDTO');
 
 // DTOs de Estudos
 const {
-    CreateStudyDTO,
-    UpdateStudyDTO,
-    StudyResponseDTO,
-    StudySearchDTO
+  CreateStudyDTO,
+  UpdateStudyDTO,
+  StudyResponseDTO,
+  StudySearchDTO,
 } = require('./studies/StudyDTO');
 
 // DTOs Comuns
 const {
-    ApiResponseDTO,
-    PaginationDTO,
-    MongoIdDTO,
-    SearchFiltersDTO,
-    StatsDTO
+  ApiResponseDTO,
+  PaginationDTO,
+  MongoIdDTO,
+  SearchFiltersDTO,
+  StatsDTO,
 } = require('./common/ResponseDTO');
 
 // DTO Base
 const BaseDTO = require('./BaseDTO');
 
 module.exports = {
-    // Base
-    BaseDTO,
+  // Base
+  BaseDTO,
 
-    // Autenticação
-    UserDTO,
-    LoginDTO,
-    AuthResponseDTO,
-    UpdateUserDTO,
+  // Autenticação
+  UserDTO,
+  LoginDTO,
+  AuthResponseDTO,
+  UpdateUserDTO,
 
-    // Livros
-    CreateBookDTO,
-    UpdateBookDTO,
-    BookResponseDTO,
-    BookSearchDTO,
+  // Livros
+  CreateBookDTO,
+  UpdateBookDTO,
+  BookResponseDTO,
+  BookSearchDTO,
 
-    // Sermões
-    CreateSermonDTO,
-    UpdateSermonDTO,
-    SermonResponseDTO,
-    SermonSearchDTO,
+  // Sermões
+  CreateSermonDTO,
+  UpdateSermonDTO,
+  SermonResponseDTO,
+  SermonSearchDTO,
 
-    // Estudos
-    CreateStudyDTO,
-    UpdateStudyDTO,
-    StudyResponseDTO,
-    StudySearchDTO,
+  // Estudos
+  CreateStudyDTO,
+  UpdateStudyDTO,
+  StudyResponseDTO,
+  StudySearchDTO,
 
-    // Comuns
-    ApiResponseDTO,
-    PaginationDTO,
-    MongoIdDTO,
-    SearchFiltersDTO,
-    StatsDTO
+  // Comuns
+  ApiResponseDTO,
+  PaginationDTO,
+  MongoIdDTO,
+  SearchFiltersDTO,
+  StatsDTO,
 };

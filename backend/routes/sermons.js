@@ -142,14 +142,14 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
       book: req.query.book,
       series: req.query.series,
       speaker: req.query.speaker,
-      search: req.query.search
+      search: req.query.search,
     };
     const result = await SermonService.findAll(options);
     const totalItems = (result.pagination && result.pagination.total) || result.total || result.totalSermons || 0;
     const pagination = new PaginationDTO({
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 10,
-      totalItems
+      totalItems,
     });
     const paginationResult = pagination.validate();
     if (!paginationResult.isValid) {
@@ -159,7 +159,7 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
     res.json(ApiResponseDTO.paginated(
       result.sermons,
       paginationData,
-      'Sermões listados com sucesso'
+      'Sermões listados com sucesso',
     ));
   } catch (error) {
     next(error);
@@ -262,29 +262,15 @@ router.get('/search/:term', cacheMiddleware('filter'), async (req, res, next) =>
     res.json(ApiResponseDTO.success({
       searchTerm,
       count: result.sermons.length,
-      data: result.sReplacementChunksermons,
-      pagination: result.pagination
+      data: result.sermons,
+      pagination: result.pagination,
     }, `Busca por '${searchTerm}' realizada com sucesso`));
   } catch (error) {
     next(error);
   }
 });
 
-// GET /api/sermons/suggestions - Busca sugestões de busca
-router.get('/suggestions', cacheMiddleware('suggestions'), async (req, res, next) => {
-  try {
-    const { q: query, limit = 5 } = req.query;
 
-    if (!query || query.length < 2) {
-      return res.json(ApiResponseDTO.success([], 'Forneça pelo menos 2 caracteres para busca'));
-    }
-
-    const suggestions = await SermonService.findSuggestions(query, parseInt(limit));
-    res.json(ApiResponseDTO.success(suggestions, 'Sugestões encontradas'));
-  } catch (error) {
-    next(error);
-  }
-});
 
 // GET /api/sermons/:id - Busca sermão específico por ID
 router.get('/:id', validateId, async (req, res) => {
@@ -293,7 +279,7 @@ router.get('/:id', validateId, async (req, res) => {
     res.json(ApiResponseDTO.success(sermon, 'Sermão obtido com sucesso'));
   } catch (error) {
     res.status(error.statusCode || 500).json(
-      ApiResponseDTO.error(error.message || 'Erro interno', null, error.statusCode || 500)
+      ApiResponseDTO.error(error.message || 'Erro interno', null, error.statusCode || 500),
     );
   }
 });
@@ -302,21 +288,21 @@ router.get('/:id', validateId, async (req, res) => {
 router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
     const { stars, deviceId } = req.body;
-    
+
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
-    
+
     if (!deviceId) {
       return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
     }
-    
+
     const sermon = await Sermon.findById(req.params.id);
     if (!sermon) return res.status(404).json({ message: 'Sermão não encontrado.' });
-    
+
     // Verifica se o dispositivo já avaliou
     const existingRatingIndex = sermon.ratings.findIndex(r => r.deviceId === deviceId);
-    
+
     if (existingRatingIndex >= 0) {
       // Atualiza avaliação existente
       sermon.ratings[existingRatingIndex].stars = stars;
@@ -327,22 +313,22 @@ router.post('/:id/rate', validateId, async (req, res, next) => {
         deviceId,
         stars,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
-    
+
     await sermon.save();
-    
+
     // Calcula a nova média e total
     const total = sermon.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (sermon.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : 0;
-    
-    res.json({ 
+
+    res.json({
       message: 'Avaliação registrada com sucesso.',
       average: parseFloat(average),
-      total
+      total,
     });
   } catch (error) {
     console.error('Erro ao registrar avaliação:', error);
@@ -376,7 +362,7 @@ router.post('/',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // PUT /api/sermons/:id - Atualizar sermão existente
@@ -392,7 +378,7 @@ router.put('/:id',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // PATCH /api/sermons/:id - Atualizar sermão existente (compatibilidade)
@@ -408,7 +394,7 @@ router.patch('/:id',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // ========== ROTAS PROTEGIDAS (APENAS ADMIN) ==========
@@ -424,7 +410,7 @@ router.delete('/:id',
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 module.exports = router;

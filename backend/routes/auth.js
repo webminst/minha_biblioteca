@@ -56,7 +56,7 @@ const {
   loginRateLimit,
   authRateLimit,
   recordAttemptMiddleware,
-  clearAttemptsMiddleware
+  clearAttemptsMiddleware,
 } = require('../middleware/rateLimiter');
 
 // NOVO: Importa middlewares de auditoria
@@ -82,7 +82,7 @@ const generateToken = (id, role) => {
   return generateSecureToken({ id, role }, 'access');
 };
 
-// ========== ROTA DE REGISTRO ========== 
+// ========== ROTA DE REGISTRO ==========
 // POST /api/auth/register - Criar primeiro usuário admin
 router.post('/register',
   auditCriticalActions(), // NOVO: Auditoria crítica para criação de usuários
@@ -93,7 +93,7 @@ router.post('/register',
       // Validação básica
       if (!username || !password) {
         return res.status(400).json({
-          message: 'Username e senha são obrigatórios'
+          message: 'Username e senha são obrigatórios',
         });
       }
 
@@ -101,7 +101,7 @@ router.post('/register',
       const userExists = await User.findOne({ username });
       if (userExists) {
         return res.status(400).json({
-          message: 'Nome de usuário já existe'
+          message: 'Nome de usuário já existe',
         });
       }
 
@@ -109,7 +109,7 @@ router.post('/register',
       const user = await User.create({
         username,
         password, // Senha será hasheada automaticamente pelo schema
-        role: role || 'admin'
+        role: role || 'admin',
       });
 
       // Gera tokens seguros para o novo usuário
@@ -122,15 +122,15 @@ router.post('/register',
         username: user.username,
         role: user.role,
         token: accessToken,
-        refreshToken: refreshToken,
+        refreshToken,
         message: 'Usuário criado com sucesso',
-        expiresIn: '15m'
+        expiresIn: '15m',
       });
 
     } catch (error) {
       console.error('Erro no registro:', error);
       res.status(500).json({
-        message: 'Erro interno do servidor'
+        message: 'Erro interno do servidor',
       });
     }
   });
@@ -151,7 +151,7 @@ router.post('/login',
       if (!username || !password) {
         return res.status(400).json({
           success: false,
-          message: 'Username e senha são obrigatórios'
+          message: 'Username e senha são obrigatórios',
         });
       }
 
@@ -161,7 +161,7 @@ router.post('/login',
         return res.status(401).json({
           success: false,
           message: 'Credenciais inválidas',
-          attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0
+          attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0,
         });
       }
 
@@ -171,7 +171,7 @@ router.post('/login',
         return res.status(401).json({
           success: false,
           message: 'Credenciais inválidas',
-          attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0
+          attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0,
         });
       }
 
@@ -183,15 +183,15 @@ router.post('/login',
         if (!twoFactorCode) {
           const tempToken = generateSecureToken(
             { id: user._id, role: user.role },
-            'partial_auth' // Novo tipo de token
+            'partial_auth', // Novo tipo de token
           );
 
           return res.json({
             success: false,
             requiresTwoFactor: true,
-            tempToken: tempToken,
+            tempToken,
             message: 'Código 2FA necessário',
-            expiresIn: '5m' // Token temporário expira em 5 minutos
+            expiresIn: '5m', // Token temporário expira em 5 minutos
           });
         }
 
@@ -202,7 +202,7 @@ router.post('/login',
           return res.status(401).json({
             success: false,
             message: 'Código 2FA inválido',
-            attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0
+            attemptsRemaining: req.rateLimitInfo?.attemptsRemaining || 0,
           });
         }
       }
@@ -225,17 +225,17 @@ router.post('/login',
         username: user.username,
         role: user.role,
         token: accessToken,
-        refreshToken: refreshToken,
+        refreshToken,
         message: 'Login realizado com sucesso',
         expiresIn: '15m', // Access token expira em 15 minutos
-        twoFactorEnabled: user.twoFactorAuth.enabled
+        twoFactorEnabled: user.twoFactorAuth.enabled,
       });
 
     } catch (error) {
       console.error('Erro no login:', error);
       res.status(500).json({
         success: false,
-        message: 'Erro interno do servidor'
+        message: 'Erro interno do servidor',
       });
     }
   });
@@ -248,7 +248,7 @@ router.post('/verify', async (req, res) => {
 
     if (!token) {
       return res.status(400).json({
-        message: 'Token não fornecido'
+        message: 'Token não fornecido',
       });
     }
 
@@ -260,7 +260,7 @@ router.post('/verify', async (req, res) => {
     if (!user) {
       return res.status(401).json({
         valid: false,
-        message: 'Usuário não encontrado'
+        message: 'Usuário não encontrado',
       });
     }
 
@@ -269,8 +269,8 @@ router.post('/verify', async (req, res) => {
       user: {
         _id: user._id,
         username: user.username,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
 
   } catch (error) {
@@ -278,20 +278,20 @@ router.post('/verify', async (req, res) => {
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         valid: false,
-        message: 'Token inválido'
+        message: 'Token inválido',
       });
     }
 
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         valid: false,
-        message: 'Token expirado'
+        message: 'Token expirado',
       });
     }
 
     console.error('Erro na verificação:', error);
     res.status(500).json({
-      message: 'Erro interno do servidor'
+      message: 'Erro interno do servidor',
     });
   }
 });
@@ -304,7 +304,7 @@ router.post('/refresh', async (req, res) => {
 
     if (!refreshToken) {
       return res.status(401).json({
-        message: 'Refresh token necessário'
+        message: 'Refresh token necessário',
       });
     }
 
@@ -315,7 +315,7 @@ router.post('/refresh', async (req, res) => {
     const user = await User.findById(decoded.id).select('-password');
     if (!user) {
       return res.status(401).json({
-        message: 'Usuário não encontrado'
+        message: 'Usuário não encontrado',
       });
     }
 
@@ -325,7 +325,7 @@ router.post('/refresh', async (req, res) => {
     res.json({
       token: newAccessToken,
       expiresIn: '15m',
-      message: 'Token renovado com sucesso'
+      message: 'Token renovado com sucesso',
     });
 
   } catch (error) {
@@ -333,12 +333,12 @@ router.post('/refresh', async (req, res) => {
 
     if (error.message.includes('Token')) {
       return res.status(401).json({
-        message: 'Refresh token inválido ou expirado'
+        message: 'Refresh token inválido ou expirado',
       });
     }
 
     res.status(500).json({
-      message: 'Erro interno do servidor'
+      message: 'Erro interno do servidor',
     });
   }
 });

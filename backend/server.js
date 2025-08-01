@@ -34,7 +34,7 @@ const {
   auditLogger,
   auditUserContext,
   auditErrorLogger,
-  auditStatsCollector
+  auditStatsCollector,
 } = require('./middleware/auditLogger');
 
 
@@ -80,7 +80,7 @@ if (process.env.NODE_ENV !== 'test') {
           await Promise.allSettled([
             CachedBookService.warmUpCache(),
             CachedSermonService.warmUp(),
-            CachedStudyService.warmUp()
+            CachedStudyService.warmUp(),
           ]);
           console.log('✅ Warm-up de todos os caches concluído!');
         } catch (err) {
@@ -109,14 +109,14 @@ app.get('/health', async (req, res) => {
       timestamp: new Date().toISOString(),
       services: {
         mongodb: mongoStatus,
-        redis: redisStatus
+        redis: redisStatus,
       },
-      version: '3.0.0'
+      version: '3.0.0',
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -127,7 +127,7 @@ app.get('/cache-status', async (req, res) => {
     const [bookCache, sermonCache, studyCache] = await Promise.allSettled([
       CachedBookService.getCacheStatus(),
       CachedSermonService.getCacheStatus(),
-      CachedStudyService.getCacheStatus()
+      CachedStudyService.getCacheStatus(),
     ]);
 
     res.json({
@@ -136,14 +136,14 @@ app.get('/cache-status', async (req, res) => {
       caches: {
         books: bookCache.status === 'fulfilled' ? bookCache.value : { error: bookCache.reason?.message },
         sermons: sermonCache.status === 'fulfilled' ? sermonCache.value : { error: sermonCache.reason?.message },
-        studies: studyCache.status === 'fulfilled' ? studyCache.value : { error: studyCache.reason?.message }
+        studies: studyCache.status === 'fulfilled' ? studyCache.value : { error: studyCache.reason?.message },
       },
-      redis: getRedisStatus()
+      redis: getRedisStatus(),
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      error: error.message
+      error: error.message,
     });
   }
 });

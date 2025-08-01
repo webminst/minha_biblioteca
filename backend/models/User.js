@@ -7,53 +7,53 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true, // Garante que o username seja único
-    trim: true
+    trim: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   role: { // Pode ser útil para diferenciar administradores de outros usuários
     type: String,
     enum: ['admin', 'editor', 'viewer'], // Exemplo de roles
-    default: 'admin' // Para o seu caso, pode ser sempre 'admin'
+    default: 'admin', // Para o seu caso, pode ser sempre 'admin'
   },
 
   // ========== CAMPOS PARA 2FA ==========
   twoFactorAuth: {
     enabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     secret: {
       type: String, // Secret TOTP criptografado
-      default: null
+      default: null,
     },
     backupCodes: [{
       code: {
         type: String,
-        required: true
+        required: true,
       },
       used: {
         type: Boolean,
-        default: false
+        default: false,
       },
       usedAt: {
         type: Date,
-        default: null
-      }
+        default: null,
+      },
     }],
     setupAt: {
       type: Date,
-      default: null
+      default: null,
     },
     lastVerified: {
       type: Date,
-      default: null
-    }
-  }
+      default: null,
+    },
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
 // Middleware do Mongoose: executa ANTES de salvar o usuário

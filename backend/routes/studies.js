@@ -36,13 +36,13 @@ const {
   StudySearchDTO,
   StudySuggestionsDTO,
   ApiResponseDTO,
-  PaginationDTO
+  PaginationDTO,
 } = require('../dto');
 const {
   validateInput,
   validateId,
   transformOutput,
-  handleValidationErrors
+  handleValidationErrors,
 } = require('../middleware/dtoValidation');
 
 // ========== AVALIAÇÃO POR ESTRELAS ==========
@@ -50,21 +50,21 @@ const {
 router.post('/:id/rate', validateId, async (req, res, next) => {
   try {
     const { stars, deviceId } = req.body;
-    
+
     if (!stars || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'A avaliação deve ser entre 1 e 5 estrelas.' });
     }
-    
+
     if (!deviceId) {
       return res.status(400).json({ message: 'ID do dispositivo não fornecido.' });
     }
-    
+
     const study = await Study.findById(req.params.id);
     if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
-    
+
     // Verifica se o dispositivo já avaliou
     const existingRatingIndex = study.ratings.findIndex(r => r.deviceId === deviceId);
-    
+
     if (existingRatingIndex >= 0) {
       // Atualiza avaliação existente
       study.ratings[existingRatingIndex].stars = stars;
@@ -75,22 +75,22 @@ router.post('/:id/rate', validateId, async (req, res, next) => {
         deviceId,
         stars,
         ratedAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
-    
+
     await study.save();
-    
+
     // Calcula a nova média e total
     const total = study.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (study.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : 0;
-    
-    res.json({ 
+
+    res.json({
       message: 'Avaliação registrada com sucesso.',
       average: parseFloat(average),
-      total
+      total,
     });
   } catch (error) {
     console.error('Erro ao registrar avaliação:', error);
@@ -103,15 +103,15 @@ router.get('/:id/ratings', validateId, async (req, res, next) => {
   try {
     const study = await Study.findById(req.params.id);
     if (!study) return res.status(404).json({ message: 'Estudo não encontrado.' });
-    
+
     const total = study.ratings.length;
-    const average = total > 0 
+    const average = total > 0
       ? (study.ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
       : null;
-      
-    res.json({ 
-      average: average ? parseFloat(average) : null, 
-      total 
+
+    res.json({
+      average: average ? parseFloat(average) : null,
+      total,
     });
   } catch (error) {
     console.error('Erro ao buscar avaliações:', error);
@@ -151,8 +151,8 @@ router.get('/count', cacheMiddleware('stats'), async (req, res, next) => {
     res.json(
       ApiResponseDTO.success(
         { count: stats.totalStudies },
-        'Contagem de estudos obtida com sucesso'
-      )
+        'Contagem de estudos obtida com sucesso',
+      ),
     );
   } catch (error) {
     next(error);
@@ -214,14 +214,14 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
       theme: req.query.theme,
       format: req.query.format,
       reference: req.query.reference,
-      search: req.query.search
+      search: req.query.search,
     };
     const result = await StudyService.findAll(options);
     const totalItems = (result.pagination && result.pagination.total) || result.total || 0;
     const pagination = new PaginationDTO({
       page: options.page,
       limit: options.limit,
-      totalItems
+      totalItems,
     });
     const paginationResult = pagination.validate();
     if (!paginationResult.isValid) {
@@ -232,8 +232,8 @@ router.get('/', cacheMiddleware('list'), async (req, res, next) => {
       ApiResponseDTO.paginated(
         result.studies || result.data || result,
         paginationData,
-        'Estudos recuperados com sucesso'
-      )
+        'Estudos recuperados com sucesso',
+      ),
     );
   } catch (error) {
     console.error('Erro na rota GET /studies:', error);
@@ -248,12 +248,12 @@ router.get('/latest', cacheMiddleware('stats'), async (req, res, next) => {
 
     if (!latestStudy) {
       return res.status(404).json(
-        ApiResponseDTO.error('Nenhum estudo encontrado', [], 404)
+        ApiResponseDTO.error('Nenhum estudo encontrado', [], 404),
       );
     }
 
     res.json(
-      ApiResponseDTO.success(latestStudy, 'Último estudo encontrado')
+      ApiResponseDTO.success(latestStudy, 'Último estudo encontrado'),
     );
   } catch (error) {
     next(error);
@@ -266,7 +266,7 @@ router.get('/stats', cacheMiddleware('stats'), async (req, res, next) => {
     const stats = await StudyService.getStats();
 
     res.json(
-      ApiResponseDTO.success(stats, 'Estatísticas dos estudos obtidas com sucesso')
+      ApiResponseDTO.success(stats, 'Estatísticas dos estudos obtidas com sucesso'),
     );
   } catch (error) {
     next(error);
@@ -279,7 +279,7 @@ router.get('/themes', cacheMiddleware('stats'), async (req, res, next) => {
     const themes = await StudyService.getAllThemes();
 
     res.json(
-      ApiResponseDTO.success(themes, 'Temas dos estudos obtidos com sucesso')
+      ApiResponseDTO.success(themes, 'Temas dos estudos obtidos com sucesso'),
     );
   } catch (error) {
     next(error);
@@ -292,7 +292,7 @@ router.get('/formats', cacheMiddleware('stats'), async (req, res, next) => {
     const formats = await StudyService.getAllFormats();
 
     res.json(
-      ApiResponseDTO.success(formats, 'Formatos dos estudos obtidos com sucesso')
+      ApiResponseDTO.success(formats, 'Formatos dos estudos obtidos com sucesso'),
     );
   } catch (error) {
     next(error);
@@ -305,7 +305,7 @@ router.get('/references', cacheMiddleware('stats'), async (req, res, next) => {
     const references = await StudyService.getAllReferences();
 
     res.json(
-      ApiResponseDTO.success(references, 'Referências bíblicas obtidas com sucesso')
+      ApiResponseDTO.success(references, 'Referências bíblicas obtidas com sucesso'),
     );
   } catch (error) {
     next(error);
@@ -319,7 +319,7 @@ router.get('/popular', cacheMiddleware('filter'), async (req, res, next) => {
     const studies = await StudyService.findPopular(limit);
 
     res.json(
-      ApiResponseDTO.success(studies, 'Estudos populares obtidos com sucesso')
+      ApiResponseDTO.success(studies, 'Estudos populares obtidos com sucesso'),
     );
   } catch (error) {
     next(error);
@@ -337,12 +337,12 @@ router.get('/:id',
 
       if (!study) {
         return res.status(404).json(
-          ApiResponseDTO.error('Estudo não encontrado', [], 404)
+          ApiResponseDTO.error('Estudo não encontrado', [], 404),
         );
       }
 
       res.json(
-        ApiResponseDTO.success(study, 'Estudo encontrado com sucesso')
+        ApiResponseDTO.success(study, 'Estudo encontrado com sucesso'),
       );
     } catch (error) {
       next(error);
@@ -355,7 +355,7 @@ router.get('/theme/:theme', cacheMiddleware('filter'), async (req, res, next) =>
     const studies = await StudyService.findByTheme(req.params.theme);
 
     res.json(
-      ApiResponseDTO.success(studies, `Estudos do tema "${req.params.theme}" obtidos com sucesso`)
+      ApiResponseDTO.success(studies, `Estudos do tema "${req.params.theme}" obtidos com sucesso`),
     );
   } catch (error) {
     next(error);
@@ -368,7 +368,7 @@ router.get('/format/:format', cacheMiddleware('filter'), async (req, res, next) 
     const studies = await StudyService.findByFormat(req.params.format);
 
     res.json(
-      ApiResponseDTO.success(studies, `Estudos do formato "${req.params.format}" obtidos com sucesso`)
+      ApiResponseDTO.success(studies, `Estudos do formato "${req.params.format}" obtidos com sucesso`),
     );
   } catch (error) {
     next(error);
@@ -384,7 +384,7 @@ router.get('/:id/related',
       const relatedStudies = await StudyService.findRelated(req.params.id, limit);
 
       res.json(
-        ApiResponseDTO.success(relatedStudies, 'Estudos relacionados obtidos com sucesso')
+        ApiResponseDTO.success(relatedStudies, 'Estudos relacionados obtidos com sucesso'),
       );
     } catch (error) {
       next(error);
@@ -404,7 +404,7 @@ router.post('/',
       const savedStudy = await StudyService.create(studyData, req.user._id);
 
       res.status(201).json(
-        ApiResponseDTO.success(savedStudy, 'Estudo criado com sucesso')
+        ApiResponseDTO.success(savedStudy, 'Estudo criado com sucesso'),
       );
     } catch (error) {
       next(error);
@@ -442,14 +442,14 @@ router.patch('/:id',
       }
 
       res.json(
-        ApiResponseDTO.success(updatedStudy, 'Estudo atualizado com sucesso')
+        ApiResponseDTO.success(updatedStudy, 'Estudo atualizado com sucesso'),
       );
     } catch (error) {
       console.error('Erro na rota PATCH:', {
         message: error.message,
         stack: error.stack,
         name: error.name,
-        ...(error.response?.data && { responseData: error.response.data })
+        ...(error.response?.data && { responseData: error.response.data }),
       });
       next(error);
     }
@@ -472,7 +472,7 @@ router.delete('/:id',
       } else {
         // Caso contrário, padroniza a resposta
         res.json(
-          ApiResponseDTO.success(result, 'Estudo deletado com sucesso')
+          ApiResponseDTO.success(result, 'Estudo deletado com sucesso'),
         );
       }
     } catch (error) {
@@ -495,10 +495,10 @@ router.get('/suggestions',
               titles: [],
               themes: [],
               references: [],
-              formats: []
+              formats: [],
             }).transform(),
-            'Sugestões vazias - termo muito curto'
-          )
+            'Sugestões vazias - termo muito curto',
+          ),
         );
       }
 
@@ -510,14 +510,14 @@ router.get('/suggestions',
       res.json(
         ApiResponseDTO.success(
           suggestionsDTO.transform(),
-          'Sugestões encontradas com sucesso'
-        )
+          'Sugestões encontradas com sucesso',
+        ),
       );
     } catch (error) {
       console.error('Erro ao buscar sugestões de estudos:', error);
       next(error);
     }
-  }
+  },
 );
 
 // ========== ROTA DE BUSCA ==========
@@ -537,8 +537,8 @@ router.get('/search/:term',
           result.studies || result.data || result,
           `Busca por "${searchTerm}" realizada com sucesso`,
           null,
-          { searchTerm, count: (result.studies || result.data || result).length }
-        )
+          { searchTerm, count: (result.studies || result.data || result).length },
+        ),
       );
     } catch (error) {
       next(error);

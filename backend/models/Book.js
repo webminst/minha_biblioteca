@@ -12,21 +12,21 @@ const BookSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Título do livro é obrigatório'],
     trim: true,
-    maxlength: [200, 'Título não pode exceder 200 caracteres']
+    maxlength: [200, 'Título não pode exceder 200 caracteres'],
   },
 
   author: {
     type: String,
     required: [true, 'Autor do livro é obrigatório'],
     trim: true,
-    maxlength: [100, 'Nome do autor não pode exceder 100 caracteres']
+    maxlength: [100, 'Nome do autor não pode exceder 100 caracteres'],
   },
 
   publisher: {
     type: String,
     required: false,
     trim: true,
-    maxlength: [100, 'Nome da editora não pode exceder 100 caracteres']
+    maxlength: [100, 'Nome da editora não pode exceder 100 caracteres'],
   },
 
   // ========== CATEGORIZAÇÃO ==========
@@ -43,27 +43,27 @@ const BookSchema = new mongoose.Schema({
       'História da Igreja',
       'Biografias',
       'Devocionais',
-      'Outros'
-    ]
+      'Outros',
+    ],
   },
 
   tags: {
     type: [String],
     required: false,
-    validate: [arrayLimit, 'Máximo 10 tags permitidas']
+    validate: [arrayLimit, 'Máximo 10 tags permitidas'],
   },
 
   // ========== CONTEÚDO ==========
   description: {
     type: String,
     required: false,
-    maxlength: [500, 'Descrição não pode exceder 500 caracteres']
+    maxlength: [500, 'Descrição não pode exceder 500 caracteres'],
   },
 
   content: {
     type: String,
     required: [true, 'Resumo do livro é obrigatório'],
-    minlength: [100, 'Resumo deve ter pelo menos 100 caracteres']
+    minlength: [100, 'Resumo deve ter pelo menos 100 caracteres'],
   },
 
   // ========== RECURSOS VISUAIS ==========
@@ -71,11 +71,11 @@ const BookSchema = new mongoose.Schema({
     type: String,
     required: false,
     validate: {
-      validator: function (v) {
+      validator (v) {
         return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(v);
       },
-      message: 'URL da capa deve ser uma URL válida de imagem'
-    }
+      message: 'URL da capa deve ser uma URL válida de imagem',
+    },
   },
 
   // ========== ARQUIVOS ==========
@@ -83,49 +83,49 @@ const BookSchema = new mongoose.Schema({
     type: String,
     required: false,
     validate: {
-      validator: function (v) {
+      validator (v) {
         return !v || /^https?:\/\/.+/i.test(v);
       },
-      message: 'URL deve ser uma URL válida'
-    }
+      message: 'URL deve ser uma URL válida',
+    },
   },
 
   // ========== AVALIAÇÕES ==========
   ratings: [
     {
       deviceId: { type: String, required: [true, 'ID do dispositivo é obrigatório'] },
-      stars: { 
-        type: Number, 
+      stars: {
+        type: Number,
         required: [true, 'Avaliação em estrelas é obrigatória'],
         min: [1, 'Avaliação mínima é 1 estrela'],
-        max: [5, 'Avaliação máxima é 5 estrelas']
+        max: [5, 'Avaliação máxima é 5 estrelas'],
       },
       ratedAt: { type: Date, default: Date.now },
-      updatedAt: { type: Date, default: Date.now }
-    }
+      updatedAt: { type: Date, default: Date.now },
+    },
   ],
 
   // ========== METADADOS ==========
   type: {
     type: String,
     default: 'Resumo de Livro',
-    required: true
+    required: true,
   },
 
   // Campos de auditoria (preenchidos automaticamente)
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false
+    required: false,
   },
 
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false
-  }
+    required: false,
+  },
 }, {
-  timestamps: true // Adiciona createdAt e updatedAt automaticamente
+  timestamps: true, // Adiciona createdAt e updatedAt automaticamente
 });
 
 // ========== VALIDAÇÕES CUSTOMIZADAS ==========
@@ -142,14 +142,14 @@ BookSchema.index({ createdAt: -1 });
 // ========== MÉTODOS DO SCHEMA ==========
 // Método para obter resumo curto
 BookSchema.methods.getShortSummary = function () {
-  return this.description || this.content.substring(0, 150) + '...';
+  return this.description || `${this.content.substring(0, 150)}...`;
 };
 
 
 // Método estático para buscar por área única (string)
 BookSchema.statics.findByArea = function (area) {
   if (typeof area === 'string' && area.trim() !== '') {
-    return this.find({ area: area }).sort({ createdAt: -1 });
+    return this.find({ area }).sort({ createdAt: -1 });
   } else {
     return this.find({}).sort({ createdAt: -1 });
   }

@@ -12,51 +12,51 @@ const { ApiResponseDTO } = require('../dto');
  * @param {string} source - Fonte dos dados ('body', 'query', 'params')
  */
 const validateInput = (DTOClass, source = 'body') => {
-    return (req, res, next) => {
-        try {
-            // Obtém os dados da fonte especificada
-            const data = req[source];
+  return (req, res, next) => {
+    try {
+      // Obtém os dados da fonte especificada
+      const data = req[source];
 
-            console.log('=== DEBUG VALIDAÇÃO DTO ===');
-            console.log('Classe DTO:', DTOClass.name);
-            console.log('Dados recebidos:', JSON.stringify(data, null, 2));
+      console.log('=== DEBUG VALIDAÇÃO DTO ===');
+      console.log('Classe DTO:', DTOClass.name);
+      console.log('Dados recebidos:', JSON.stringify(data, null, 2));
 
-            // Valida usando o DTO
-            const result = DTOClass.validateAndCreate(data);
+      // Valida usando o DTO
+      const result = DTOClass.validateAndCreate(data);
 
-            if (!result.success) {
-                console.log('❌ Validação falhou:');
-                console.log('Erros:', JSON.stringify(result.errors, null, 2));
-                res.status(400).json(
-                    ApiResponseDTO.error(
-                        'Dados de entrada inválidos',
-                        result.errors,
-                        400
-                    )
-                );
-                return; // Garante que não chama next()
-            }
+      if (!result.success) {
+        console.log('❌ Validação falhou:');
+        console.log('Erros:', JSON.stringify(result.errors, null, 2));
+        res.status(400).json(
+          ApiResponseDTO.error(
+            'Dados de entrada inválidos',
+            result.errors,
+            400,
+          ),
+        );
+        return; // Garante que não chama next()
+      }
 
-            console.log('✅ Validação bem-sucedida');
-            console.log('Dados validados:', JSON.stringify(result.data, null, 2));
+      console.log('✅ Validação bem-sucedida');
+      console.log('Dados validados:', JSON.stringify(result.data, null, 2));
 
-            // Armazena os dados validados e transformados
-            req.validatedData = result.data;
-            req.dtoInstance = result.instance;
+      // Armazena os dados validados e transformados
+      req.validatedData = result.data;
+      req.dtoInstance = result.instance;
 
-            next();
-        } catch (error) {
-            console.error('Erro na validação DTO:', error);
-            res.status(500).json(
-                ApiResponseDTO.error(
-                    'Erro interno na validação',
-                    null,
-                    500
-                )
-            );
-            return; // Garante que não chama next()
-        }
-    };
+      next();
+    } catch (error) {
+      console.error('Erro na validação DTO:', error);
+      res.status(500).json(
+        ApiResponseDTO.error(
+          'Erro interno na validação',
+          null,
+          500,
+        ),
+      );
+      return; // Garante que não chama next()
+    }
+  };
 };
 
 /**
@@ -65,34 +65,34 @@ const validateInput = (DTOClass, source = 'body') => {
  * @param {string} method - Método de transformação ('toPublicObject', 'toSummaryObject', etc.)
  */
 const transformOutput = (DTOClass, method = 'toPublicObject') => {
-    return (req, res, next) => {
-        // Intercepta o método json do response
-        const originalJson = res.json;
+  return (req, res, next) => {
+    // Intercepta o método json do response
+    const originalJson = res.json;
 
-        res.json = function (data) {
-            try {
-                // Se os dados têm um array de items (listagem paginada)
-                if (data && data.data && Array.isArray(data.data)) {
-                    data.data = data.data.map(item => {
-                        const dto = new DTOClass(item);
-                        return dto[method] ? dto[method]() : dto.toSafeObject();
-                    });
-                }
-                // Se é um único item
-                else if (data && !data.success) {
-                    const dto = new DTOClass(data);
-                    data = dto[method] ? dto[method]() : dto.toSafeObject();
-                }
+    res.json = function (data) {
+      try {
+        // Se os dados têm um array de items (listagem paginada)
+        if (data && data.data && Array.isArray(data.data)) {
+          data.data = data.data.map(item => {
+            const dto = new DTOClass(item);
+            return dto[method] ? dto[method]() : dto.toSafeObject();
+          });
+        }
+        // Se é um único item
+        else if (data && !data.success) {
+          const dto = new DTOClass(data);
+          data = dto[method] ? dto[method]() : dto.toSafeObject();
+        }
 
-                return originalJson.call(this, data);
-            } catch (error) {
-                console.error('Erro na transformação DTO:', error);
-                return originalJson.call(this, data); // Retorna dados originais em caso de erro
-            }
-        };
-
-        next();
+        return originalJson.call(this, data);
+      } catch (error) {
+        console.error('Erro na transformação DTO:', error);
+        return originalJson.call(this, data); // Retorna dados originais em caso de erro
+      }
     };
+
+    next();
+  };
 };
 
 /**
@@ -104,26 +104,26 @@ const transformOutput = (DTOClass, method = 'toPublicObject') => {
  * @param {string} options.outputMethod - Método de transformação de saída
  */
 const validateAndTransform = (options) => {
-    const {
-        inputDTO,
-        outputDTO,
-        inputSource = 'body',
-        outputMethod = 'toPublicObject'
-    } = options;
+  const {
+    inputDTO,
+    outputDTO,
+    inputSource = 'body',
+    outputMethod = 'toPublicObject',
+  } = options;
 
-    const middlewares = [];
+  const middlewares = [];
 
-    // Adiciona validação de entrada se especificada
-    if (inputDTO) {
-        middlewares.push(validateInput(inputDTO, inputSource));
-    }
+  // Adiciona validação de entrada se especificada
+  if (inputDTO) {
+    middlewares.push(validateInput(inputDTO, inputSource));
+  }
 
-    // Adiciona transformação de saída se especificada
-    if (outputDTO) {
-        middlewares.push(transformOutput(outputDTO, outputMethod));
-    }
+  // Adiciona transformação de saída se especificada
+  if (outputDTO) {
+    middlewares.push(transformOutput(outputDTO, outputMethod));
+  }
 
-    return middlewares;
+  return middlewares;
 };
 
 /**
@@ -131,31 +131,31 @@ const validateAndTransform = (options) => {
  * @param {Class} SearchDTO - DTO de busca específico
  */
 const validateSearch = (SearchDTO) => {
-    return validateInput(SearchDTO, 'query');
+  return validateInput(SearchDTO, 'query');
 };
 
 /**
  * Middleware para validar IDs em parâmetros da URL
  */
 const validateId = (req, res, next) => {
-    try {
-        const { MongoIdDTO } = require('../dto');
+  try {
+    const { MongoIdDTO } = require('../dto');
 
-        if (req.params.id) {
-            MongoIdDTO.validate(req.params.id);
-            req.validatedId = req.params.id;
-        }
-
-        next();
-    } catch (error) {
-        return res.status(400).json(
-            ApiResponseDTO.error(
-                'ID inválido',
-                [{ field: 'id', message: error.message }],
-                400
-            )
-        );
+    if (req.params.id) {
+      MongoIdDTO.validate(req.params.id);
+      req.validatedId = req.params.id;
     }
+
+    next();
+  } catch (error) {
+    return res.status(400).json(
+      ApiResponseDTO.error(
+        'ID inválido',
+        [{ field: 'id', message: error.message }],
+        400,
+      ),
+    );
+  }
 };
 
 /**
@@ -164,84 +164,84 @@ const validateId = (req, res, next) => {
  * @param {number} statusCode - Código de status HTTP
  */
 const successResponse = (message = null, statusCode = 200) => {
-    return (req, res, next) => {
-        const originalJson = res.json;
+  return (req, res, next) => {
+    const originalJson = res.json;
 
-        res.json = function (data) {
-            // Se já é uma resposta padronizada, não altera
-            if (data && typeof data.success === 'boolean') {
-                res.status(statusCode);
-                return originalJson.call(this, data);
-            }
+    res.json = function (data) {
+      // Se já é uma resposta padronizada, não altera
+      if (data && typeof data.success === 'boolean') {
+        res.status(statusCode);
+        return originalJson.call(this, data);
+      }
 
-            // Cria resposta padronizada
-            const response = ApiResponseDTO.success(data, message);
-            res.status(statusCode);
-            return originalJson.call(this, response);
-        };
-
-        next();
+      // Cria resposta padronizada
+      const response = ApiResponseDTO.success(data, message);
+      res.status(statusCode);
+      return originalJson.call(this, response);
     };
+
+    next();
+  };
 };
 
 /**
  * Middleware para tratar erros de validação automaticamente
  */
 const handleValidationErrors = (error, req, res, next) => {
-    // Erros de validação do Joi
-    if (error.isJoi) {
-        const errors = error.details.map(detail => ({
-            field: detail.path.join('.'),
-            message: detail.message,
-            value: detail.context?.value
-        }));
+  // Erros de validação do Joi
+  if (error.isJoi) {
+    const errors = error.details.map(detail => ({
+      field: detail.path.join('.'),
+      message: detail.message,
+      value: detail.context?.value,
+    }));
 
-        return res.status(400).json(
-            ApiResponseDTO.error(
-                'Dados inválidos',
-                errors,
-                400
-            )
-        );
-    }
+    return res.status(400).json(
+      ApiResponseDTO.error(
+        'Dados inválidos',
+        errors,
+        400,
+      ),
+    );
+  }
 
-    // Erros de cast do MongoDB (ID inválido)
-    if (error.name === 'CastError') {
-        return res.status(400).json(
-            ApiResponseDTO.error(
-                'ID inválido',
-                [{ field: error.path, message: 'Formato de ID inválido' }],
-                400
-            )
-        );
-    }
+  // Erros de cast do MongoDB (ID inválido)
+  if (error.name === 'CastError') {
+    return res.status(400).json(
+      ApiResponseDTO.error(
+        'ID inválido',
+        [{ field: error.path, message: 'Formato de ID inválido' }],
+        400,
+      ),
+    );
+  }
 
-    // Erros de validação do MongoDB
-    if (error.name === 'ValidationError') {
-        const errors = Object.values(error.errors).map(err => ({
-            field: err.path,
-            message: err.message,
-            value: err.value
-        }));
+  // Erros de validação do MongoDB
+  if (error.name === 'ValidationError') {
+    const errors = Object.values(error.errors).map(err => ({
+      field: err.path,
+      message: err.message,
+      value: err.value,
+    }));
 
-        return res.status(400).json(
-            ApiResponseDTO.error(
-                'Erro de validação',
-                errors,
-                400
-            )
-        );
-    }
+    return res.status(400).json(
+      ApiResponseDTO.error(
+        'Erro de validação',
+        errors,
+        400,
+      ),
+    );
+  }
 
-    next(error);
+  next(error);
 };
 
 module.exports = {
-    validateInput,
-    transformOutput,
-    validateAndTransform,
-    validateSearch,
-    validateId,
-    successResponse,
-    handleValidationErrors
+  validateInput,
+  transformOutput,
+  validateAndTransform,
+  validateSearch,
+  validateId,
+  successResponse,
+  handleValidationErrors,
 };
