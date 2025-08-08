@@ -1,0 +1,22 @@
+# Configuração para normalização de terminações de linha
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+*.{js,jsx,ts,tsx,json,md,html,css,scss} text eol=lf
+*.{sh,env} text eol=lf
+*.{png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot} binary
+
+# Configurações específicas para Windows
+*.sln text eol=crlf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
+*.psd1 text eol=crlf
+*.ps1xml text eol=crlf
+*.clixml text eol=crlf
+*.psc1 text eol=crlf
+*.pssc text eol=crlf
+*.cdxml text eol=crlf
+*.yaml text eol=lf
+*.yml text eol=lf

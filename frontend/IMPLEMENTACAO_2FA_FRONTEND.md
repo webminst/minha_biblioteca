@@ -35,7 +35,7 @@ A implementação frontend da autenticação de dois fatores (2FA) está complet
 import { TwoFactorSetup } from './components';
 
 const MyComponent = () => {
-  const handleSetupComplete = (setupData) => {
+  const handleSetupComplete = setupData => {
     console.log('2FA configurado:', setupData);
     // Redirecionar ou atualizar estado
   };
@@ -45,15 +45,13 @@ const MyComponent = () => {
   };
 
   return (
-    <TwoFactorSetup
-      onComplete={handleSetupComplete}
-      onCancel={handleCancel}
-    />
+    <TwoFactorSetup onComplete={handleSetupComplete} onCancel={handleCancel} />
   );
 };
 ```
 
 **Características:**
+
 - Wizard de 3 etapas
 - QR Code e entrada manual
 - Verificação de código
@@ -69,7 +67,7 @@ const LoginPage = () => {
   const [needsTwoFactor, setNeedsTwoFactor] = useState(false);
   const [userEmail, setUserEmail] = useState('');
 
-  const handleTwoFactorSubmit = async (data) => {
+  const handleTwoFactorSubmit = async data => {
     try {
       await authService.verifyTwoFactor(data.code, data.isBackupCode);
       // Login completo
@@ -95,6 +93,7 @@ const LoginPage = () => {
 ```
 
 **Características:**
+
 - Interface para código TOTP (6 dígitos)
 - Interface para códigos de backup (8 caracteres)
 - Alternância entre modos
@@ -117,6 +116,7 @@ const SecurityPage = () => {
 ```
 
 **Características:**
+
 - Status atual do 2FA
 - Regeneração de códigos de backup
 - Desabilitação do 2FA
@@ -137,8 +137,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/setup-2fa" element={<TwoFactorSetup />} />
-        <Route path="/security" element={<TwoFactorManagement />} />
+        <Route path='/setup-2fa' element={<TwoFactorSetup />} />
+        <Route path='/security' element={<TwoFactorManagement />} />
         {/* Outras rotas... */}
       </Routes>
     </Router>
@@ -183,14 +183,14 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!authService.isAuthenticated()) {
-    return <Navigate to="/login" />;
+    return <Navigate to='/login' />;
   }
 
   if (needsTwoFactor) {
     return (
       <TwoFactorLogin
         email={authService.getUserEmail()}
-        onSubmit={async (data) => {
+        onSubmit={async data => {
           try {
             await authService.verifyTwoFactor(data.code, data.isBackupCode);
             setNeedsTwoFactor(false);
@@ -224,6 +224,7 @@ Todos os componentes são **totalmente responsivos** e incluem:
 - **Acessibilidade**: Suporte a leitores de tela
 
 ### Breakpoints CSS:
+
 ```css
 /* Mobile */
 @media (max-width: 600px) {
@@ -244,7 +245,7 @@ Todos os componentes são **totalmente responsivos** e incluem:
 
 ```css
 /* Cores principais */
---primary-color: #2196F3;
+--primary-color: #2196f3;
 --secondary-color: #6c757d;
 --success-color: #28a745;
 --danger-color: #dc3545;
@@ -255,9 +256,9 @@ Todos os componentes são **totalmente responsivos** e incluem:
 --gradient-secondary: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 
 /* Sombras */
---shadow-light: 0 4px 12px rgba(0,0,0,0.1);
---shadow-medium: 0 10px 30px rgba(0,0,0,0.1);
---shadow-heavy: 0 25px 50px rgba(0,0,0,0.15);
+--shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+--shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.1);
+--shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.15);
 ```
 
 ### Customização:
@@ -292,10 +293,10 @@ Todos os componentes são **totalmente responsivos** e incluem:
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState('');
 
-const handleSubmit = async (data) => {
+const handleSubmit = async data => {
   setLoading(true);
   setError('');
-  
+
   try {
     await authService.verifyTwoFactor(data.code);
     // Sucesso
@@ -320,6 +321,7 @@ return (
 ## 🧪 Testes Recomendados
 
 ### 1. Testes Unitários:
+
 ```javascript
 // TwoFactorSetup.test.js
 import { render, fireEvent, screen } from '@testing-library/react';
@@ -332,6 +334,7 @@ test('deve renderizar o primeiro passo', () => {
 ```
 
 ### 2. Testes de Integração:
+
 ```javascript
 // authService.test.js
 import authService from './authService';
@@ -344,6 +347,7 @@ test('deve configurar 2FA corretamente', async () => {
 ```
 
 ### 3. Testes E2E:
+
 ```javascript
 // cypress/integration/2fa.spec.js
 describe('Autenticação 2FA', () => {
@@ -360,6 +364,7 @@ describe('Autenticação 2FA', () => {
 ## 📋 Checklist de Implementação
 
 ### ✅ Backend (Concluído)
+
 - [x] Modelo User atualizado
 - [x] TwoFactorService implementado
 - [x] Rotas 2FA criadas
@@ -367,8 +372,9 @@ describe('Autenticação 2FA', () => {
 - [x] Testes realizados
 
 ### ✅ Frontend (Concluído)
+
 - [x] Componente TwoFactorSetup
-- [x] Componente TwoFactorLogin  
+- [x] Componente TwoFactorLogin
 - [x] Componente TwoFactorManagement
 - [x] Estilos CSS responsivos
 - [x] authService atualizado
@@ -377,6 +383,7 @@ describe('Autenticação 2FA', () => {
 - [x] Documentação completa
 
 ### 🔄 Próximos Passos (Opcional)
+
 - [ ] Integração com o App principal
 - [ ] Testes automatizados
 - [ ] Deploy e configuração de produção
@@ -387,16 +394,18 @@ describe('Autenticação 2FA', () => {
 ## 🚀 Deploy em Produção
 
 ### Variáveis de Ambiente:
+
 ```bash
 # Backend
 TWO_FACTOR_SERVICE_NAME=PastorPortfolio
 TWO_FACTOR_ENCRYPTION_KEY=your-32-char-key
 
-# Frontend  
+# Frontend
 REACT_APP_API_URL=https://your-api-domain.com
 ```
 
 ### Configurações de Segurança:
+
 1. HTTPS obrigatório
 2. CSP (Content Security Policy)
 3. Rate limiting configurado
@@ -407,11 +416,13 @@ REACT_APP_API_URL=https://your-api-domain.com
 ## 📞 Suporte e Manutenção
 
 ### Logs Importantes:
+
 - Setup de 2FA: `Backend/logs/audit.log`
 - Tentativas de login: `Backend/logs/auth.log`
 - Erros do sistema: `Backend/logs/error.log`
 
 ### Monitoramento:
+
 - Taxa de sucesso do 2FA
 - Tempo médio de configuração
 - Uso de códigos de backup
@@ -419,6 +430,6 @@ REACT_APP_API_URL=https://your-api-domain.com
 
 ---
 
-**🎉 Implementação Completa!** 
+**🎉 Implementação Completa!**
 
 A autenticação de dois fatores está totalmente implementada e pronta para uso. Todos os componentes são seguros, responsivos e seguem as melhores práticas de UX/UI.

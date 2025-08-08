@@ -4,9 +4,12 @@ import { API_ENDPOINTS } from '../config/api';
 import StudyService from '../services/studyService';
 import ContentCard from '../components/ContentCard/ContentCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from 'react-router-dom';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
 import { extractStudies, extractPagination } from '../utils/apiResponseHelpers';
@@ -26,7 +29,7 @@ function Studies() {
 
   // Extrai página atual da URL
   const query = new URLSearchParams(location.search);
-  const pageFromUrl = parseInt(query.get("page") || "1", 10);
+  const pageFromUrl = parseInt(query.get('page') || '1', 10);
 
   // Estados para dados e controles
   const [studies, setStudies] = useState([]);
@@ -46,15 +49,17 @@ function Studies() {
   const [isSearching, setIsSearching] = useState(false);
 
   // Busca as avaliações de um estudo
-  const fetchStudyRatings = async (studyId) => {
+  const fetchStudyRatings = async studyId => {
     if (!studyId) {
       console.warn('ID do estudo não fornecido para buscar avaliações');
       return { average: null, total: 0 };
     }
 
     try {
-      const response = await fetch(`${API_ENDPOINTS.STUDIES.BASE}/${studyId}/ratings`);
-      
+      const response = await fetch(
+        `${API_ENDPOINTS.STUDIES.BASE}/${studyId}/ratings`,
+      );
+
       if (!response.ok) {
         // Se a resposta não for 200-299, verifica se é 404 (estudo sem avaliações)
         if (response.status === 404) {
@@ -62,30 +67,34 @@ function Studies() {
         }
         throw new Error(`Erro ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      
+
       // Garante que os dados retornados tenham o formato esperado
       if (typeof data !== 'object' || data === null) {
         console.warn('Formato de avaliação inválido:', data);
         return { average: null, total: 0 };
       }
-      
+
       return {
         average: typeof data.average === 'number' ? data.average : null,
-        total: typeof data.total === 'number' ? data.total : 0
+        total: typeof data.total === 'number' ? data.total : 0,
       };
-      
     } catch (err) {
-      console.error('Erro ao carregar avaliações para o estudo', studyId, ':', err);
+      console.error(
+        'Erro ao carregar avaliações para o estudo',
+        studyId,
+        ':',
+        err,
+      );
       return { average: null, total: 0 };
     }
   };
 
   // Busca as avaliações para todos os estudos
-  const fetchAllRatings = async (studiesList) => {
+  const fetchAllRatings = async studiesList => {
     const ratingsMap = {};
-    
+
     // Verifica se studiesList é um array e tem itens
     if (!Array.isArray(studiesList) || studiesList.length === 0) {
       console.warn('Nenhum estudo encontrado para buscar avaliações');
@@ -93,24 +102,27 @@ function Studies() {
     }
 
     // Cria um array de promessas para buscar as avaliações em paralelo
-    const ratingPromises = studiesList.map(async (study) => {
+    const ratingPromises = studiesList.map(async study => {
       try {
         const ratingData = await fetchStudyRatings(study._id);
         return { id: study._id, data: ratingData };
       } catch (error) {
-        console.error(`Erro ao buscar avaliações para o estudo ${study._id}:`, error);
+        console.error(
+          `Erro ao buscar avaliações para o estudo ${study._id}:`,
+          error,
+        );
         return { id: study._id, data: { average: null, total: 0 } };
       }
     });
 
     // Aguarda todas as requisições serem concluídas
     const ratings = await Promise.all(ratingPromises);
-    
+
     // Preenche o mapa de avaliações
     ratings.forEach(({ id, data }) => {
       ratingsMap[id] = data;
     });
-    
+
     return ratingsMap;
   };
 
@@ -126,16 +138,16 @@ function Studies() {
             limit: ITEMS_PER_PAGE,
             ...(selectedFormat && { format: selectedFormat }),
             ...(selectedTheme && { theme: selectedTheme }),
-            ...(searchTerm && { search: searchTerm })
-          }
+            ...(searchTerm && { search: searchTerm }),
+          },
         });
 
         // Extrai os estudos e garante que seja um array
         const extractedData = extractStudies(response.data);
         const studiesList = Array.isArray(extractedData) ? extractedData : [];
-        
+
         setStudies(studiesList);
-        
+
         // Extrai os dados de paginação
         const paginationData = extractPagination(response.data) || {};
         setPagination(paginationData);
@@ -145,9 +157,13 @@ function Studies() {
         setRatings(ratingsMap);
 
         // Extrai formatos e temas únicos para os filtros
-        const formats = [...new Set(studiesList.map(study => study?.format).filter(Boolean))];
-        const themes = [...new Set(studiesList.map(study => study?.theme).filter(Boolean))];
-        
+        const formats = [
+          ...new Set(studiesList.map(study => study?.format).filter(Boolean)),
+        ];
+        const themes = [
+          ...new Set(studiesList.map(study => study?.theme).filter(Boolean)),
+        ];
+
         setUniqueFormats(formats);
         setUniqueThemes(themes);
       } catch (err) {
@@ -183,11 +199,21 @@ function Studies() {
       try {
         const [formats, themes] = await Promise.all([
           StudyService.getFormats(),
-          StudyService.getThemes()
+          StudyService.getThemes(),
         ]);
 
-        console.log('DEBUG - formats:', formats, 'isArray:', Array.isArray(formats));
-        console.log('DEBUG - themes:', themes, 'isArray:', Array.isArray(themes));
+        console.log(
+          'DEBUG - formats:',
+          formats,
+          'isArray:',
+          Array.isArray(formats),
+        );
+        console.log(
+          'DEBUG - themes:',
+          themes,
+          'isArray:',
+          Array.isArray(themes),
+        );
 
         setUniqueFormats(Array.isArray(formats) ? formats : []);
         setUniqueThemes(Array.isArray(themes) ? themes : []);
@@ -201,33 +227,44 @@ function Studies() {
   }, []);
 
   // Função para navegar entre páginas mantendo filtros
-  const goToPage = (pageNumber) => {
-    navigate(`${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  const goToPage = pageNumber => {
+    navigate(
+      `${location.pathname}?page=${pageNumber}${selectedFormat ? `&format=${selectedFormat}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
   // Gera sugestões de busca com fallback local (igual Sermons)
-  const generateSearchSuggestions = async (term) => {
+  const generateSearchSuggestions = async term => {
     if (!term.trim()) return [];
 
     try {
       // Tenta buscar sugestões no backend primeiro
-      const response = await axios.get(`${API_ENDPOINTS.STUDIES.BASE}/suggestions`, {
-        params: { q: term, limit: 5 },
-        validateStatus: status => status >= 200 && status < 500
-      });
+      const response = await axios.get(
+        `${API_ENDPOINTS.STUDIES.BASE}/suggestions`,
+        {
+          params: { q: term, limit: 5 },
+          validateStatus: status => status >= 200 && status < 500,
+        },
+      );
 
       // Verifica se a resposta tem o formato esperado
       if (response.status === 200) {
         if (Array.isArray(response.data)) {
           return response.data;
-        } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        } else if (
+          response.data &&
+          response.data.success &&
+          Array.isArray(response.data.data)
+        ) {
           return response.data.data;
         }
       }
 
       // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
       // Usa busca global como fallback
-      console.warn('Usando busca global para sugestões. Considerar implementar o endpoint /suggestions no backend para melhor desempenho.');
+      console.warn(
+        'Usando busca global para sugestões. Considerar implementar o endpoint /suggestions no backend para melhor desempenho.',
+      );
       return await generateGlobalSearchSuggestions(term);
     } catch (error) {
       console.error('Erro ao buscar sugestões:', error);
@@ -237,15 +274,17 @@ function Studies() {
   };
 
   // Busca sugestões globalmente na API (fallback global)
-  const generateGlobalSearchSuggestions = async (term) => {
+  const generateGlobalSearchSuggestions = async term => {
     if (!term.trim()) return [];
     try {
       // Busca os primeiros 100 estudos que contenham o termo
       const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, {
         params: { search: term, page: 1, limit: 100 },
-        validateStatus: status => status >= 200 && status < 500
+        validateStatus: status => status >= 200 && status < 500,
       });
-      const studiesList = Array.isArray(response.data.data) ? response.data.data : [];
+      const studiesList = Array.isArray(response.data.data)
+        ? response.data.data
+        : [];
       const lowerTerm = term.toLowerCase();
       const suggestions = new Set();
       for (let i = 0; i < studiesList.length; i++) {
@@ -256,7 +295,10 @@ function Studies() {
         if (study.author && study.author.toLowerCase().includes(lowerTerm)) {
           suggestions.add(study.author);
         }
-        if (study.reference && study.reference.toLowerCase().includes(lowerTerm)) {
+        if (
+          study.reference &&
+          study.reference.toLowerCase().includes(lowerTerm)
+        ) {
           suggestions.add(study.reference);
         }
         if (suggestions.size >= 5) break;
@@ -269,7 +311,7 @@ function Studies() {
   };
 
   // Gera sugestões localmente (usado como fallback)
-  const generateLocalSearchSuggestions = (term) => {
+  const generateLocalSearchSuggestions = term => {
     if (!term.trim() || !studies || studies.length === 0) return [];
 
     const lowerTerm = term.toLowerCase();
@@ -292,7 +334,10 @@ function Studies() {
       }
 
       // Adiciona sugestões de referências
-      if (study.reference && study.reference.toLowerCase().includes(lowerTerm)) {
+      if (
+        study.reference &&
+        study.reference.toLowerCase().includes(lowerTerm)
+      ) {
         suggestions.add(study.reference);
       }
 
@@ -304,18 +349,22 @@ function Studies() {
   };
 
   // Handlers para mudança de filtros
-  const handleFormatChange = (e) => {
+  const handleFormatChange = e => {
     setSelectedFormat(e.target.value);
-    navigate(`${location.pathname}?page=1${e.target.value ? `&format=${e.target.value}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    navigate(
+      `${location.pathname}?page=1${e.target.value ? `&format=${e.target.value}` : ''}${selectedTheme ? `&theme=${selectedTheme}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
-  const handleThemeChange = (e) => {
+  const handleThemeChange = e => {
     setSelectedTheme(e.target.value);
-    navigate(`${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${e.target.value ? `&theme=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    navigate(
+      `${location.pathname}?page=1${selectedFormat ? `&format=${selectedFormat}` : ''}${e.target.value ? `&theme=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
   // Atualiza o termo de busca local
-  const handleSearchChange = async (e) => {
+  const handleSearchChange = async e => {
     const value = e.target.value;
     setLocalSearchTerm(value);
 
@@ -356,7 +405,7 @@ function Studies() {
   };
 
   // Aplica a busca quando o usuário pressiona Enter
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (e.key === 'Enter') {
       applySearch();
     }
@@ -390,48 +439,54 @@ function Studies() {
   if (studies.length === 0) return <p>Nenhum estudo encontrado.</p>;
 
   return (
-    <div className="list-page-container">
+    <div className='list-page-container'>
       {/* Cabeçalho da página */}
       <h1>Estudos Bíblicos</h1>
-      <p className="list-page-description">
-        Aprofunde seu conhecimento da Palavra com estudos temáticos, panoramas bíblicos e devocionais.
+      <p className='list-page-description'>
+        Aprofunde seu conhecimento da Palavra com estudos temáticos, panoramas
+        bíblicos e devocionais.
       </p>
 
       {/* Controles de filtro */}
-      <div className="filter-controls">
+      <div className='filter-controls'>
         {/* Campo de busca */}
-        <div className="filter-group">
-          <label htmlFor="search-filter">Buscar:</label>
+        <div className='filter-group'>
+          <label htmlFor='search-filter'>Buscar:</label>
           <div style={{ position: 'relative' }}>
             <input
-              id="search-filter"
-              type="text"
-              placeholder="Buscar por título, descrição..."
+              id='search-filter'
+              type='text'
+              placeholder='Buscar por título, descrição...'
               value={localSearchTerm}
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
-              onFocus={() => localSearchTerm.length > 1 && setShowSuggestions(true)}
+              onFocus={() =>
+                localSearchTerm.length > 1 && setShowSuggestions(true)
+              }
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               className={`search-input ${localSearchTerm ? 'search-active' : ''}`}
-              autoComplete="off"
+              autoComplete='off'
             />
-            <div className="search-icon-container">
+            <div className='search-icon-container'>
               {isSearching ? (
-                <div className="spinner-border spinner-border-sm text-muted" role="status">
-                  <span className="visually-hidden">Carregando...</span>
+                <div
+                  className='spinner-border spinner-border-sm text-muted'
+                  role='status'
+                >
+                  <span className='visually-hidden'>Carregando...</span>
                 </div>
               ) : (
-                <i className="fas fa-search"></i>
+                <i className='fas fa-search'></i>
               )}
             </div>
 
             {/* Sugestões de busca */}
             {showSuggestions && searchSuggestions.length > 0 && (
-              <div className="search-suggestions visible">
+              <div className='search-suggestions visible'>
                 {searchSuggestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className="suggestion-item"
+                    className='suggestion-item'
                     onMouseDown={() => {
                       setLocalSearchTerm(suggestion);
                       applySearch(suggestion);
@@ -443,48 +498,66 @@ function Studies() {
               </div>
             )}
 
-            {showSuggestions && searchSuggestions.length === 0 && localSearchTerm.length > 1 && (
-              <div className="search-suggestions visible">
-                <div className="search-loading">Nenhuma sugestão encontrada</div>
+            {showSuggestions &&
+              searchSuggestions.length === 0 &&
+              localSearchTerm.length > 1 && (
+              <div className='search-suggestions visible'>
+                <div className='search-loading'>
+                    Nenhuma sugestão encontrada
+                </div>
               </div>
             )}
           </div>
         </div>
 
         {/* Filtro por formato */}
-        <div className="filter-group">
-          <label htmlFor="format-filter">Formato:</label>
-          <select id="format-filter" value={selectedFormat} onChange={handleFormatChange}>
-            <option value="">Todos</option>
-            {Array.isArray(uniqueFormats) && uniqueFormats.map(format => (
-              <option key={format} value={format}>{format}</option>
-            ))}
+        <div className='filter-group'>
+          <label htmlFor='format-filter'>Formato:</label>
+          <select
+            id='format-filter'
+            value={selectedFormat}
+            onChange={handleFormatChange}
+          >
+            <option value=''>Todos</option>
+            {Array.isArray(uniqueFormats) &&
+              uniqueFormats.map(format => (
+                <option key={format} value={format}>
+                  {format}
+                </option>
+              ))}
           </select>
         </div>
 
         {/* Filtro por tema */}
-        <div className="filter-group">
-          <label htmlFor="theme-filter">Tema:</label>
-          <select id="theme-filter" value={selectedTheme} onChange={handleThemeChange}>
-            <option value="">Todos</option>
-            {Array.isArray(uniqueThemes) && uniqueThemes.map(theme => (
-              <option key={theme} value={theme}>{theme}</option>
-            ))}
+        <div className='filter-group'>
+          <label htmlFor='theme-filter'>Tema:</label>
+          <select
+            id='theme-filter'
+            value={selectedTheme}
+            onChange={handleThemeChange}
+          >
+            <option value=''>Todos</option>
+            {Array.isArray(uniqueThemes) &&
+              uniqueThemes.map(theme => (
+                <option key={theme} value={theme}>
+                  {theme}
+                </option>
+              ))}
           </select>
         </div>
 
         {/* Botão para limpar filtros - só aparece se houver filtros ativos */}
         {(selectedFormat || selectedTheme || searchTerm) && (
-          <button onClick={clearFilters} className="clear-filter-button">
+          <button onClick={clearFilters} className='clear-filter-button'>
             Limpar Filtros
           </button>
         )}
       </div>
 
       {/* Lista de estudos */}
-      <div className="content-list">
+      <div className='content-list'>
         {studies.length > 0 ? (
-          studies.map((study) => (
+          studies.map(study => (
             <div key={study._id} style={{ marginBottom: 24 }}>
               <ContentCard
                 title={study.title}
@@ -494,10 +567,14 @@ function Studies() {
                 detailsUrl={`/estudos/${study._id}`}
                 pdfUrl={study.pdfUrl}
                 study={study}
-                rating={ratings[study._id] ? {
-                  average: ratings[study._id].average,
-                  total: ratings[study._id].total
-                } : null}
+                rating={
+                  ratings[study._id]
+                    ? {
+                      average: ratings[study._id].average,
+                      total: ratings[study._id].total,
+                    }
+                    : null
+                }
               />
             </div>
           ))
@@ -508,9 +585,13 @@ function Studies() {
 
       {/* Controles de paginação - só aparecem se houver mais de uma página */}
       {totalPages > 1 && (
-        <div className="pagination-controls">
+        <div className='pagination-controls'>
           {/* Botão página anterior */}
-          <button onClick={goToPreviousPage} disabled={pageFromUrl === 1} className="pagination-button">
+          <button
+            onClick={goToPreviousPage}
+            disabled={pageFromUrl === 1}
+            className='pagination-button'
+          >
             <FontAwesomeIcon icon={faChevronLeft} /> Anterior
           </button>
 
@@ -527,7 +608,11 @@ function Studies() {
           ))}
 
           {/* Botão próxima página */}
-          <button onClick={goToNextPage} disabled={pageFromUrl === totalPages} className="pagination-button">
+          <button
+            onClick={goToNextPage}
+            disabled={pageFromUrl === totalPages}
+            className='pagination-button'
+          >
             Próxima <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>

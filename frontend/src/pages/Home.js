@@ -6,7 +6,11 @@ import { API_ENDPOINTS } from '../config/api';
 import './Home.css';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
-import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
+import {
+  extractSermons,
+  extractStudies,
+  extractBooks,
+} from '../utils/apiResponseHelpers';
 
 /**
  * Componente Home - Página inicial do portfólio pastoral
@@ -85,7 +89,7 @@ const Home = () => {
             description: sermon.description,
             detailsUrl: `/sermoes/${sermon._id}`,
             pdfUrl: sermon.pdfUrl,
-            sermon: sermon
+            sermon,
           });
           setLatestSermon(sermon);
         }
@@ -102,7 +106,7 @@ const Home = () => {
             detailsUrl: `/estudos/${study._id}`,
             pdfUrl: study.pdfUrl,
             speaker: study.speaker,
-            study: study
+            study,
           });
           setLatestStudy(study);
         }
@@ -118,7 +122,7 @@ const Home = () => {
             description: book.description,
             detailsUrl: `/livros/${book._id}`,
             pdfUrl: book.pdfUrl,
-            book: book
+            book,
           });
           setLatestBook(book);
         }
@@ -127,23 +131,25 @@ const Home = () => {
         if (items.length === 0) {
           items.push(
             {
-              id: "redes-sociais-familia-alianca",
-              title: "Redes Sociais: Perigos e Oportunidades para a Família.",
-              type: "Estudo Bíblico",
-              reference: "Ef 4:29, 1 Coríntios 10:31, Romanos 12:2",
-              description: "Uma reflexão sobre o uso das redes sociais à luz da fé cristã.",
-              detailsUrl: "/estudos/redes-sociais-familia-alianca",
-              pdfUrl: "/estudos/redes-sociais-familia-alianca.pdf"
+              id: 'redes-sociais-familia-alianca',
+              title: 'Redes Sociais: Perigos e Oportunidades para a Família.',
+              type: 'Estudo Bíblico',
+              reference: 'Ef 4:29, 1 Coríntios 10:31, Romanos 12:2',
+              description:
+                'Uma reflexão sobre o uso das redes sociais à luz da fé cristã.',
+              detailsUrl: '/estudos/redes-sociais-familia-alianca',
+              pdfUrl: '/estudos/redes-sociais-familia-alianca.pdf',
             },
             {
-              id: "as-institutas-i",
-              title: "Institutas da Religião Cristã - Volume 1",
-              type: "Resumo de Livro",
-              author: "João Calvino",
-              description: "Um resumo estruturado da obra monumental de Calvino.",
-              detailsUrl: "livros/institutas-calvino-resumo",
-              pdfUrl: "/path/to/book-summary-001.pdf"
-            }
+              id: 'as-institutas-i',
+              title: 'Institutas da Religião Cristã - Volume 1',
+              type: 'Resumo de Livro',
+              author: 'João Calvino',
+              description:
+                'Um resumo estruturado da obra monumental de Calvino.',
+              detailsUrl: 'livros/institutas-calvino-resumo',
+              pdfUrl: '/path/to/book-summary-001.pdf',
+            },
           );
         }
 
@@ -160,41 +166,47 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="home-container">
-
+    <div className='home-container'>
       {/* Seção Hero - Apresentação principal */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-text">
+      <section className='hero-section'>
+        <div className='hero-content'>
+          <div className='hero-text'>
             <h1>Bem-vindo!</h1>
-            <p className="hero-subtitle">
-              Sou <b>Giovanni Moreira Guimarães</b>, pastor presbiteriano e entusiasta do ensino bíblico.
-              Minha Jornada de Fé é um testemunho da graça de Deus, de um encontro transformador com Cristo
-              que me conduziu à Igreja. Marcada por um profundo aprendizado e desafios, essa caminhada
-              culminou no chamado ao ministério pastoral. Hoje, com 25 anos de experiência pastoral e
-              sólida formação teológica, minha paixão é o ensino expositivo da Palavra, fundamentado na
-              fé reformada e com um coração missionário, buscando edificar a Igreja e proclamar o Evangelho.
+            <p className='hero-subtitle'>
+              Sou <b>Giovanni Moreira Guimarães</b>, pastor presbiteriano e
+              entusiasta do ensino bíblico. Minha Jornada de Fé é um testemunho
+              da graça de Deus, de um encontro transformador com Cristo que me
+              conduziu à Igreja. Marcada por um profundo aprendizado e desafios,
+              essa caminhada culminou no chamado ao ministério pastoral. Hoje,
+              com 25 anos de experiência pastoral e sólida formação teológica,
+              minha paixão é o ensino expositivo da Palavra, fundamentado na fé
+              reformada e com um coração missionário, buscando edificar a Igreja
+              e proclamar o Evangelho.
             </p>
             <p>
-              Este espaço é dedicado ao compartilhamento de sermões, estudos, análises de livros e outros
-              recursos para edificar sua fé e aprofundar seu conhecimento da Palavra de Deus. Aproveite ao máximo!
+              Este espaço é dedicado ao compartilhamento de sermões, estudos,
+              análises de livros e outros recursos para edificar sua fé e
+              aprofundar seu conhecimento da Palavra de Deus. Aproveite ao
+              máximo!
             </p>
-            <Link to="/sobre" className="hero-button">Saiba Mais Sobre Mim</Link>
+            <Link to='/sobre' className='hero-button'>
+              Saiba Mais Sobre Mim
+            </Link>
           </div>
 
           {/* Foto do pastor */}
-          <div className="hero-image-container">
+          <div className='hero-image-container'>
             <img
               src={profileImageUrl}
-              alt="Foto do Pastor Giovanni Moreira Guimarães"
-              className="hero-photo"
+              alt='Foto do Pastor Giovanni Moreira Guimarães'
+              className='hero-photo'
             />
           </div>
         </div>
       </section>
 
       {/* Seção de Conteúdo em Destaque */}
-      <section className="featured-section">
+      <section className='featured-section'>
         <h2>Conteúdo em Destaque</h2>
 
         {/* Estados de carregamento e erro */}
@@ -202,14 +214,18 @@ const Home = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {/* Lista de itens em destaque */}
-        <div className="featured-list">
-          {featuredItems.map((item) => (
+        <div className='featured-list'>
+          {featuredItems.map(item => (
             <ContentCard
               key={item.id}
               title={item.title}
               type={item.type}
               date={item.date}
-              reference={item.type === 'Resumo de Livro' ? `Por ${item.author}` : item.reference}
+              reference={
+                item.type === 'Resumo de Livro'
+                  ? `Por ${item.author}`
+                  : item.reference
+              }
               description={item.description}
               detailsUrl={item.detailsUrl}
               pdfUrl={item.pdfUrl}
@@ -224,13 +240,22 @@ const Home = () => {
       </section>
 
       {/* --- Seção de Chamada para Ação (CTA) --- */}
-      <section className="cta-section">
+      <section className='cta-section'>
         <h2>Explore Mais</h2>
-        <p>Navegue pelas diferentes seções para encontrar o conteúdo que mais lhe interessa.</p>
-        <div className="cta-buttons">
-          <Link to="/sermoes" className="cta-button">Ver Sermões</Link>
-          <Link to="/estudos" className="cta-button">Ver Estudos</Link>
-          <Link to="/livros" className="cta-button">Ver Livros</Link>
+        <p>
+          Navegue pelas diferentes seções para encontrar o conteúdo que mais lhe
+          interessa.
+        </p>
+        <div className='cta-buttons'>
+          <Link to='/sermoes' className='cta-button'>
+            Ver Sermões
+          </Link>
+          <Link to='/estudos' className='cta-button'>
+            Ver Estudos
+          </Link>
+          <Link to='/livros' className='cta-button'>
+            Ver Livros
+          </Link>
         </div>
       </section>
 
@@ -252,7 +277,6 @@ const Home = () => {
             <Link to="/agenda" className="widget-link">Ver Agenda Completa →</Link>
         </section>
        */}
-
     </div>
   );
 };

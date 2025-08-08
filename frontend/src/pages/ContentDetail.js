@@ -10,7 +10,11 @@ import NotFound from './NotFound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram } from '@fortawesome/free-brands-svg-icons';
-import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
+import {
+  extractSermons,
+  extractStudies,
+  extractBooks,
+} from '../utils/apiResponseHelpers';
 import './ContentDetail.css';
 import {
   FacebookShareButton,
@@ -49,17 +53,23 @@ const ContentDetail = () => {
         if (window.location.pathname.startsWith('/sermoes')) {
           response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(contentId));
           // Para endpoints BY_ID, o dado vem diretamente em response.data.data
-          const sermonData = response.data.success ? response.data.data : response.data;
+          const sermonData = response.data.success
+            ? response.data.data
+            : response.data;
           setSermon(sermonData);
         } else if (window.location.pathname.startsWith('/estudos')) {
           response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(contentId));
           // Para endpoints BY_ID, o dado vem diretamente em response.data.data
-          const studyData = response.data.success ? response.data.data : response.data;
+          const studyData = response.data.success
+            ? response.data.data
+            : response.data;
           setSermon(studyData);
         } else if (window.location.pathname.startsWith('/livros')) {
           response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(contentId));
           // Para endpoints BY_ID, o dado vem diretamente em response.data.data
-          const bookData = response.data.success ? response.data.data : response.data;
+          const bookData = response.data.success
+            ? response.data.data
+            : response.data;
           setSermon(bookData);
         }
       } catch (err) {
@@ -84,11 +94,20 @@ const ContentDetail = () => {
   // Função para compartilhar no Instagram
   const shareOnInstagram = () => {
     // Copia a URL para clipboard e orienta o usuário
-    navigator.clipboard.writeText(`${shareTitle}\n\n${shareUrl}\n\n#SermoesOnline #Biblia #EstudoBiblico`)
+    navigator.clipboard
+      .writeText(
+        `${shareTitle}\n\n${shareUrl}\n\n#SermoesOnline #Biblia #EstudoBiblico`,
+      )
       .then(() => {
-        alert('Link copiado! Cole no Instagram Stories ou post para compartilhar.');
+        alert(
+          'Link copiado! Cole no Instagram Stories ou post para compartilhar.',
+        );
         // Abre o Instagram (se estiver no mobile) ou Instagram Web
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        if (
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent,
+          )
+        ) {
           window.open('instagram://story-camera', '_blank');
         } else {
           window.open('https://www.instagram.com/', '_blank');
@@ -100,62 +119,67 @@ const ContentDetail = () => {
   };
 
   return (
-    <div className="content-detail-container">
+    <div className='content-detail-container'>
       {/* Botão de voltar */}
-      <button onClick={() => navigate(-1)} className="back-button">
+      <button onClick={() => navigate(-1)} className='back-button'>
         <FontAwesomeIcon icon={faArrowLeft} /> Voltar
       </button>
 
       {/* Cabeçalho com título e capa (para livros) */}
-      <div className="content-header-wrapper">
+      <div className='content-header-wrapper'>
         {/* Capa do livro - só aparece para resumos de livros */}
         {sermon.type === 'Resumo de Livro' && sermon.coverImageUrl && (
-          <div className="book-cover-container">
+          <div className='book-cover-container'>
             <img
               src={sermon.coverImageUrl}
               alt={`Capa do livro ${sermon.title}`}
-              className="book-cover-image"
+              className='book-cover-image'
             />
           </div>
         )}
 
         {/* Container para título e metadados */}
-        <div className="title-and-meta-container">
-          <div className="content-meta">
-            <span className="content-type-badge">{sermon.type}</span>
+        <div className='title-and-meta-container'>
+          <div className='content-meta'>
+            <span className='content-type-badge'>{sermon.type}</span>
 
             {/* Metadados específicos para livros */}
             {sermon.type === 'Resumo de Livro' && sermon.author && (
-              <span className="meta-item">Autor: {sermon.author}</span>
+              <span className='meta-item'>Autor: {sermon.author}</span>
             )}
-            {sermon.publisher && <span className="meta-item">Editora: {sermon.publisher}</span>}
-            {sermon.area && <span className="meta-item">Área: {sermon.area}</span>}
+            {sermon.publisher && (
+              <span className='meta-item'>Editora: {sermon.publisher}</span>
+            )}
+            {sermon.area && (
+              <span className='meta-item'>Área: {sermon.area}</span>
+            )}
           </div>
         </div>
       </div>
 
       {/* Metadados para sermões e estudos - aparecem acima do título */}
-      {(['Sermão', 'Estudo', 'sermão', 'estudo'].includes(sermon.type)) && (
-        <div className="content-meta-above-title">
+      {['Sermão', 'Estudo', 'sermão', 'estudo'].includes(sermon.type) && (
+        <div className='content-meta-above-title'>
           {(sermon.author || sermon.speaker) && (
-            <span className="meta-item">
+            <span className='meta-item'>
               Autor: {sermon.author || sermon.speaker}
             </span>
           )}
           {(sermon.reference || sermon.bibleReference) && (
-            <span className="meta-item">
-              {' | Referência: '}{sermon.reference || sermon.bibleReference}
+            <span className='meta-item'>
+              {' | Referência: '}
+              {sermon.reference || sermon.bibleReference}
             </span>
           )}
         </div>
       )}
 
       {/* Título principal do conteúdo */}
-      <h1 className="content-title">{sermon.title}</h1>
+      <h1 className='content-title'>{sermon.title}</h1>
 
       {/* Conteúdo principal em Markdown */}
       {sermon.content && (
-        <div className="content-full-text">
+        <div className='content-full-text'>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {sermon.content}
           </ReactMarkdown>
@@ -163,57 +187,72 @@ const ContentDetail = () => {
       )}
 
       {/* Seção de ações: download, avaliação e compartilhamento */}
-      <div className="content-actions">
+      <div className='content-actions'>
         {/* Botão de download do PDF - só aparece se houver PDF */}
         {sermon.pdfUrl && (
           <a
             href={sermon.pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="action-button download-button"
+            target='_blank'
+            rel='noopener noreferrer'
+            className='action-button download-button'
           >
-            <FontAwesomeIcon icon={faFilePdf} className="icon-before-text" /> Baixar PDF
+            <FontAwesomeIcon icon={faFilePdf} className='icon-before-text' />{' '}
+            Baixar PDF
           </a>
         )}
 
         {/* Avaliação - aparece para livros, estudos e sermões */}
         {sermon.type && (
-          <div className="rating-container">
-            <StarRating 
-              bookId={sermon._id} 
+          <div className='rating-container'>
+            <StarRating
+              bookId={sermon._id}
               apiBase={
-                sermon.type === 'Resumo de Livro' ? '/api/books' : 
-                (sermon.type === 'Sermão' || sermon.type === 'sermão') ? '/api/sermons' : 
-                '/api/studies'
-              } 
+                sermon.type === 'Resumo de Livro'
+                  ? '/api/books'
+                  : sermon.type === 'Sermão' || sermon.type === 'sermão'
+                    ? '/api/sermons'
+                    : '/api/studies'
+              }
             />
           </div>
         )}
 
         {/* Botões de compartilhamento em redes sociais */}
-        <div className="share-buttons-container">
-          <span className="share-label">Compartilhar:</span>
+        <div className='share-buttons-container'>
+          <span className='share-label'>Compartilhar:</span>
 
           {/* Facebook */}
-          <FacebookShareButton url={shareUrl} quote={shareTitle} hashtag="#SermoesOnline">
+          <FacebookShareButton
+            url={shareUrl}
+            quote={shareTitle}
+            hashtag='#SermoesOnline'
+          >
             <FacebookIcon size={32} round />
           </FacebookShareButton>
 
           {/* Twitter */}
-          <TwitterShareButton url={shareUrl} title={shareTitle} hashtags={["Biblia", "EstudoBiblico"]}>
+          <TwitterShareButton
+            url={shareUrl}
+            title={shareTitle}
+            hashtags={['Biblia', 'EstudoBiblico']}
+          >
             <TwitterIcon size={32} round />
           </TwitterShareButton>
 
           {/* WhatsApp */}
-          <WhatsappShareButton url={shareUrl} title={shareTitle} separator=":: ">
+          <WhatsappShareButton
+            url={shareUrl}
+            title={shareTitle}
+            separator=':: '
+          >
             <WhatsappIcon size={32} round />
           </WhatsappShareButton>
 
           {/* Instagram */}
           <button
             onClick={shareOnInstagram}
-            className="instagram-share-button"
-            title="Compartilhar no Instagram"
+            className='instagram-share-button'
+            title='Compartilhar no Instagram'
           >
             <FontAwesomeIcon icon={faInstagram} />
           </button>
@@ -223,7 +262,7 @@ const ContentDetail = () => {
             url={shareUrl}
             title={shareTitle}
             summary={sermon.description}
-            source="Pastor Giovanni - Portfólio Pastoral"
+            source='Pastor Giovanni - Portfólio Pastoral'
           >
             <LinkedinIcon size={32} round />
           </LinkedinShareButton>

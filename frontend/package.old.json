@@ -1,0 +1,59 @@
+{
+  "name": "pastor-portfolio-frontend",
+  "version": "2.3.1",
+  "private": true,
+  "proxy": "http://localhost:3001",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "axios": "^1.10.0",
+    "dompurify": "^3.2.6",
+    "history": "^5.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "^5.0.1",
+    "react-share": "^5.2.2",
+    "remark-gfm": "^4.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "clean": "rm -rf build node_modules",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^13.5.0",
+    "babel-jest": "^27.5.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest-environment-jsdom": "^27.5.1",
+    "prettier": "^3.2.5"
+  },
+  "description": "Frontend React para o portfólio ministerial digital",
+  "keywords": ["react", "frontend", "pastor", "portfolio", "ministerial"],
+  "author": "Pastor Giovanni Moreira Guimarães",
+  "license": "MIT"
+}

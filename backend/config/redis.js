@@ -1,20 +1,52 @@
 const Redis = require('ioredis');
 const { promisify } = require('util');
+const logger = require('./logger');
 
-// Configurações do Redis
+// Configurações do Redis com opções avançadas
 const redisConfig = {
+  // Configurações básicas
   host: process.env.REDIS_HOST || 'localhost',
-  port: process.env.REDIS_PORT || 6379,
+  port: parseInt(process.env.REDIS_PORT, 10) || 6379,
   password: process.env.REDIS_PASSWORD || undefined,
-  db: process.env.REDIS_DB || 0,
-  retryDelayOnFailover: 100,
-  maxRetriesPerRequest: 3,
-  lazyConnect: true,
-  showFriendlyErrorStack: true,
-  keepAlive: 30000,
+  db: parseInt(process.env.REDIS_DB, 10) || 0,
+  
+  // Configurações de reconexão
+  retryStrategy: (times) => {
+    const delay = Math.min(times * 100, 5000); // Aumenta o delay a cada tentativa, até 5s
+    logger.warn(`Tentativa ${times} de reconexão ao Redis em ${delay}ms`);
+    return delay;
+  },
+  reconnectOnError: (err) => {
+    const targetError = 'READONLY';
+    if (err.message.includes(targetError)) {
+      return true; // Reconecta quando o nó é apenas de leitura
+    }
+    return false;
+  },
+  
+  // Timeouts
+  connectTimeout: 10000, // 10 segundos para conectar
+  commandTimeout: 10000, // 10 segundos para comandos
+  
+  // Alta disponibilidade
+  enableOfflineQueue: true, // Permite enfileirar comandos quando offline
+  maxRetriesPerRequest: 5, // Aumenta o número de tentativas
+  
+  // Desempenho
+  keepAlive: 60000, // 1 minuto de keepalive
   family: 4, // IPv4
-  connectTimeout: 10000,
-  commandTimeout: 5000,
+  
+  // Depuração
+  showFriendlyErrorStack: process.env.NODE_ENV !== 'production',
+  enableReadyCheck: true, // Verifica se o Redis está pronto
+  autoResubscribe: true, // Reconecta as subscrições
+  autoResendUnfulfilledCommands: true, // Reenvia comandos não concluídos
+  
+  // Prefixo para todas as chaves
+  keyPrefix: process.env.REDIS_PREFIX || 'pastor-portfolio:',
+  
+  // TLS/SSL (opcional)
+  tls: process.env.REDIS_TLS === 'true' ? {} : undefined,
 };
 
 // Instância principal do Redis

@@ -175,7 +175,10 @@
   font-weight: 500;
   font-size: 1rem;
   text-align: center;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .action-button:hover {
@@ -191,7 +194,10 @@
   background-color: var(--color-gray-light);
   color: var(--color-green-ipb);
   border: 1px solid var(--color-gray-medium);
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .download-button:hover {
@@ -217,14 +223,14 @@
 }
 
 /* Garantir alinhamento uniforme de todos os botões de compartilhamento */
-.share-buttons-container>* {
+.share-buttons-container > * {
   vertical-align: middle;
   flex-shrink: 0;
 }
 
 /* Forçar alinhamento específico para todos os botões de compartilhamento */
 .share-buttons-container button,
-.share-buttons-container>div {
+.share-buttons-container > div {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -248,7 +254,7 @@
 
 /* Botão customizado do Instagram */
 .instagram-share-button {
-  background-color: #E4405F;
+  background-color: #e4405f;
   border: none;
   border-radius: 50%;
   width: 32px;
@@ -289,7 +295,6 @@
 
 /* Dispositivos móveis */
 @media (max-width: 600px) {
-
   /* Layout empilhado para cabeçalho */
   .content-header-wrapper {
     flex-direction: column;

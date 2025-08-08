@@ -7,5 +7,5 @@ import DOMPurify from 'dompurify';
  * @returns {string} - HTML sanitizado
  */
 export function sanitizeHtml(html) {
-    return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 }

@@ -4,7 +4,11 @@ import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
-import { extractSermons, extractStudies, extractBooks } from '../utils/apiResponseHelpers';
+import {
+  extractSermons,
+  extractStudies,
+  extractBooks,
+} from '../utils/apiResponseHelpers';
 import './ListPage.css';
 
 /**
@@ -41,11 +45,12 @@ const SearchResults = () => {
         setLoading(true);
 
         // Busca paralela de todas as coleções
-        const [sermonsResponse, studiesResponse, booksResponse] = await Promise.all([
-          axios.get(API_ENDPOINTS.SERMONS.BASE),
-          axios.get(API_ENDPOINTS.STUDIES.BASE),
-          axios.get(API_ENDPOINTS.BOOKS.BASE)
-        ]);
+        const [sermonsResponse, studiesResponse, booksResponse] =
+          await Promise.all([
+            axios.get(API_ENDPOINTS.SERMONS.BASE),
+            axios.get(API_ENDPOINTS.STUDIES.BASE),
+            axios.get(API_ENDPOINTS.BOOKS.BASE),
+          ]);
 
         // Extrai dados usando helpers de compatibilidade DTO
         const sermonsData = extractSermons(sermonsResponse.data);
@@ -56,7 +61,9 @@ const SearchResults = () => {
         setStudies(Array.isArray(studiesData) ? studiesData : []);
         setBooks(Array.isArray(booksData) ? booksData : []);
       } catch (err) {
-        setError('Erro ao carregar dados para busca. Por favor, tente novamente mais tarde.');
+        setError(
+          'Erro ao carregar dados para busca. Por favor, tente novamente mais tarde.',
+        );
         console.error('Erro ao buscar dados:', err);
       } finally {
         setLoading(false);
@@ -67,23 +74,26 @@ const SearchResults = () => {
   }, []);
 
   // Combina todos os conteúdos e adiciona URLs de detalhes
-  const allContent = useMemo(() => [
-    ...sermons.map(sermon => ({
-      ...sermon,
-      type: 'Sermão',
-      detailsUrl: `/sermoes/${sermon._id}`
-    })),
-    ...studies.map(study => ({
-      ...study,
-      type: 'Estudo',
-      detailsUrl: `/estudos/${study._id}`
-    })),
-    ...books.map(book => ({
-      ...book,
-      type: 'Livro',
-      detailsUrl: `/livros/${book._id}`
-    }))
-  ], [sermons, studies, books]);
+  const allContent = useMemo(
+    () => [
+      ...sermons.map(sermon => ({
+        ...sermon,
+        type: 'Sermão',
+        detailsUrl: `/sermoes/${sermon._id}`,
+      })),
+      ...studies.map(study => ({
+        ...study,
+        type: 'Estudo',
+        detailsUrl: `/estudos/${study._id}`,
+      })),
+      ...books.map(book => ({
+        ...book,
+        type: 'Livro',
+        detailsUrl: `/livros/${book._id}`,
+      })),
+    ],
+    [sermons, studies, books],
+  );
 
   // Filtra os resultados com base no termo de busca
   const filteredResults = useMemo(() => {
@@ -114,7 +124,7 @@ const SearchResults = () => {
   // Estado de carregamento
   if (loading) {
     return (
-      <div className="list-page-container">
+      <div className='list-page-container'>
         <h1>Resultados da Busca</h1>
         <p>Carregando resultados...</p>
       </div>
@@ -124,7 +134,7 @@ const SearchResults = () => {
   // Estado de erro
   if (error) {
     return (
-      <div className="list-page-container">
+      <div className='list-page-container'>
         <h1>Resultados da Busca</h1>
         <p style={{ color: 'red' }}>{error}</p>
       </div>
@@ -132,24 +142,25 @@ const SearchResults = () => {
   }
 
   return (
-    <div className="list-page-container">
+    <div className='list-page-container'>
       <h1>Resultados da Busca</h1>
 
       {/* Descrição dos resultados ou instrução de busca */}
       {searchTerm ? (
-        <p className="list-page-description">
-          Resultados para: <strong>"{searchTerm}"</strong> ({filteredResults.length} encontrados)
+        <p className='list-page-description'>
+          Resultados para: <strong>"{searchTerm}"</strong> (
+          {filteredResults.length} encontrados)
         </p>
       ) : (
-        <p className="list-page-description">
+        <p className='list-page-description'>
           Por favor, digite um termo na barra de busca acima.
         </p>
       )}
 
       {/* Lista de resultados */}
-      <div className="content-list">
-        {filteredResults.length > 0 ? (
-          filteredResults.map((item) => (
+      <div className='content-list'>
+        {filteredResults.length > 0
+          ? filteredResults.map(item => (
             <ContentCard
               key={`${item.type}-${item._id}`}
               title={item.title}
@@ -158,7 +169,11 @@ const SearchResults = () => {
               reference={
                 item.type === 'Livro'
                   ? `Por ${item.author}`
-                  : item.reference || item.bibleReference || item.theme || item.area || ''
+                  : item.reference ||
+                      item.bibleReference ||
+                      item.theme ||
+                      item.area ||
+                      ''
               }
               description={item.description}
               detailsUrl={item.detailsUrl}
@@ -168,25 +183,31 @@ const SearchResults = () => {
               book={item.type === 'Livro' ? item : undefined}
             />
           ))
-        ) : (
-          // Estado vazio - quando há termo de busca mas nenhum resultado
+          : // Estado vazio - quando há termo de busca mas nenhum resultado
           searchTerm && (
-            <div className="empty-state-container">
+            <div className='empty-state-container'>
               <h2>Nenhum resultado para "{searchTerm}"</h2>
               <p>Tente palavras-chave diferentes ou explore nossas seções:</p>
-              <div className="empty-state-actions">
-                <Link to="/sermoes" className="empty-state-button">Ver Sermões</Link>
-                <Link to="/estudos" className="empty-state-button">Ver Estudos</Link>
-                <Link to="/livros" className="empty-state-button">Ver Livros</Link>
+              <div className='empty-state-actions'>
+                <Link to='/sermoes' className='empty-state-button'>
+                    Ver Sermões
+                </Link>
+                <Link to='/estudos' className='empty-state-button'>
+                    Ver Estudos
+                </Link>
+                <Link to='/livros' className='empty-state-button'>
+                    Ver Livros
+                </Link>
               </div>
             </div>
-          )
-        )}
+          )}
       </div>
 
       {/* Botão para voltar à página inicial */}
       <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-        <Link to="/" className="hero-button">Voltar para Home</Link>
+        <Link to='/' className='hero-button'>
+          Voltar para Home
+        </Link>
       </div>
     </div>
   );

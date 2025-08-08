@@ -75,7 +75,9 @@
   border-radius: 8px;
   font-weight: bold;
   font-size: 1.1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
 }
 
 .hero-button:hover {
@@ -230,7 +232,6 @@
 /* ========== RESPONSIVIDADE ========== */
 /* Tablets */
 @media (max-width: 768px) {
-
   /* Hero section responsiva */
   .hero-content {
     flex-direction: column;
@@ -338,7 +339,7 @@
 }
 
 /* Animação sutil para os cards em destaque */
-.featured-list>* {
+.featured-list > * {
   animation: slideUp 0.6s ease-out forwards;
 }
 

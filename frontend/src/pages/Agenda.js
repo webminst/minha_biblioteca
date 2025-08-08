@@ -5,7 +5,7 @@ import SupportSection from '../components/SupportSection/SupportSection';
 
 /**
  * Componente Agenda - Página de calendário pastoral
- * Exibe o calendário do Google incorporado com eventos públicos, 
+ * Exibe o calendário do Google incorporado com eventos públicos,
  * pregações e compromissos pastorais
  */
 const Agenda = () => {
@@ -22,26 +22,30 @@ const Agenda = () => {
   `;
 
   return (
-    <div className="agenda-page">
+    <div className='agenda-page'>
       {/* Cabeçalho da página com título e descrição */}
-      <header className="agenda-header">
+      <header className='agenda-header'>
         <h1>Agenda Pastoral</h1>
-        <p>Confira os próximos eventos públicos, pregações e compromissos pastorais.</p>
+        <p>
+          Confira os próximos eventos públicos, pregações e compromissos
+          pastorais.
+        </p>
       </header>
 
       {/* Container do calendário Google incorporado */}
-      <section className="calendar-section">
+      <section className='calendar-section'>
         <div
-          className="google-calendar-container"
+          className='google-calendar-container'
           dangerouslySetInnerHTML={{ __html: googleCalendarEmbedCode }}
         />
       </section>
 
       {/* Informações adicionais sobre o calendário */}
-      <footer className="agenda-footer">
+      <footer className='agenda-footer'>
         <p>
           <strong>Nota:</strong> Este calendário mostra apenas eventos públicos.
-          Para participar de algum evento ou obter mais informações, entre em contato.
+          Para participar de algum evento ou obter mais informações, entre em
+          contato.
         </p>
       </footer>
 

@@ -10,19 +10,19 @@
  * @param {Object|Array} responseData - Dados da resposta da API
  * @returns {Array} - Array de sermões
  */
-export const extractSermons = (responseData) => {
-    // Formato novo (DTO): responseData.data
-    if (responseData.success && responseData.data) {
-        return Array.isArray(responseData.data) ? responseData.data : [];
-    }
+export const extractSermons = responseData => {
+  // Formato novo (DTO): responseData.data
+  if (responseData.success && responseData.data) {
+    return Array.isArray(responseData.data) ? responseData.data : [];
+  }
 
-    // Formato intermediário: responseData.sermons
-    if (responseData.sermons) {
-        return Array.isArray(responseData.sermons) ? responseData.sermons : [];
-    }
+  // Formato intermediário: responseData.sermons
+  if (responseData.sermons) {
+    return Array.isArray(responseData.sermons) ? responseData.sermons : [];
+  }
 
-    // Formato antigo: array direto
-    return Array.isArray(responseData) ? responseData : [];
+  // Formato antigo: array direto
+  return Array.isArray(responseData) ? responseData : [];
 };
 
 /**
@@ -30,19 +30,19 @@ export const extractSermons = (responseData) => {
  * @param {Object|Array} responseData - Dados da resposta da API
  * @returns {Array} - Array de estudos
  */
-export const extractStudies = (responseData) => {
-    // Formato novo (DTO): responseData.data
-    if (responseData.success && responseData.data) {
-        return Array.isArray(responseData.data) ? responseData.data : [];
-    }
+export const extractStudies = responseData => {
+  // Formato novo (DTO): responseData.data
+  if (responseData.success && responseData.data) {
+    return Array.isArray(responseData.data) ? responseData.data : [];
+  }
 
-    // Formato intermediário: responseData.studies
-    if (responseData.studies) {
-        return Array.isArray(responseData.studies) ? responseData.studies : [];
-    }
+  // Formato intermediário: responseData.studies
+  if (responseData.studies) {
+    return Array.isArray(responseData.studies) ? responseData.studies : [];
+  }
 
-    // Formato antigo: array direto
-    return Array.isArray(responseData) ? responseData : [];
+  // Formato antigo: array direto
+  return Array.isArray(responseData) ? responseData : [];
 };
 
 /**
@@ -50,19 +50,19 @@ export const extractStudies = (responseData) => {
  * @param {Object|Array} responseData - Dados da resposta da API
  * @returns {Array} - Array de livros
  */
-export const extractBooks = (responseData) => {
-    // Formato novo (DTO): responseData.data
-    if (responseData.success && responseData.data) {
-        return Array.isArray(responseData.data) ? responseData.data : [];
-    }
+export const extractBooks = responseData => {
+  // Formato novo (DTO): responseData.data
+  if (responseData.success && responseData.data) {
+    return Array.isArray(responseData.data) ? responseData.data : [];
+  }
 
-    // Formato intermediário: responseData.books
-    if (responseData.books) {
-        return Array.isArray(responseData.books) ? responseData.books : [];
-    }
+  // Formato intermediário: responseData.books
+  if (responseData.books) {
+    return Array.isArray(responseData.books) ? responseData.books : [];
+  }
 
-    // Formato antigo: array direto
-    return Array.isArray(responseData) ? responseData : [];
+  // Formato antigo: array direto
+  return Array.isArray(responseData) ? responseData : [];
 };
 
 /**
@@ -70,8 +70,8 @@ export const extractBooks = (responseData) => {
  * @param {Object} responseData - Dados da resposta da API
  * @returns {Object|null} - Objeto de paginação ou null se não existir
  */
-export const extractPagination = (responseData) => {
-    return responseData.pagination || null;
+export const extractPagination = responseData => {
+  return responseData.pagination || null;
 };
 
 /**
@@ -79,8 +79,8 @@ export const extractPagination = (responseData) => {
  * @param {Object} responseData - Dados da resposta da API
  * @returns {Object} - Objeto com filtros aplicados
  */
-export const extractFilters = (responseData) => {
-    return responseData.filters || {};
+export const extractFilters = responseData => {
+  return responseData.filters || {};
 };
 
 /**
@@ -90,27 +90,27 @@ export const extractFilters = (responseData) => {
  * @returns {Object} - Objeto com dados, paginação e filtros
  */
 export const extractApiData = (responseData, type) => {
-    let data = [];
+  let data = [];
 
-    switch (type) {
-        case 'sermons':
-            data = extractSermons(responseData);
-            break;
-        case 'studies':
-            data = extractStudies(responseData);
-            break;
-        case 'books':
-            data = extractBooks(responseData);
-            break;
-        default:
-            data = Array.isArray(responseData) ? responseData : [];
-    }
+  switch (type) {
+  case 'sermons':
+    data = extractSermons(responseData);
+    break;
+  case 'studies':
+    data = extractStudies(responseData);
+    break;
+  case 'books':
+    data = extractBooks(responseData);
+    break;
+  default:
+    data = Array.isArray(responseData) ? responseData : [];
+  }
 
-    return {
-        data,
-        pagination: extractPagination(responseData),
-        filters: extractFilters(responseData)
-    };
+  return {
+    data,
+    pagination: extractPagination(responseData),
+    filters: extractFilters(responseData),
+  };
 };
 
 /**
@@ -118,6 +118,6 @@ export const extractApiData = (responseData, type) => {
  * @param {string} type - Tipo de dados (sermons, studies, books)
  * @returns {Function} - Função para processar resposta da API
  */
-export const useApiResponseProcessor = (type) => {
-    return (responseData) => extractApiData(responseData, type);
+export const useApiResponseProcessor = type => {
+  return responseData => extractApiData(responseData, type);
 };

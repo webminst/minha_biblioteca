@@ -132,7 +132,10 @@
   font-weight: bold;
   cursor: pointer;
   text-align: center;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* Hover do botão */

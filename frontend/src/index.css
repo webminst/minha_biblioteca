@@ -8,11 +8,11 @@
 /* ========== VARIÁVEIS ESPECÍFICAS DO TEMA ========== */
 :root {
   /* Cores do tema */
-  --color-white: #FFFFFF;
+  --color-white: #ffffff;
   --color-gray-light: #f0f0f0;
   --color-gray-medium: #a9a9a9;
   --color-gray-dark: #333333;
-  --color-green-ipb: #006A4E;
+  --color-green-ipb: #006a4e;
 
   /* Fontes específicas do projeto */
   --font-primary: 'Open Sans', sans-serif;
@@ -20,11 +20,14 @@
 }
 
 /* ========== CONFIGURAÇÃO BASE DO BODY ========== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;

@@ -129,7 +129,6 @@
 /* ========== RESPONSIVIDADE ========== */
 /* Ajustes para dispositivos móveis */
 @media (max-width: 600px) {
-
   /* Layout empilhado para intro em telas pequenas */
   .about-intro {
     flex-direction: column;

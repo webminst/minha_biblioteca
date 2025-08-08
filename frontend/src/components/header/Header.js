@@ -11,9 +11,9 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleSearchChange = (e) => setSearchTerm(e.target.value);
+  const handleSearchChange = e => setSearchTerm(e.target.value);
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = e => {
     e.preventDefault();
     const trimmedSearchTerm = searchTerm.trim();
     if (trimmedSearchTerm) {
@@ -23,22 +23,24 @@ const Header = () => {
     }
   };
 
-  const toggleMobileMenu = (e) => {
+  const toggleMobileMenu = e => {
     e?.stopPropagation();
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   // Fechar menu ao clicar fora
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = e => {
       const menu = document.querySelector('.main-nav');
       const button = document.querySelector('.mobile-menu-toggle');
 
-      if (isMobileMenuOpen &&
+      if (
+        isMobileMenuOpen &&
         menu &&
         button &&
         !menu.contains(e.target) &&
-        !button.contains(e.target)) {
+        !button.contains(e.target)
+      ) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -54,7 +56,7 @@ const Header = () => {
 
   // Adiciona scroll suave para os links de navegação
   useEffect(() => {
-    const handleLinkClick = (e) => {
+    const handleLinkClick = e => {
       // Verifica se o clique foi em um link de âncora
       if (e.target.matches('a[href^="#"]')) {
         e.preventDefault();
@@ -64,7 +66,7 @@ const Header = () => {
         if (targetElement) {
           targetElement.scrollIntoView({
             behavior: 'smooth',
-            block: 'start'
+            block: 'start',
           });
 
           // Fecha o menu móvel se estiver aberto
@@ -103,11 +105,18 @@ const Header = () => {
   useEffect(() => {
     const updateLogo = () => {
       const isDark = document.body.classList.contains('dark');
-      setLogoSrc(isDark ? '/images/minha-biblioteca-dark.png' : '/images/minha-biblioteca-white.png');
+      setLogoSrc(
+        isDark
+          ? '/images/minha-biblioteca-dark.png'
+          : '/images/minha-biblioteca-white.png',
+      );
     };
     updateLogo();
     const observer = new MutationObserver(updateLogo);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
     return () => observer.disconnect();
   }, []);
 
@@ -117,16 +126,16 @@ const Header = () => {
       <div
         className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`}
         onClick={toggleMobileMenu}
-        aria-hidden="true"
+        aria-hidden='true'
       />
-      <header className="app-header">
-        <div className="header-content">
-          <div className="logo-container">
-            <Link to="/">
+      <header className='app-header'>
+        <div className='header-content'>
+          <div className='logo-container'>
+            <Link to='/'>
               <img
                 src={logoSrc}
-                alt="Logo Minha Biblioteca"
-                className="header-logo"
+                alt='Logo Minha Biblioteca'
+                className='header-logo'
               />
             </Link>
           </div>
@@ -136,49 +145,140 @@ const Header = () => {
             aria-label={isMobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={isMobileMenuOpen}
           >
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
+            <span className='bar'></span>
+            <span className='bar'></span>
+            <span className='bar'></span>
           </button>
 
           <nav className={`main-nav ${isMobileMenuOpen ? 'open' : ''}`}>
             <ul>
-              <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink></li>
-              <li><NavLink to="/sermoes" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sermões</NavLink></li>
-              <li><NavLink to="/estudos" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Estudos</NavLink></li>
-              <li><NavLink to="/livros" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Livros</NavLink></li>
-              <li><NavLink to="/biblia" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Bíblia</NavLink></li>
-              <li><NavLink to="/agenda" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Agenda</NavLink></li>
-              <li><NavLink to="/sobre" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Sobre</NavLink></li>
-              <li><NavLink to="/contato" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Contato</NavLink></li>
-              <li><NavLink to="/apoie" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Apoie</NavLink></li>
-              <li><NavLink to="/login" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsMobileMenuOpen(false)}>Login</NavLink></li>
+              <li>
+                <NavLink
+                  to='/'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/sermoes'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sermões
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/estudos'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Estudos
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/livros'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Livros
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/biblia'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Bíblia
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/agenda'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Agenda
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/sobre'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sobre
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/contato'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contato
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/apoie'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Apoie
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to='/login'
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Login
+                </NavLink>
+              </li>
             </ul>
-            <form onSubmit={handleSearchSubmit} className="search-form-mobile">
+            <form onSubmit={handleSearchSubmit} className='search-form-mobile'>
               <input
-                type="search"
-                placeholder="Buscar..."
+                type='search'
+                placeholder='Buscar...'
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="header-search-input"
-                aria-label="Buscar no site"
+                className='header-search-input'
+                aria-label='Buscar no site'
               />
-              <button type="submit" className="header-search-button" aria-label="Buscar">
+              <button
+                type='submit'
+                className='header-search-button'
+                aria-label='Buscar'
+              >
                 <FontAwesomeIcon icon={faSearch} />
               </button>
             </form>
           </nav>
 
-          <form onSubmit={handleSearchSubmit} className="search-form desktop-search">
+          <form
+            onSubmit={handleSearchSubmit}
+            className='search-form desktop-search'
+          >
             <input
-              type="search"
-              placeholder="Buscar..."
+              type='search'
+              placeholder='Buscar...'
               value={searchTerm}
               onChange={handleSearchChange}
-              className="header-search-input"
-              aria-label="Buscar no site"
+              className='header-search-input'
+              aria-label='Buscar no site'
             />
-            <button type="submit" className="header-search-button" aria-label="Buscar">
+            <button
+              type='submit'
+              className='header-search-button'
+              aria-label='Buscar'
+            >
               <FontAwesomeIcon icon={faSearch} />
             </button>
           </form>

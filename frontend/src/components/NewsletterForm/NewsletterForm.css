@@ -52,14 +52,17 @@
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .newsletter-button:hover:not(:disabled) {
   background-color: var(--color-green-ipb);
   color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 .newsletter-button:disabled {
   background-color: var(--color-gray-medium);
@@ -81,7 +84,8 @@
   .newsletter-form {
     flex-direction: column;
   }
-  .newsletter-input, .newsletter-button {
+  .newsletter-input,
+  .newsletter-button {
     width: auto;
     max-width: 350px;
     min-width: 120px;

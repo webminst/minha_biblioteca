@@ -38,16 +38,16 @@ const Contact = () => {
   });
 
   // Handler para mudanças no formulário de contato
-  const handleContactChange = (e) => {
+  const handleContactChange = e => {
     const { name, value } = e.target;
-    setContactFormData((prevData) => ({
+    setContactFormData(prevData => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   // Handler para envio do formulário de contato
-  const handleContactSubmit = async (e) => {
+  const handleContactSubmit = async e => {
     e.preventDefault();
     setContactStatus({ submitting: true, succeeded: false, error: null });
 
@@ -69,30 +69,36 @@ const Contact = () => {
         setContactFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         const data = await response.json();
-        const errorMessage = data.errors?.map((err) => err.message).join(', ') || 'Ocorreu um erro ao enviar.';
-        setContactStatus({ submitting: false, succeeded: false, error: errorMessage });
+        const errorMessage =
+          data.errors?.map(err => err.message).join(', ') ||
+          'Ocorreu um erro ao enviar.';
+        setContactStatus({
+          submitting: false,
+          succeeded: false,
+          error: errorMessage,
+        });
       }
     } catch (error) {
       console.error('Erro no envio do formulário de contato:', error);
       setContactStatus({
         submitting: false,
         succeeded: false,
-        error: 'Não foi possível conectar ao servidor. Tente novamente.'
+        error: 'Não foi possível conectar ao servidor. Tente novamente.',
       });
     }
   };
 
   // Handler para mudanças no formulário de oração
-  const handlePrayerChange = (e) => {
+  const handlePrayerChange = e => {
     const { name, value } = e.target;
-    setPrayerFormData((prevData) => ({
+    setPrayerFormData(prevData => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   // Handler para envio do formulário de oração
-  const handlePrayerSubmit = async (e) => {
+  const handlePrayerSubmit = async e => {
     e.preventDefault();
     setPrayerStatus({ submitting: true, succeeded: false, error: null });
 
@@ -108,7 +114,7 @@ const Contact = () => {
         },
         body: JSON.stringify({
           ...prayerFormData,
-          name: prayerFormData.name || 'Anônimo'
+          name: prayerFormData.name || 'Anônimo',
         }),
       });
 
@@ -117,46 +123,54 @@ const Contact = () => {
         setPrayerFormData({ name: '', request: '' });
       } else {
         const data = await response.json();
-        const errorMessage = data.errors?.map((err) => err.message).join(', ') || 'Ocorreu um erro ao enviar.';
-        setPrayerStatus({ submitting: false, succeeded: false, error: errorMessage });
+        const errorMessage =
+          data.errors?.map(err => err.message).join(', ') ||
+          'Ocorreu um erro ao enviar.';
+        setPrayerStatus({
+          submitting: false,
+          succeeded: false,
+          error: errorMessage,
+        });
       }
     } catch (error) {
       console.error('Erro no envio do formulário de oração:', error);
       setPrayerStatus({
         submitting: false,
         succeeded: false,
-        error: 'Não foi possível conectar ao servidor. Tente novamente.'
+        error: 'Não foi possível conectar ao servidor. Tente novamente.',
       });
     }
   };
 
   return (
-    <div className="contact-container">
+    <div className='contact-container'>
       <h1>Contato</h1>
 
       {/* Seção de informações de contato direto */}
-      <section className="contact-info">
+      <section className='contact-info'>
         <h2>Informações</h2>
         <p>
           Para entrar em contato diretamente, envie um e-mail para: <br />
-          <a href="mailto:webminst@hotmail.com">webminst@hotmail.com</a>
+          <a href='mailto:webminst@hotmail.com'>webminst@hotmail.com</a>
         </p>
       </section>
 
-      <hr className="section-divider" />
+      <hr className='section-divider' />
 
       {/* Formulário de contato geral */}
-      <section className="form-section">
+      <section className='form-section'>
         <h2>Envie sua Mensagem</h2>
         <form onSubmit={handleContactSubmit}>
           {/* Campo Nome */}
-          <div className="form-group">
-            <label htmlFor="contact-name" className="form-label">Nome:</label>
+          <div className='form-group'>
+            <label htmlFor='contact-name' className='form-label'>
+              Nome:
+            </label>
             <input
-              type="text"
-              id="contact-name"
-              name="name"
-              className="form-input"
+              type='text'
+              id='contact-name'
+              name='name'
+              className='form-input'
               value={contactFormData.name}
               onChange={handleContactChange}
               required
@@ -165,13 +179,15 @@ const Contact = () => {
           </div>
 
           {/* Campo E-mail */}
-          <div className="form-group">
-            <label htmlFor="contact-email" className="form-label">E-mail:</label>
+          <div className='form-group'>
+            <label htmlFor='contact-email' className='form-label'>
+              E-mail:
+            </label>
             <input
-              type="email"
-              id="contact-email"
-              name="email"
-              className="form-input"
+              type='email'
+              id='contact-email'
+              name='email'
+              className='form-input'
               value={contactFormData.email}
               onChange={handleContactChange}
               required
@@ -180,13 +196,15 @@ const Contact = () => {
           </div>
 
           {/* Campo Assunto */}
-          <div className="form-group">
-            <label htmlFor="contact-subject" className="form-label">Assunto:</label>
+          <div className='form-group'>
+            <label htmlFor='contact-subject' className='form-label'>
+              Assunto:
+            </label>
             <input
-              type="text"
-              id="contact-subject"
-              name="subject"
-              className="form-input"
+              type='text'
+              id='contact-subject'
+              name='subject'
+              className='form-input'
               value={contactFormData.subject}
               onChange={handleContactChange}
               required
@@ -195,13 +213,15 @@ const Contact = () => {
           </div>
 
           {/* Campo Mensagem */}
-          <div className="form-group">
-            <label htmlFor="contact-message" className="form-label">Mensagem:</label>
+          <div className='form-group'>
+            <label htmlFor='contact-message' className='form-label'>
+              Mensagem:
+            </label>
             <textarea
-              id="contact-message"
-              name="message"
-              className="form-textarea"
-              rows="5"
+              id='contact-message'
+              name='message'
+              className='form-textarea'
+              rows='5'
               value={contactFormData.message}
               onChange={handleContactChange}
               required
@@ -211,42 +231,56 @@ const Contact = () => {
 
           {/* Mensagens de status do formulário de contato */}
           {contactStatus.succeeded && (
-            <p className="form-status success">Mensagem enviada com sucesso! Obrigado.</p>
+            <p className='form-status success'>
+              Mensagem enviada com sucesso! Obrigado.
+            </p>
           )}
           {contactStatus.error && (
-            <p className="form-status error">Erro: {contactStatus.error}</p>
+            <p className='form-status error'>Erro: {contactStatus.error}</p>
           )}
 
           {/* Botão de envio */}
-          <button type="submit" className="form-button" disabled={contactStatus.submitting}>
-            {contactStatus.submitting ? 'Enviando...' : (
+          <button
+            type='submit'
+            className='form-button'
+            disabled={contactStatus.submitting}
+          >
+            {contactStatus.submitting ? (
+              'Enviando...'
+            ) : (
               <>
-                Enviar Mensagem <FontAwesomeIcon icon={faPaperPlane} className="icon-after-text" />
+                Enviar Mensagem{' '}
+                <FontAwesomeIcon
+                  icon={faPaperPlane}
+                  className='icon-after-text'
+                />
               </>
             )}
           </button>
         </form>
       </section>
 
-      <hr className="section-divider" />
+      <hr className='section-divider' />
 
       {/* Formulário de pedido de oração */}
-      <section className="form-section">
+      <section className='form-section'>
         <h2>Pedido de Oração</h2>
-        <p className="prayer-note">
-          Seu pedido será tratado com respeito e confidencialidade pela equipe pastoral.
-          Deixar o nome é opcional.
+        <p className='prayer-note'>
+          Seu pedido será tratado com respeito e confidencialidade pela equipe
+          pastoral. Deixar o nome é opcional.
         </p>
 
         <form onSubmit={handlePrayerSubmit}>
           {/* Campo Nome (opcional) */}
-          <div className="form-group">
-            <label htmlFor="prayer-name" className="form-label">Nome (Opcional):</label>
+          <div className='form-group'>
+            <label htmlFor='prayer-name' className='form-label'>
+              Nome (Opcional):
+            </label>
             <input
-              type="text"
-              id="prayer-name"
-              name="name"
-              className="form-input"
+              type='text'
+              id='prayer-name'
+              name='name'
+              className='form-input'
               value={prayerFormData.name}
               onChange={handlePrayerChange}
               disabled={prayerStatus.submitting}
@@ -254,13 +288,15 @@ const Contact = () => {
           </div>
 
           {/* Campo Pedido de Oração */}
-          <div className="form-group">
-            <label htmlFor="prayer-request" className="form-label">Seu Pedido:</label>
+          <div className='form-group'>
+            <label htmlFor='prayer-request' className='form-label'>
+              Seu Pedido:
+            </label>
             <textarea
-              id="prayer-request"
-              name="request"
-              className="form-textarea"
-              rows="5"
+              id='prayer-request'
+              name='request'
+              className='form-textarea'
+              rows='5'
               value={prayerFormData.request}
               onChange={handlePrayerChange}
               required
@@ -270,17 +306,29 @@ const Contact = () => {
 
           {/* Mensagens de status do formulário de oração */}
           {prayerStatus.succeeded && (
-            <p className="form-status success">Pedido de oração enviado com sucesso.</p>
+            <p className='form-status success'>
+              Pedido de oração enviado com sucesso.
+            </p>
           )}
           {prayerStatus.error && (
-            <p className="form-status error">Erro: {prayerStatus.error}</p>
+            <p className='form-status error'>Erro: {prayerStatus.error}</p>
           )}
 
           {/* Botão de envio */}
-          <button type="submit" className="form-button" disabled={prayerStatus.submitting}>
-            {prayerStatus.submitting ? 'Enviando...' : (
+          <button
+            type='submit'
+            className='form-button'
+            disabled={prayerStatus.submitting}
+          >
+            {prayerStatus.submitting ? (
+              'Enviando...'
+            ) : (
               <>
-                Enviar Pedido <FontAwesomeIcon icon={faPaperPlane} className="icon-after-text" />
+                Enviar Pedido{' '}
+                <FontAwesomeIcon
+                  icon={faPaperPlane}
+                  className='icon-after-text'
+                />
               </>
             )}
           </button>

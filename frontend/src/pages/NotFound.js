@@ -9,22 +9,22 @@ import './NotFound.css';
  */
 const NotFound = () => {
   return (
-    <div className="not-found-container">
+    <div className='not-found-container'>
       {/* Ícone ou ilustração de erro */}
-      <div className="error-icon">
-        <span className="error-number">404</span>
+      <div className='error-icon'>
+        <span className='error-number'>404</span>
       </div>
 
       {/* Mensagem principal de erro */}
-      <h1 className="error-title">Página Não Encontrada</h1>
+      <h1 className='error-title'>Página Não Encontrada</h1>
 
       {/* Mensagem explicativa */}
-      <p className="error-message">
+      <p className='error-message'>
         Desculpe, a página que você está procurando não existe ou foi removida.
       </p>
 
       {/* Sugestões para o usuário */}
-      <div className="error-suggestions">
+      <div className='error-suggestions'>
         <p>Você pode:</p>
         <ul>
           <li>Verificar se o endereço foi digitado corretamente</li>
@@ -34,14 +34,14 @@ const NotFound = () => {
       </div>
 
       {/* Botões de navegação */}
-      <div className="error-actions">
-        <Link to="/" className="primary-button">
+      <div className='error-actions'>
+        <Link to='/' className='primary-button'>
           Página Inicial
         </Link>
-        <Link to="/sermoes" className="secondary-button">
+        <Link to='/sermoes' className='secondary-button'>
           Ver Sermões
         </Link>
-        <Link to="/estudos" className="secondary-button">
+        <Link to='/estudos' className='secondary-button'>
           Ver Estudos
         </Link>
       </div>

@@ -13,16 +13,18 @@ const StudyService = {
     try {
       const response = await axios.get(API_ENDPOINTS.STUDIES.SUGGESTIONS, {
         params: { term, limit },
-        headers: authHeader()
+        headers: authHeader(),
       });
-      
+
       // Retorna as sugestões formatadas
-      return response.data.data || {
-        titles: [],
-        themes: [],
-        references: [],
-        formats: []
-      };
+      return (
+        response.data.data || {
+          titles: [],
+          themes: [],
+          references: [],
+          formats: [],
+        }
+      );
     } catch (error) {
       console.error('Erro ao buscar sugestões de estudos:', error);
       // Retorna um objeto vazio em caso de erro
@@ -30,7 +32,7 @@ const StudyService = {
         titles: [],
         themes: [],
         references: [],
-        formats: []
+        formats: [],
       };
     }
   },
@@ -44,7 +46,7 @@ const StudyService = {
     try {
       const response = await axios.get(API_ENDPOINTS.STUDIES.BASE, {
         params,
-        headers: authHeader()
+        headers: authHeader(),
       });
       return response.data;
     } catch (error) {
@@ -61,7 +63,7 @@ const StudyService = {
   async getById(id) {
     try {
       const response = await axios.get(API_ENDPOINTS.STUDIES.BY_ID(id), {
-        headers: authHeader()
+        headers: authHeader(),
       });
       return response.data;
     } catch (error) {
@@ -115,14 +117,14 @@ const StudyService = {
     try {
       const response = await axios.get(API_ENDPOINTS.STUDIES.LATEST, {
         params: { limit },
-        headers: authHeader()
+        headers: authHeader(),
       });
       return response.data.data || [];
     } catch (error) {
       console.error('Erro ao buscar estudos recentes:', error);
       return [];
     }
-  }
+  },
 };
 
 export default StudyService;

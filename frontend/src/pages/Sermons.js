@@ -5,9 +5,12 @@ import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
 import StarRating from '../components/StarRating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from 'react-router-dom';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
 import { extractSermons, extractPagination } from '../utils/apiResponseHelpers';
@@ -27,7 +30,7 @@ function Sermons() {
 
   // Extrai página atual da URL
   const query = new URLSearchParams(location.search);
-  const pageFromUrl = parseInt(query.get("page") || "1", 10);
+  const pageFromUrl = parseInt(query.get('page') || '1', 10);
 
   // Estados para dados e controles
   const [sermons, setSermons] = useState([]);
@@ -49,11 +52,15 @@ function Sermons() {
   const [isSearching, setIsSearching] = useState(false);
 
   // Busca as avaliações de um sermão
-  const fetchSermonRatings = async (sermonId) => {
+  const fetchSermonRatings = async sermonId => {
     try {
-      const response = await fetch(`${API_ENDPOINTS.SERMONS.BASE}/${sermonId}/ratings`);
+      const response = await fetch(
+        `${API_ENDPOINTS.SERMONS.BASE}/${sermonId}/ratings`,
+      );
       if (!response.ok) {
-        throw new Error(`Erro ao carregar avaliações para o sermão ${sermonId}`);
+        throw new Error(
+          `Erro ao carregar avaliações para o sermão ${sermonId}`,
+        );
       }
       const data = await response.json();
       // Garante que a resposta tem o formato esperado
@@ -63,38 +70,44 @@ function Sermons() {
       }
       return data.dados || { average: null, total: 0 };
     } catch (err) {
-      console.error(`Erro ao carregar avaliações para o sermão ${sermonId}:`, err);
+      console.error(
+        `Erro ao carregar avaliações para o sermão ${sermonId}:`,
+        err,
+      );
       return { average: null, total: 0 };
     }
   };
 
   // Busca as avaliações para todos os sermões
-  const fetchAllRatings = async (sermonsList) => {
+  const fetchAllRatings = async sermonsList => {
     if (!Array.isArray(sermonsList) || sermonsList.length === 0) {
       return {};
     }
 
     const ratingsMap = {};
-    
+
     // Cria um array de promessas para buscar as avaliações em paralelo
-    const ratingPromises = sermonsList.map(async (sermon) => {
+    const ratingPromises = sermonsList.map(async sermon => {
       try {
         const ratingData = await fetchSermonRatings(sermon._id);
         return { id: sermon._id, data: ratingData };
       } catch (error) {
-        console.error(`Erro ao buscar avaliações para o sermão ${sermon._id}:`, error);
+        console.error(
+          `Erro ao buscar avaliações para o sermão ${sermon._id}:`,
+          error,
+        );
         return { id: sermon._id, data: { average: null, total: 0 } };
       }
     });
 
     // Aguarda todas as requisições serem concluídas
     const ratings = await Promise.all(ratingPromises);
-    
+
     // Preenche o mapa de avaliações
     ratings.forEach(({ id, data }) => {
       ratingsMap[id] = data;
     });
-    
+
     return ratingsMap;
   };
 
@@ -107,7 +120,7 @@ function Sermons() {
         // Constrói parâmetros da query
         const params = {
           page: pageFromUrl,
-          limit: ITEMS_PER_PAGE
+          limit: ITEMS_PER_PAGE,
         };
 
         if (selectedBook) params.book = selectedBook;
@@ -115,7 +128,9 @@ function Sermons() {
         if (selectedSpeaker) params.speaker = selectedSpeaker;
         if (searchTerm) params.search = searchTerm;
 
-        const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, { params });
+        const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, {
+          params,
+        });
 
         // Usa helpers para extrair dados e paginação
         console.log('[Sermons] API response:', response.data);
@@ -123,7 +138,7 @@ function Sermons() {
         const paginationData = extractPagination(response.data);
         console.log('[Sermons] sermonsData:', sermonsData);
         console.log('[Sermons] paginationData:', paginationData);
-        
+
         // Atualiza a lista de sermões e paginação
         setSermons(sermonsData);
         setPagination(paginationData);
@@ -134,7 +149,9 @@ function Sermons() {
 
         console.log('Dados dos sermões carregados:', sermonsData);
       } catch (err) {
-        setError('Erro ao carregar os sermões. Por favor, tente novamente mais tarde.');
+        setError(
+          'Erro ao carregar os sermões. Por favor, tente novamente mais tarde.',
+        );
         console.error('Erro ao buscar sermões:', err);
       } finally {
         setLoading(false);
@@ -162,33 +179,44 @@ function Sermons() {
   }, [location.search]);
 
   // Função para navegar entre páginas mantendo filtros
-  const goToPage = (pageNumber) => {
-    navigate(`${location.pathname}?page=${pageNumber}${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+  const goToPage = pageNumber => {
+    navigate(
+      `${location.pathname}?page=${pageNumber}${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
   // Busca sugestões de busca no backend ou usa busca local como fallback
-  const generateSearchSuggestions = async (term) => {
+  const generateSearchSuggestions = async term => {
     if (!term.trim()) return [];
 
     try {
       // Tenta buscar sugestões no backend primeiro
-      const response = await axios.get(`${API_ENDPOINTS.SERMONS.BASE}/suggestions`, {
-        params: { q: term, limit: 5 },
-        validateStatus: status => status >= 200 && status < 500
-      });
+      const response = await axios.get(
+        `${API_ENDPOINTS.SERMONS.BASE}/suggestions`,
+        {
+          params: { q: term, limit: 5 },
+          validateStatus: status => status >= 200 && status < 500,
+        },
+      );
 
       // Verifica se a resposta tem o formato esperado
       if (response.status === 200) {
         if (Array.isArray(response.data)) {
           return response.data;
-        } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        } else if (
+          response.data &&
+          response.data.success &&
+          Array.isArray(response.data.data)
+        ) {
           return response.data.data;
         }
       }
 
       // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
       // Usa busca global como fallback
-      console.warn('Usando busca global para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.');
+      console.warn(
+        'Usando busca global para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.',
+      );
       return await generateGlobalSearchSuggestions(term);
     } catch (error) {
       console.error('Erro ao buscar sugestões:', error);
@@ -198,15 +226,17 @@ function Sermons() {
   };
 
   // Busca sugestões globalmente na API (fallback global)
-  const generateGlobalSearchSuggestions = async (term) => {
+  const generateGlobalSearchSuggestions = async term => {
     if (!term.trim()) return [];
     try {
       // Busca os primeiros 100 sermões que contenham o termo
       const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, {
         params: { search: term, page: 1, limit: 100 },
-        validateStatus: status => status >= 200 && status < 500
+        validateStatus: status => status >= 200 && status < 500,
       });
-      const sermonsList = Array.isArray(response.data.data) ? response.data.data : [];
+      const sermonsList = Array.isArray(response.data.data)
+        ? response.data.data
+        : [];
       const lowerTerm = term.toLowerCase();
       const suggestions = new Set();
       for (let i = 0; i < sermonsList.length; i++) {
@@ -217,7 +247,10 @@ function Sermons() {
         if (sermon.series && sermon.series.toLowerCase().includes(lowerTerm)) {
           suggestions.add(sermon.series);
         }
-        if (sermon.speaker && sermon.speaker.toLowerCase().includes(lowerTerm)) {
+        if (
+          sermon.speaker &&
+          sermon.speaker.toLowerCase().includes(lowerTerm)
+        ) {
           suggestions.add(sermon.speaker);
         }
         if (suggestions.size >= 5) break;
@@ -230,23 +263,29 @@ function Sermons() {
   };
 
   // Handlers para mudança de filtros
-  const handleBookChange = (e) => {
+  const handleBookChange = e => {
     setSelectedBook(e.target.value);
-    navigate(`${location.pathname}?page=1${e.target.value ? `&book=${e.target.value}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    navigate(
+      `${location.pathname}?page=1${e.target.value ? `&book=${e.target.value}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
-  const handleSeriesChange = (e) => {
+  const handleSeriesChange = e => {
     setSelectedSeries(e.target.value);
-    navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${e.target.value ? `&series=${e.target.value}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    navigate(
+      `${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${e.target.value ? `&series=${e.target.value}` : ''}${selectedSpeaker ? `&speaker=${selectedSpeaker}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
-  const handleSpeakerChange = (e) => {
+  const handleSpeakerChange = e => {
     setSelectedSpeaker(e.target.value);
-    navigate(`${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${e.target.value ? `&speaker=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`);
+    navigate(
+      `${location.pathname}?page=1${selectedBook ? `&book=${selectedBook}` : ''}${selectedSeries ? `&series=${selectedSeries}` : ''}${e.target.value ? `&speaker=${e.target.value}` : ''}${searchTerm ? `&search=${searchTerm}` : ''}`,
+    );
   };
 
   // Atualiza o termo de busca local
-  const handleSearchChange = async (e) => {
+  const handleSearchChange = async e => {
     const value = e.target.value;
     setLocalSearchTerm(value);
 
@@ -296,7 +335,7 @@ function Sermons() {
   };
 
   // Aplica a busca quando o usuário pressiona Enter
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (e.key === 'Enter') {
       applySearch();
     }
@@ -318,20 +357,33 @@ function Sermons() {
       try {
         console.log('Buscando opções de filtro...');
         // Busca séries, pregadores e livros bíblicos diretamente dos endpoints da API
-        const [seriesResponse, speakersResponse, booksResponse] = await Promise.all([
-          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/series`),
-          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/speakers`),
-          axios.get(`${API_ENDPOINTS.SERMONS.BASE}/books`)
-        ]);
+        const [seriesResponse, speakersResponse, booksResponse] =
+          await Promise.all([
+            axios.get(`${API_ENDPOINTS.SERMONS.BASE}/series`),
+            axios.get(`${API_ENDPOINTS.SERMONS.BASE}/speakers`),
+            axios.get(`${API_ENDPOINTS.SERMONS.BASE}/books`),
+          ]);
 
         console.log('Resposta da API - Séries:', seriesResponse);
         console.log('Resposta da API - Pregadores:', speakersResponse);
         console.log('Resposta da API - Livros:', booksResponse);
 
         // Extrai dados dos filtros, verificando se é DTO ou formato antigo
-        const series = seriesResponse.data.success ? seriesResponse.data.data : (Array.isArray(seriesResponse.data) ? seriesResponse.data : []);
-        const speakers = speakersResponse.data.success ? speakersResponse.data.data : (Array.isArray(speakersResponse.data) ? speakersResponse.data : []);
-        const books = booksResponse.data.success ? booksResponse.data.data : (Array.isArray(booksResponse.data) ? booksResponse.data : []);
+        const series = seriesResponse.data.success
+          ? seriesResponse.data.data
+          : Array.isArray(seriesResponse.data)
+            ? seriesResponse.data
+            : [];
+        const speakers = speakersResponse.data.success
+          ? speakersResponse.data.data
+          : Array.isArray(speakersResponse.data)
+            ? speakersResponse.data
+            : [];
+        const books = booksResponse.data.success
+          ? booksResponse.data.data
+          : Array.isArray(booksResponse.data)
+            ? booksResponse.data
+            : [];
 
         console.log('Séries extraídas:', series);
         console.log('Pregadores extraídos:', speakers);
@@ -373,49 +425,55 @@ function Sermons() {
   if (sermons.length === 0) return <p>Nenhum sermão encontrado.</p>;
 
   return (
-    <div className="list-page-container">
+    <div className='list-page-container'>
       {/* Cabeçalho da página */}
       <h1>Sermões</h1>
-      <p className="list-page-description">
-        Você pode usar, copiar ou distribuir estes esboços desde que o faça gratuitamente.
+      <p className='list-page-description'>
+        Você pode usar, copiar ou distribuir estes esboços desde que o faça
+        gratuitamente.
         <i>"De graça recebestes, de graça dai"</i> (Mateus 10:8).
       </p>
 
       {/* Controles de filtro */}
-      <div className="filter-controls">
+      <div className='filter-controls'>
         {/* Campo de busca */}
-        <div className="filter-group">
-          <label htmlFor="search-filter">Buscar:</label>
+        <div className='filter-group'>
+          <label htmlFor='search-filter'>Buscar:</label>
           <div style={{ position: 'relative' }}>
             <input
-              id="search-filter"
-              type="text"
-              placeholder="Buscar por título, pregador, referência..."
+              id='search-filter'
+              type='text'
+              placeholder='Buscar por título, pregador, referência...'
               value={localSearchTerm}
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
-              onFocus={() => localSearchTerm.length > 1 && setShowSuggestions(true)}
+              onFocus={() =>
+                localSearchTerm.length > 1 && setShowSuggestions(true)
+              }
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               className={`search-input ${localSearchTerm ? 'search-active' : ''}`}
-              autoComplete="off"
+              autoComplete='off'
             />
-            <div className="search-icon-container">
+            <div className='search-icon-container'>
               {isSearching ? (
-                <div className="spinner-border spinner-border-sm text-muted" role="status">
-                  <span className="visually-hidden">Carregando...</span>
+                <div
+                  className='spinner-border spinner-border-sm text-muted'
+                  role='status'
+                >
+                  <span className='visually-hidden'>Carregando...</span>
                 </div>
               ) : (
-                <i className="fas fa-search"></i>
+                <i className='fas fa-search'></i>
               )}
             </div>
 
             {/* Sugestões de busca */}
             {showSuggestions && searchSuggestions.length > 0 && (
-              <div className="search-suggestions visible">
+              <div className='search-suggestions visible'>
                 {searchSuggestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className="suggestion-item"
+                    className='suggestion-item'
                     onMouseDown={() => {
                       setLocalSearchTerm(suggestion);
                       applySearch(suggestion);
@@ -427,58 +485,84 @@ function Sermons() {
               </div>
             )}
 
-            {showSuggestions && searchSuggestions.length === 0 && localSearchTerm.length > 1 && (
-              <div className="search-suggestions visible">
-                <div className="search-loading">Nenhuma sugestão encontrada</div>
+            {showSuggestions &&
+              searchSuggestions.length === 0 &&
+              localSearchTerm.length > 1 && (
+              <div className='search-suggestions visible'>
+                <div className='search-loading'>
+                    Nenhuma sugestão encontrada
+                </div>
               </div>
             )}
           </div>
         </div>
 
         {/* Filtro por livro bíblico */}
-        <div className="filter-group">
-          <label htmlFor="book-filter">Livro Bíblico:</label>
-          <select id="book-filter" value={selectedBook} onChange={handleBookChange}>
-            <option value="">Todos</option>
+        <div className='filter-group'>
+          <label htmlFor='book-filter'>Livro Bíblico:</label>
+          <select
+            id='book-filter'
+            value={selectedBook}
+            onChange={handleBookChange}
+          >
+            <option value=''>Todos</option>
             {uniqueBooks.map(book => (
-              <option key={book} value={book}>{book}</option>
+              <option key={book} value={book}>
+                {book}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Filtro por série */}
-        <div className="filter-group">
-          <label htmlFor="series-filter">Série:</label>
-          <select id="series-filter" value={selectedSeries} onChange={handleSeriesChange}>
-            <option value="">Todas</option>
+        <div className='filter-group'>
+          <label htmlFor='series-filter'>Série:</label>
+          <select
+            id='series-filter'
+            value={selectedSeries}
+            onChange={handleSeriesChange}
+          >
+            <option value=''>Todas</option>
             {uniqueSeries.map(series => (
-              <option key={series} value={series}>{series}</option>
+              <option key={series} value={series}>
+                {series}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Filtro por pregador */}
-        <div className="filter-group">
-          <label htmlFor="speaker-filter">Pregador:</label>
-          <select id="speaker-filter" value={selectedSpeaker} onChange={handleSpeakerChange}>
-            <option value="">Todos</option>
+        <div className='filter-group'>
+          <label htmlFor='speaker-filter'>Pregador:</label>
+          <select
+            id='speaker-filter'
+            value={selectedSpeaker}
+            onChange={handleSpeakerChange}
+          >
+            <option value=''>Todos</option>
             {uniqueSpeakers.map(speaker => (
-              <option key={speaker} value={speaker}>{speaker}</option>
+              <option key={speaker} value={speaker}>
+                {speaker}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Botão para limpar filtros - só aparece se houver filtros ativos */}
         {(selectedBook || selectedSeries || selectedSpeaker || searchTerm) && (
-          <button onClick={clearFilters} className="clear-filter-button">
+          <button onClick={clearFilters} className='clear-filter-button'>
             Limpar Filtros
           </button>
         )}
       </div>
 
       {/* Controles de paginação */}
-      <div className="pagination-controls">
-        <button onClick={goToPreviousPage} disabled={pageFromUrl === 1} className="pagination-button">
+      <div className='pagination-controls'>
+        <button
+          onClick={goToPreviousPage}
+          disabled={pageFromUrl === 1}
+          className='pagination-button'
+        >
           <FontAwesomeIcon icon={faChevronLeft} /> Anterior
         </button>
 
@@ -495,28 +579,36 @@ function Sermons() {
         ))}
 
         {/* Botão próxima página */}
-        <button onClick={goToNextPage} disabled={pageFromUrl === totalPages} className="pagination-button">
+        <button
+          onClick={goToNextPage}
+          disabled={pageFromUrl === totalPages}
+          className='pagination-button'
+        >
           Próxima <FontAwesomeIcon icon={faChevronRight} />
         </button>
       </div>
 
       {/* Lista de sermões */}
-      <div className="content-list">
+      <div className='content-list'>
         {sermons.length > 0 ? (
-          sermons.map((sermon) => (
+          sermons.map(sermon => (
             <div key={sermon._id} style={{ marginBottom: 24 }}>
               <ContentCard
                 title={sermon.title}
-                type="Sermão"
+                type='Sermão'
                 reference={sermon.reference || sermon.book}
                 description={sermon.description}
                 detailsUrl={`/sermoes/${sermon._id}`}
                 pdfUrl={sermon.pdfUrl}
                 sermon={sermon}
-                rating={ratings[sermon._id] ? {
-                  average: ratings[sermon._id].average,
-                  total: ratings[sermon._id].total
-                } : null}
+                rating={
+                  ratings[sermon._id]
+                    ? {
+                      average: ratings[sermon._id].average,
+                      total: ratings[sermon._id].total,
+                    }
+                    : null
+                }
               />
             </div>
           ))

@@ -7,16 +7,16 @@ import './BiblePage.css';
  * Integra o componente BibleSearch com layout completo
  */
 const BiblePage = () => {
-    return (
-        <div className="bible-page">
-            <div className="bible-content">
-                {/* Seção de busca principal */}
-                <section className="search-section">
-                    <BibleSearchSimple />
-                </section>
-            </div>
-        </div>
-    );
+  return (
+    <div className='bible-page'>
+      <div className='bible-content'>
+        {/* Seção de busca principal */}
+        <section className='search-section'>
+          <BibleSearchSimple />
+        </section>
+      </div>
+    </div>
+  );
 };
 
 export default BiblePage;

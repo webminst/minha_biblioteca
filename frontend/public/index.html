@@ -1,53 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+  <head>
+    <!-- Configuração básica -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#006a4e" />
 
-<head>
-  <!-- Configuração básica -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#006a4e" />
+    <!-- SEO e Meta Tags -->
+    <title>Minha Biblioteca</title>
+    <meta
+      name="description"
+      content="Portfólio pastoral com sermões, estudos bíblicos e resumos de livros do Pastor Giovanni Moreira Guimarães - Igreja Presbiteriana do Brasil"
+    />
+    <meta
+      name="keywords"
+      content="pastor, sermões, estudos bíblicos, IPB, Igreja Presbiteriana, teologia reformada"
+    />
+    <meta name="author" content="Giovanni Moreira Guimarães" />
 
-  <!-- SEO e Meta Tags -->
-  <title>Minha Biblioteca</title>
-  <meta name="description"
-    content="Portfólio pastoral com sermões, estudos bíblicos e resumos de livros do Pastor Giovanni Moreira Guimarães - Igreja Presbiteriana do Brasil" />
-  <meta name="keywords" content="pastor, sermões, estudos bíblicos, IPB, Igreja Presbiteriana, teologia reformada" />
-  <meta name="author" content="Giovanni Moreira Guimarães" />
+    <!-- Open Graph para redes sociais -->
+    <meta
+      property="og:title"
+      content="Pastor Giovanni Moreira Guimarães - Portfólio Pastoral"
+    />
+    <meta
+      property="og:description"
+      content="Sermões, estudos bíblicos e recursos teológicos"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://seudominio.com" />
+    <meta property="og:image" content="%PUBLIC_URL%/images/pastor-foto.jpeg" />
 
-  <!-- Open Graph para redes sociais -->
-  <meta property="og:title" content="Pastor Giovanni Moreira Guimarães - Portfólio Pastoral" />
-  <meta property="og:description" content="Sermões, estudos bíblicos e recursos teológicos" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://seudominio.com" />
-  <meta property="og:image" content="%PUBLIC_URL%/images/pastor-foto.jpeg" />
+    <!-- Ícones e Manifesto -->
+    <link rel="icon" href="%PUBLIC_URL%/minha-biblioteca-logo.png" />
+    <link
+      rel="apple-touch-icon"
+      href="%PUBLIC_URL%/minha-biblioteca-logo.png"
+    />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-  <!-- Ícones e Manifesto -->
-  <link rel="icon" href="%PUBLIC_URL%/minha-biblioteca-logo.png" />
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/minha-biblioteca-logo.png" />
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-  <!-- Fontes do Google -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap"
-    rel="stylesheet">
-</head>
+  <body>
+    <!-- Fallback para usuários sem JavaScript -->
+    <noscript>
+      Você precisa habilitar JavaScript para executar esta aplicação.
+    </noscript>
 
-<body>
-  <!-- Fallback para usuários sem JavaScript -->
-  <noscript>
-    Você precisa habilitar JavaScript para executar esta aplicação.
-  </noscript>
+    <!-- Container principal da aplicação React -->
+    <div id="root"></div>
 
-  <!-- Container principal da aplicação React -->
-  <div id="root"></div>
-
-  <!-- 
+    <!-- 
     Esta aplicação React será injetada no elemento #root acima.
     Para começar o desenvolvimento, execute `npm start` ou `yarn start`.
     Para criar um build de produção, execute `npm run build` ou `yarn build`.
-  -->
-</body>
-
+  --></body>
 </html>

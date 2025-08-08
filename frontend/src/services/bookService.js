@@ -13,16 +13,18 @@ const BookService = {
     try {
       const response = await axios.get(API_ENDPOINTS.BOOKS.SUGGESTIONS, {
         params: { term, limit },
-        headers: authHeader()
+        headers: authHeader(),
       });
-      
+
       // Retorna as sugestões formatadas
-      return response.data.data || {
-        titles: [],
-        authors: [],
-        areas: [],
-        publishers: []
-      };
+      return (
+        response.data.data || {
+          titles: [],
+          authors: [],
+          areas: [],
+          publishers: [],
+        }
+      );
     } catch (error) {
       console.error('Erro ao buscar sugestões de livros:', error);
       // Retorna um objeto vazio em caso de erro
@@ -30,7 +32,7 @@ const BookService = {
         titles: [],
         authors: [],
         areas: [],
-        publishers: []
+        publishers: [],
       };
     }
   },
@@ -44,7 +46,7 @@ const BookService = {
     try {
       const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, {
         params,
-        headers: authHeader()
+        headers: authHeader(),
       });
       return response.data;
     } catch (error) {
@@ -61,7 +63,7 @@ const BookService = {
   async getById(id) {
     try {
       const response = await axios.get(API_ENDPOINTS.BOOKS.BY_ID(id), {
-        headers: authHeader()
+        headers: authHeader(),
       });
       return response.data;
     } catch (error) {
@@ -143,7 +145,7 @@ const BookService = {
     try {
       const response = await axios.get(API_ENDPOINTS.BOOKS.LATEST, {
         params: { limit },
-        headers: authHeader()
+        headers: authHeader(),
       });
       return response.data.data || [];
     } catch (error) {
@@ -164,7 +166,7 @@ const BookService = {
       const response = await axios.post(
         `${API_ENDPOINTS.BOOKS.BASE}/${bookId}/rate`,
         { stars, deviceId },
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
       return response.data;
     } catch (error) {
@@ -182,7 +184,7 @@ const BookService = {
     try {
       const response = await axios.get(
         `${API_ENDPOINTS.BOOKS.BASE}/${bookId}/ratings`,
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
       return response.data;
     } catch (error) {
@@ -190,7 +192,7 @@ const BookService = {
       // Retorna valores padrão em caso de erro
       return { average: null, total: 0 };
     }
-  }
+  },
 };
 
 export default BookService;

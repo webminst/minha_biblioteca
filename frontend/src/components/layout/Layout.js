@@ -6,9 +6,9 @@ import './Layout.css';
 
 const Layout = () => {
   return (
-    <div className="layout-container">
+    <div className='layout-container'>
       <Header />
-      <main className="main-content">
+      <main className='main-content'>
         <Outlet />
       </main>
       <Footer />
