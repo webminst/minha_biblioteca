@@ -4,6 +4,8 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { extractSermons } from '../../utils/apiResponseHelpers';
+import { useToast } from '../Toast/ToastContainer';
+import ConfirmationDialog from '../shared/ConfirmationDialog';
 import './AdminList.css'; // CSS geral para listas admin
 
 function AdminSermonsList() {
@@ -14,7 +16,10 @@ function AdminSermonsList() {
   const [sortedSermons, setSortedSermons] = useState([]); // Estado para sermões ordenados
   const [currentPage, setCurrentPage] = useState(1); // Página atual
   const [pageSize, setPageSize] = useState(10); // Itens por página
+  const [sermonToDelete, setSermonToDelete] = useState(null); // Armazena o sermão a ser excluído
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false); // Controla a exibição do diálogo
   const navigate = useNavigate(); // Hook para navegação
+  const { addToast } = useToast(); // Hook para notificações
 
   const fetchSermons = async () => {
     setLoading(true);
@@ -47,27 +52,47 @@ function AdminSermonsList() {
     fetchSermons();
   }, []);
 
-  const handleDelete = async id => {
-    if (window.confirm('Tem certeza que deseja excluir este sermão?')) {
-      try {
-        const token = localStorage.getItem('userToken');
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        await axios.delete(API_ENDPOINTS.SERMONS.BY_ID(id), config);
-        // Atualiza a lista removendo o sermão excluído
-        const updatedSermons = sermons.filter(sermon => sermon._id !== id);
-        setSermons(updatedSermons);
-        alert('Sermão excluído com sucesso!');
-      } catch (err) {
-        setError(
-          `Erro ao excluir sermão: ${
-            err.response?.data?.message || err.message}`,
-        );
-        console.error('Erro ao excluir sermão:', err);
-      }
+  // Abre o diálogo de confirmação para exclusão
+  const confirmDelete = (id) => {
+    setSermonToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  // Cancela a exclusão
+  const cancelDelete = () => {
+    setSermonToDelete(null);
+    setShowDeleteDialog(false);
+  };
+
+  // Executa a exclusão após confirmação
+  const handleDelete = async () => {
+    if (!sermonToDelete) return;
+
+    try {
+      const token = localStorage.getItem('userToken');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      await axios.delete(API_ENDPOINTS.SERMONS.BY_ID(sermonToDelete), config);
+
+      // Atualiza a lista removendo o sermão excluído
+      const updatedSermons = sermons.filter(sermon => sermon._id !== sermonToDelete);
+      setSermons(updatedSermons);
+
+      // Mostra mensagem de sucesso
+      addToast('Sermão excluído com sucesso!', 'success');
+
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message;
+      addToast(`Erro ao excluir sermão: ${errorMessage}`, 'error');
+      console.error('Erro ao excluir sermão:', err);
+    } finally {
+      // Fecha o diálogo e limpa o estado
+      setSermonToDelete(null);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -284,10 +309,11 @@ function AdminSermonsList() {
                       Editar
                     </Link>
                     <button
-                      onClick={() => handleDelete(sermon._id)}
-                      className='btn-delete'
+                      onClick={() => confirmDelete(sermon._id)}
+                      className='delete-button'
+                      title='Excluir sermão'
                     >
-                      Excluir
+                      🗑️ Excluir
                     </button>
                   </td>
                 </tr>
@@ -312,6 +338,18 @@ function AdminSermonsList() {
           </div>
         </>
       )}
+
+      {/* Diálogo de confirmação de exclusão */}
+      <ConfirmationDialog
+        isOpen={showDeleteDialog}
+        onClose={cancelDelete}
+        onConfirm={handleDelete}
+        title="Confirmar Exclusão"
+        message="Tem certeza que deseja excluir este sermão? Esta ação não pode ser desfeita."
+        confirmText="Sim, Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

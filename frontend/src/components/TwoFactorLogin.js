@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './TwoFactorLogin.css';
 
 const TwoFactorLogin = ({
@@ -13,6 +13,24 @@ const TwoFactorLogin = ({
   const [code, setCode] = useState('');
   const [useBackupCode, setUseBackupCode] = useState(isBackupCodeMode);
   const [countdown, setCountdown] = useState(0);
+
+  // Refs para os campos de entrada
+  const totpInputRef = useRef(null);
+  const backupInputRef = useRef(null);
+
+  // Efeito para gerenciar o foco nos campos de entrada
+  useEffect(() => {
+    // Timeout para garantir que o foco seja aplicado após a renderização
+    const timer = setTimeout(() => {
+      if (useBackupCode && backupInputRef.current) {
+        backupInputRef.current.focus();
+      } else if (!useBackupCode && totpInputRef.current) {
+        totpInputRef.current.focus();
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [useBackupCode]);
 
   // Countdown para reenvio (se necessário no futuro)
   useEffect(() => {
@@ -149,7 +167,7 @@ const TwoFactorLogin = ({
                     className='verification-input totp-input'
                     maxLength={6}
                     disabled={loading}
-                    autoFocus
+                    ref={totpInputRef}
                     autoComplete='one-time-code'
                   />
                   <div className='input-helper'>
@@ -178,7 +196,7 @@ const TwoFactorLogin = ({
                     className='verification-input backup-input'
                     maxLength={8}
                     disabled={loading}
-                    autoFocus
+                    ref={backupInputRef}
                     autoComplete='off'
                   />
                   <div className='input-helper'>

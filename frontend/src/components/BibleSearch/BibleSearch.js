@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useToast } from '../Toast/ToastContainer';
 import {
   fetchVerse,
   validateReference,
@@ -15,12 +16,14 @@ import './BibleSearch.css';
 
 const BibleSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [translation, setTranslation] = useState('ara');
   const [currentReference, setCurrentReference] = useState('');
-  const [translation, setTranslation] = useState('almeida');
-  const [isValidating, setIsValidating] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
+  const [isValidating, setIsValidating] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
+  const { addToast } = useToast();
 
   // Sugestões de referências populares
   const popularReferences = [
@@ -51,12 +54,13 @@ const BibleSearch = () => {
         setSearchTerm('');
         setShowSuggestions(false);
       } else {
-        alert(
+        addToast(
           'Referência bíblica não encontrada. Verifique a formatação e tente novamente.',
+          'error',
         );
       }
     } catch (error) {
-      alert(`Erro ao validar referência: ${error.message}`);
+      addToast(`Erro ao validar referência: ${error.message}`, 'error');
     } finally {
       setIsValidating(false);
     }
@@ -73,7 +77,7 @@ const BibleSearch = () => {
         addToHistory(randomVerse.reference);
       }
     } catch (error) {
-      alert(`Erro ao buscar versículo aleatório: ${error.message}`);
+      addToast(`Erro ao buscar versículo aleatório: ${error.message}`, 'error');
     } finally {
       setIsValidating(false);
     }

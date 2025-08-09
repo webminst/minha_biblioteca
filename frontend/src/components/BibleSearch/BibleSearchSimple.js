@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useToast } from '../Toast/ToastContainer';
 import {
   fetchVerse,
   fetchRandomVerse,
@@ -15,6 +16,7 @@ const BibleSearchSimple = () => {
   const [verse, setVerse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { addToast } = useToast();
 
   const handleSearch = async e => {
     e.preventDefault();
@@ -114,7 +116,7 @@ const BibleSearchSimple = () => {
               navigator.clipboard.writeText(
                 `"${verse.text}" - ${verse.reference}`,
               );
-              alert('Versículo copiado para a área de transferência!');
+              addToast('Versículo copiado para a área de transferência!', 'success');
             }}
           >
             📋 Copiar Versículo

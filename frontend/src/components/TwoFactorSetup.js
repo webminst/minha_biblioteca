@@ -1,12 +1,14 @@
 // frontend/src/components/TwoFactorSetup.js
 import { useState, useEffect } from 'react';
 import authService from '../services/authService';
+import { useToast } from './Toast/ToastContainer';
 import './TwoFactorSetup.css';
 
 const TwoFactorSetup = ({ user, onComplete, onCancel }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { addToast } = useToast();
 
   // Estado do setup
   const [setupData, setSetupData] = useState({
@@ -101,7 +103,10 @@ const TwoFactorSetup = ({ user, onComplete, onCancel }) => {
   const copyBackupCodes = () => {
     const codesText = setupData.backupCodes.join('\n');
     navigator.clipboard.writeText(codesText).then(() => {
-      alert('Códigos copiados para a área de transferência!');
+      addToast('Códigos copiados para a área de transferência!', 'success');
+    }).catch(err => {
+      console.error('Erro ao copiar códigos:', err);
+      addToast('Erro ao copiar códigos. Por favor, tente novamente.', 'error');
     });
   };
 

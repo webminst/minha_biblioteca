@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className='app-footer'>
       {/* Remover NewsletterSection e SupportSection */}
-      <p>&copy; 2024 Pastor Portfolio. Todos os direitos reservados.</p>
+      <p>{'©'} 2024 Pastor Portfolio. Todos os direitos reservados.</p>
     </footer>
   );
 };

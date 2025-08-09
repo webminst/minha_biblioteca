@@ -4,6 +4,8 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { extractStudies } from '../../utils/apiResponseHelpers';
+import { useToast } from '../Toast/ToastContainer';
+import ConfirmationDialog from '../shared/ConfirmationDialog';
 import './AdminList.css'; // Reutiliza o CSS geral de listas admin
 
 function AdminStudiesList() {
@@ -14,7 +16,10 @@ function AdminStudiesList() {
   const [sortedStudies, setSortedStudies] = useState([]); // Estado para estudos ordenados
   const [currentPage, setCurrentPage] = useState(1); // Página atual
   const [pageSize, setPageSize] = useState(10); // Itens por página
+  const [studyToDelete, setStudyToDelete] = useState(null); // Armazena o estudo a ser excluído
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false); // Controla a exibição do diálogo
   const navigate = useNavigate(); // Hook para navegação
+  const { addToast } = useToast(); // Hook para notificações
 
   const fetchStudies = async () => {
     setLoading(true);
@@ -47,27 +52,47 @@ function AdminStudiesList() {
     fetchStudies();
   }, []); // O array vazio [] garante que a busca ocorra apenas uma vez ao montar o componente
 
-  const handleDelete = async id => {
-    if (window.confirm('Tem certeza que deseja excluir este estudo?')) {
-      try {
-        const token = localStorage.getItem('userToken');
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        await axios.delete(API_ENDPOINTS.STUDIES.BY_ID(id), config);
-        // Atualiza a lista removendo o estudo excluído
-        const updatedStudies = studies.filter(study => study._id !== id);
-        setStudies(updatedStudies);
-        alert('Estudo excluído com sucesso!');
-      } catch (err) {
-        setError(
-          `Erro ao excluir estudo: ${
-            err.response?.data?.message || err.message}`,
-        );
-        console.error('Erro ao excluir estudo:', err);
-      }
+  // Abre o diálogo de confirmação para exclusão
+  const confirmDelete = (id) => {
+    setStudyToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  // Cancela a exclusão
+  const cancelDelete = () => {
+    setStudyToDelete(null);
+    setShowDeleteDialog(false);
+  };
+
+  // Executa a exclusão após confirmação
+  const handleDelete = async () => {
+    if (!studyToDelete) return;
+
+    try {
+      const token = localStorage.getItem('userToken');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      await axios.delete(API_ENDPOINTS.STUDIES.BY_ID(studyToDelete), config);
+
+      // Atualiza a lista removendo o estudo excluído
+      const updatedStudies = studies.filter(study => study._id !== studyToDelete);
+      setStudies(updatedStudies);
+
+      // Mostra mensagem de sucesso
+      addToast('Estudo excluído com sucesso!', 'success');
+
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message;
+      addToast(`Erro ao excluir estudo: ${errorMessage}`, 'error');
+      console.error('Erro ao excluir estudo:', err);
+    } finally {
+      // Fecha o diálogo e limpa o estado
+      setStudyToDelete(null);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -274,10 +299,11 @@ function AdminStudiesList() {
                       Editar
                     </Link>
                     <button
-                      onClick={() => handleDelete(study._id)}
-                      className='btn-delete'
+                      onClick={() => confirmDelete(study._id)}
+                      className='delete-button'
+                      title='Excluir estudo'
                     >
-                      Excluir
+                      🗑️ Excluir
                     </button>
                   </td>
                 </tr>
@@ -302,6 +328,18 @@ function AdminStudiesList() {
           </div>
         </>
       )}
+
+      {/* Diálogo de confirmação de exclusão */}
+      <ConfirmationDialog
+        isOpen={showDeleteDialog}
+        onClose={cancelDelete}
+        onConfirm={handleDelete}
+        title="Confirmar Exclusão"
+        message="Tem certeza que deseja excluir este estudo? Esta ação não pode ser desfeita."
+        confirmText="Sim, Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

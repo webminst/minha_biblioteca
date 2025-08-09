@@ -134,7 +134,6 @@ const BOOK_MAPPING_PT = {
   lc: 'lc',
   joao: 'jo',
   joão: 'jo',
-  jo: 'jo',
   atos: 'at',
   at: 'at',
   romanos: 'rm',

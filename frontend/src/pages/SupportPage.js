@@ -1,7 +1,7 @@
 // src/pages/SupportPage.js
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { useToast } from '../components/Toast/ToastContainer';
 import './SupportPage.css';
 
 /**
@@ -10,33 +10,42 @@ import './SupportPage.css';
  * Inclui funcionalidade para copiar chave PIX para área de transferência
  */
 const SupportPage = () => {
+  const { addToast } = useToast();
+
   // Dados para contribuição via PIX - obtidos de variáveis de ambiente
-  const pixKey = process.env.REACT_APP_PIX_KEY || 'webminst@hotmail.com';
-  const bankName = process.env.REACT_APP_BANK_NAME || 'Caixa Econômica Federal';
+  const pixKey = import.meta.env.VITE_APP_PIX_KEY || 'webminst@hotmail.com';
+  const bankName = import.meta.env.VITE_APP_BANK_NAME || 'Caixa Econômica Federal';
   const accountHolderName =
-    process.env.REACT_APP_ACCOUNT_HOLDER || 'Pastor Giovanni Moreira Guimarães';
+    import.meta.env.VITE_APP_ACCOUNT_HOLDER || 'Pastor Giovanni Moreira Guimarães';
 
   // Verificação se as informações sensíveis estão configuradas
   const isPixConfigured = pixKey && pixKey !== 'sua_chave_pix_aqui';
 
   // Função para copiar chave PIX para área de transferência
-  const copyToClipboard = () => {
+  const handleCopyToClipboard = async () => {
     if (!isPixConfigured) {
-      alert(
-        'Informações de PIX não configuradas. Entre em contato pelo formulário.',
-      );
+      addToast({
+        type: 'error',
+        message: 'Informações de PIX não configuradas. Entre em contato pelo formulário.',
+        duration: 5000,
+      });
       return;
     }
 
-    navigator.clipboard
-      .writeText(pixKey)
-      .then(() => {
-        alert(`Chave PIX "${pixKey}" copiada para a área de transferência!`);
-      })
-      .catch(err => {
-        console.error('Erro ao copiar a chave PIX: ', err);
-        alert('Erro ao copiar a chave PIX. Por favor, copie manualmente.');
+    try {
+      await navigator.clipboard.writeText(pixKey);
+      addToast({
+        type: 'success',
+        message: 'Chave PIX copiada para a área de transferência!',
+        duration: 3000,
       });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        message: 'Erro ao copiar a chave PIX. Por favor, copie manualmente.',
+        duration: 5000,
+      });
+    }
   };
 
   return (
@@ -84,11 +93,9 @@ const SupportPage = () => {
                 : 'Entre em contato para informações de PIX'}
             </strong>
             <button
-              onClick={copyToClipboard}
+              onClick={handleCopyToClipboard}
               className={`copy-pix-button ${!isPixConfigured ? 'disabled' : ''}`}
-              title={
-                isPixConfigured ? 'Copiar Chave PIX' : 'PIX não configurado'
-              }
+              title={isPixConfigured ? 'Copiar Chave PIX' : 'PIX não configurado'}
               disabled={!isPixConfigured}
             >
               <FontAwesomeIcon icon={faCopy} />{' '}
@@ -108,10 +115,12 @@ const SupportPage = () => {
         </div>
 
         {/* Instruções de segurança */}
-        <p className='pix-instructions'>
-          Ao realizar a transferência, por favor, verifique se o nome do titular
-          confere antes de confirmar. Deus o abençoe por sua generosidade!
+        <p className="support-description">
+          &ldquo;Aquele que supre a semente ao que semeia e o pão ao que come, também
+          suprirá e aumentará a semente de vocês e fará crescer os frutos da sua
+          justiça.&rdquo;
         </p>
+        <p className="bible-verse">2 Coríntios 9:10</p>
 
         {/* QR Code para PIX - exibe apenas se PIX estiver configurado */}
         {isPixConfigured && (
@@ -152,8 +161,8 @@ const SupportPage = () => {
         </p>
         <p>
           <em>
-            "Cada um contribua segundo propôs no seu coração; não com tristeza
-            ou por necessidade; porque Deus ama ao que dá com alegria." (2
+            &ldquo;Cada um contribua segundo propôs no seu coração; não com tristeza
+            ou por necessidade; porque Deus ama ao que dá com alegria.&rdquo; (2
             Coríntios 9:7)
           </em>
         </p>

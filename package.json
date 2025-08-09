@@ -8,15 +8,14 @@
     "dev:backend": "cd backend && npm run dev",
     "build": "cd frontend && npm run build",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "cd frontend && serve -s build -l 3000",
+    "start:frontend": "cd frontend && echo 'Comando removido: serve não está mais instalado.'",
     "start:backend": "cd backend && npm start",
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "clean:all": "cd frontend && npm run clean && cd ../backend && npm run clean",
     "test": "cd frontend && npm test"
   },
   "devDependencies": {
-    "concurrently": "^7.6.0",
-    "serve": "^14.2.0"
+    "concurrently": "^7.6.0"
   },
   "keywords": [
     "react",
