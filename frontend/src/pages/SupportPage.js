@@ -13,10 +13,9 @@ const SupportPage = () => {
   const { addToast } = useToast();
 
   // Dados para contribuição via PIX - obtidos de variáveis de ambiente
-  const pixKey = import.meta.env.VITE_APP_PIX_KEY || 'webminst@hotmail.com';
-  const bankName = import.meta.env.VITE_APP_BANK_NAME || 'Caixa Econômica Federal';
-  const accountHolderName =
-    import.meta.env.VITE_APP_ACCOUNT_HOLDER || 'Pastor Giovanni Moreira Guimarães';
+  const pixKey = import.meta.env?.VITE_APP_PIX_KEY || 'webminst@hotmail.com';
+  const bankName = import.meta.env?.VITE_APP_BANK_NAME || 'Caixa Econômica Federal';
+  const accountHolderName = import.meta.env?.VITE_APP_ACCOUNT_HOLDER || 'Pastor Giovanni Moreira Guimarães';
 
   // Verificação se as informações sensíveis estão configuradas
   const isPixConfigured = pixKey && pixKey !== 'sua_chave_pix_aqui';

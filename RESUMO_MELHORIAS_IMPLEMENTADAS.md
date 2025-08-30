@@ -312,3 +312,49 @@ O projeto agora segue as melhores práticas de desenvolvimento e está preparado
 
 *Relatório gerado em: ${new Date().toLocaleDateString('pt-BR')}*
 *Versão do projeto: 2.3.1*
+
+---
+Perfeito! Aqui está um passo a passo detalhado para deploy do seu projeto, separando frontend (React) e backend (Node.js/Express):
+
+1. Deploy do Backend (Node.js/Express) na Render
+a) Suba seu projeto para o GitHub (se ainda não fez)
+b) Crie uma conta em <https://render.com/>
+c) Clique em “New +” > “Web Service”
+d) Conecte seu GitHub e selecione o repositório
+e) Configure:
+Name: backend-pastor-portfolio (ou como preferir)
+Root Directory: backend
+Environment: Node
+Build Command:
+Start Command:
+Branch: master (ou main)
+f) Adicione as variáveis de ambiente (Environment)
+Clique em “Add Environment Variable”
+Adicione todas as variáveis do seu .env do backend (ex: MONGODB_URI, JWT_SECRET, etc.)
+g) Clique em “Create Web Service”
+Aguarde o deploy. O Render vai te dar uma URL do tipo:
+<https://backend-pastor-portfolio.onrender.com>
+
+2. Deploy do Frontend (React) na Vercel
+a) Crie uma conta em <https://vercel.com/> (se ainda não tem)
+b) Clique em “Add New Project” e conecte seu GitHub
+c) Escolha o repositório e configure:
+Root Directory: frontend
+Framework Preset: React (ou Vite, se for o caso)
+Build Command:
+Output Directory:
+(ou build se for Create React App)
+d) Adicione as variáveis de ambiente do frontend
+Clique em “Environment Variables”
+Adicione todas as variáveis que começam com VITE_(ex: VITE_APP_PIX_KEY, etc.)
+Adicione também a URL do backend, por exemplo:
+e) Clique em “Deploy”
+3. Ajuste o frontend para usar a URL do backend
+No seu código React, use a variável de ambiente para fazer requisições:
+
+Use apiUrl para todas as chamadas à API.
+
+4. Teste tudo em produção
+Acesse a URL do frontend fornecida pela Vercel.
+Teste as funcionalidades que dependem do backend.
+Se precisar de exemplos de configuração de variáveis, scripts ou ajustes no código, me avise!

@@ -1,15 +1,15 @@
 // src/components/Sermons.js
-import React, { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
-import StarRating from '../components/StarRating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import './ListPage.css';
+import './Sermons.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
@@ -42,7 +42,7 @@ function Sermons() {
   const [selectedSpeaker, setSelectedSpeaker] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [localSearchTerm, setLocalSearchTerm] = useState('');
-  const [searchTimeout, setSearchTimeout] = useState(null);
+
   const [pagination, setPagination] = useState(null);
   const [uniqueBooks, setUniqueBooks] = useState([]);
   const [uniqueSeries, setUniqueSeries] = useState([]);
@@ -429,9 +429,8 @@ function Sermons() {
       {/* Cabeçalho da página */}
       <h1>Sermões</h1>
       <p className='list-page-description'>
-        Você pode usar, copiar ou distribuir estes esboços desde que o faça
-        gratuitamente.
-        <i>"De graça recebestes, de graça dai"</i> (Mateus 10:8).
+        Você pode usar, copiar ou distribuir estes esboços desde que o faça gratuitamente.
+        <i>&quot;De graça recebestes, de graça dai&quot;</i> (Mateus 10:8).
       </p>
 
       {/* Controles de filtro */}
