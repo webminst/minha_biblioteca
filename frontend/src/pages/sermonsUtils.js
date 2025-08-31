@@ -2,8 +2,23 @@ import axios from 'axios';
 
 export async function generateGlobalSearchSuggestions(term, API_ENDPOINTS) {
   if (!term.trim()) return [];
+
+  function addSuggestion(suggestions, value) {
+    if (!suggestions.includes(value)) {
+      suggestions.push(value);
+    }
+  }
+
+  function checkAndAddField(suggestions, sermon, field, lowerTerm) {
+    if (sermon[field] && sermon[field].toLowerCase().includes(lowerTerm)) {
+      addSuggestion(suggestions, sermon[field]);
+      return true;
+    }
+    return false;
+  }
+
   try {
-    // Busca os primeiros 100 sermões que contenham o termo
+    // Busca os primeiros 100 serm5es que contenham o termo
     const response = await axios.get(API_ENDPOINTS.SERMONS.BASE, {
       params: { search: term, page: 1, limit: 100 },
       validateStatus: status => status >= 200 && status < 500,
@@ -12,24 +27,17 @@ export async function generateGlobalSearchSuggestions(term, API_ENDPOINTS) {
       ? response.data.data
       : [];
     const lowerTerm = term.toLowerCase();
-    const suggestions = new Set();
+    const suggestions = [];
+
     for (let i = 0; i < sermonsList.length; i++) {
       const sermon = sermonsList[i];
-      if (sermon.title && sermon.title.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(sermon.title);
-      }
-      if (sermon.series && sermon.series.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(sermon.series);
-      }
-      if (
-        sermon.speaker &&
-        sermon.speaker.toLowerCase().includes(lowerTerm)
-      ) {
-        suggestions.add(sermon.speaker);
-      }
-      if (suggestions.size >= 5) break;
+      let matched = false;
+      matched = checkAndAddField(suggestions, sermon, 'title', lowerTerm) || matched;
+      matched = checkAndAddField(suggestions, sermon, 'series', lowerTerm) || matched;
+      matched = checkAndAddField(suggestions, sermon, 'speaker', lowerTerm) || matched;
+      if (suggestions.length >= 5) break;
     }
-    return Array.from(suggestions);
+    return suggestions;
   } catch (error) {
     return [];
   }
