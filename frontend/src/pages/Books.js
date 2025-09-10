@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import ContentCard from '../components/ContentCard/ContentCard';
-import RatingDisplay from '../components/RatingDisplay/RatingDisplay';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
@@ -13,7 +12,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
 import { extractBooks, extractPagination } from '../utils/apiResponseHelpers';
-import BookService from '../services/bookService';
 
 /**
  * Componente Books - Página de resumos de livros
@@ -25,6 +23,27 @@ import BookService from '../services/bookService';
 const ITEMS_PER_PAGE = 8;
 
 function Books() {
+  function handleSearchFocus() {
+    if (localSearchTerm.length > 1) setShowSuggestions(true);
+  }
+
+  function handleSearchBlur() {
+    setTimeout(() => setShowSuggestions(false), 200);
+  }
+
+  function handleSuggestionMouseDown(value) {
+    return function () {
+      handleSuggestionClick(value);
+    };
+  }
+
+  function handleSuggestionKeyPress(value) {
+    return function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        handleSuggestionClick(value);
+      }
+    };
+  }
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,167 +53,80 @@ function Books() {
 
   // Estados para dados e controles
   const [books, setBooks] = useState([]);
-  const [ratings, setRatings] = useState({}); // Armazena as avaliações por livro
+  const [ratings] = useState({}); // Armazena as avaliações por livro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedAuthor, setSelectedAuthor] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchTimeout, setSearchTimeout] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [uniqueAreas, setUniqueAreas] = useState([]);
   const [uniqueAuthors, setUniqueAuthors] = useState([]);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState('');
-  const [suggestionCategories, setSuggestionCategories] = useState({
-    titles: [],
-    authors: [],
-    areas: [],
-    publishers: [],
-  });
-  const lastRequestId = useRef(0);
 
-  // Busca dados dos livros na API com filtros e paginação
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        setLoading(true);
-
-        // Constrói parâmetros da query a partir da URL
-        const query = new URLSearchParams(location.search);
-        const searchParam = query.get('search') || '';
-        const areaParam = query.get('area') || '';
-        const authorParam = query.get('author') || '';
-        const pageParam = query.get('page') || '1';
-
-        const params = {
-          page: pageParam,
-          limit: ITEMS_PER_PAGE,
-        };
-
-        if (areaParam) params.area = areaParam;
-        if (authorParam) params.author = authorParam;
-        if (searchParam) params.search = searchParam;
-
-        const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
-
-        const booksData = extractBooks(response.data);
-        const paginationData = extractPagination(response.data);
-
-        setBooks(booksData);
-        setPagination(paginationData);
-      } catch (err) {
-        setError(
-          'Erro ao carregar os livros. Por favor, tente novamente mais tarde.',
-        );
-        console.error('Erro ao buscar livros:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBooks();
-  }, [location.search]);
-
-  // Busca as avaliações de um livro
-  const fetchBookRatings = async bookId => {
+  // Helper to fetch books and pagination
+  const fetchBooksAndPagination = async ({
+    locationSearch,
+    setBooks,
+    setPagination,
+    setError,
+    setLoading,
+  }) => {
     try {
-      const response = await fetch(
-        `${API_ENDPOINTS.BOOKS.BASE}/${bookId}/ratings`,
-      );
-      if (!response.ok) {
-        throw new Error(`Erro ao carregar avaliações para o livro ${bookId}`);
-      }
-      const data = await response.json();
-      // Garante que a resposta tem o formato esperado
-      if (data.sucesso === false) {
-        console.error('Erro na resposta da API:', data.mensagem);
-        return { average: null, total: 0 };
-      }
-      return data.dados || { average: null, total: 0 };
-    } catch (err) {
-      console.error(`Erro ao carregar avaliações para o livro ${bookId}:`, err);
-      return { average: null, total: 0 };
-    }
-  };
+      setLoading(true);
 
-  // Busca as avaliações para todos os livros
-  const fetchAllRatings = async booksList => {
-    if (!Array.isArray(booksList) || booksList.length === 0) {
-      return {};
-    }
+      // Constrói parâmetros da query a partir da URL
+      const query = new URLSearchParams(locationSearch);
+      const searchParam = query.get('search') || '';
+      const areaParam = query.get('area') || '';
+      const authorParam = query.get('author') || '';
+      const pageParam = query.get('page') || '1';
 
-    const ratingsMap = {};
+      const params = {
+        page: pageParam,
+        limit: ITEMS_PER_PAGE,
+      };
 
-    // Cria um array de promessas para buscar as avaliações em paralelo
-    const ratingPromises = booksList.map(async book => {
-      try {
-        const ratingData = await fetchBookRatings(book._id);
-        return { id: book._id, data: ratingData };
-      } catch (error) {
-        console.error(
-          `Erro ao buscar avaliações para o livro ${book._id}:`,
-          error,
-        );
-        return { id: book._id, data: { average: null, total: 0 } };
-      }
-    });
+      if (areaParam) params.area = areaParam;
+      if (authorParam) params.author = authorParam;
+      if (searchParam) params.search = searchParam;
 
-    // Aguarda todas as requisições serem concluídas
-    const ratings = await Promise.all(ratingPromises);
+      const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, { params });
 
-    // Preenche o mapa de avaliações
-    ratings.forEach(({ id, data }) => {
-      ratingsMap[id] = data;
-    });
+      const booksData = extractBooks(response.data);
+      const paginationData = extractPagination(response.data);
 
-    return ratingsMap;
-  };
-
-  // Busca os livros da API
-  const fetchBooks = async (page = 1) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get(API_ENDPOINTS.BOOKS.BASE, {
-        params: {
-          page,
-          limit: ITEMS_PER_PAGE,
-          ...(selectedArea && { area: selectedArea }),
-          ...(selectedAuthor && { author: selectedAuthor }),
-          ...(searchTerm && { search: searchTerm }),
-        },
-      });
-
-      const { books: booksList, ...paginationData } = extractBooks(
-        response.data,
-      );
-      setBooks(booksList);
+      setBooks(booksData);
       setPagination(paginationData);
-
-      // Busca as avaliações para os livros
-      const ratingsMap = await fetchAllRatings(booksList);
-      setRatings(ratingsMap);
-
-      // Extrai áreas e autores únicos para os filtros
-      const areas = [
-        ...new Set(booksList.map(book => book.area).filter(Boolean)),
-      ];
-      const authors = [
-        ...new Set(booksList.map(book => book.author).filter(Boolean)),
-      ];
-
-      setUniqueAreas(areas);
-      setUniqueAuthors(authors);
     } catch (err) {
-      console.error('Erro ao buscar livros:', err);
-      setError('Erro ao carregar os livros. Tente novamente mais tarde.');
+      setError(
+        'Erro ao carregar os livros. Por favor, tente novamente mais tarde.',
+      );
+      // Erro ao buscar livros
     } finally {
       setLoading(false);
     }
   };
+
+  // Busca dados dos livros na API com filtros e paginação
+  useEffect(() => {
+    fetchBooksAndPagination({
+      locationSearch: location.search,
+      setBooks,
+      setPagination,
+      setError,
+      setLoading,
+    });
+  }, [location.search, searchTerm]);
+
+  // Busca as avaliações de um livro
+  // ...código existente...
+  // ...existing code...
+
+  // ...existing code...
 
   // Inicializa filtros a partir da URL
   useEffect(() => {
@@ -217,20 +149,17 @@ function Books() {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        console.log('Buscando opções de filtro...');
+        // Buscando opções de filtro
 
         // Buscando as áreas
         const areasResponse = await axios.get(
           `${API_ENDPOINTS.BOOKS.BASE}/areas`,
         );
-        console.log('Resposta da API - Áreas (raw):', areasResponse);
+        // Resposta da API - Áreas (raw)
 
         // Buscando os livros para extrair os autores
         const booksResponse = await axios.get(API_ENDPOINTS.BOOKS.BASE);
-        console.log(
-          'Resposta completa da API de livros:',
-          JSON.stringify(booksResponse.data, null, 2),
-        );
+        // Resposta completa da API de livros
 
         // Extrai as áreas da resposta
         const areas = areasResponse.data.success
@@ -239,52 +168,36 @@ function Books() {
 
         // Extrai os livros da resposta - agora acessando corretamente a propriedade data
         const books = booksResponse.data.data || [];
-        console.log('Lista de livros extraída:', books);
+        // Lista de livros extraída
 
         // Extrai os autores únicos dos livros
         const authors = [
           ...new Set(
             books
               .map(book => {
-                console.log('Livro atual:', book);
+                // Livro atual
                 return book.author;
               })
               .filter(author => {
                 const isValid =
                   author && typeof author === 'string' && author.trim() !== '';
-                console.log('Autor:', author, 'é válido?', isValid);
+                // Autor é válido
                 return isValid;
               }),
           ),
         ].sort(); // Ordena os autores alfabeticamente
 
-        console.log('Autores extraídos dos livros:', authors);
+        // Autores extraídos dos livros
 
-        console.log(
-          'Tipo de áreas:',
-          typeof areas,
-          'É array?',
-          Array.isArray(areas),
-        );
-        console.log(
-          'Tipo de autores:',
-          typeof authors,
-          'É array?',
-          Array.isArray(authors),
-        );
+        // Tipo de áreas
+        // Tipo de autores
 
         // Usando JSON.stringify para ver o conteúdo completo dos arrays
-        console.log(
-          'Conteúdo completo de áreas:',
-          JSON.stringify(areas, null, 2),
-        );
-        console.log(
-          'Conteúdo completo de autores:',
-          JSON.stringify(authors, null, 2),
-        );
+        // Conteúdo completo de áreas
+        // Conteúdo completo de autores
 
-        console.log('Primeiros 5 itens de áreas:', areas.slice(0, 5));
-        console.log('Primeiros 5 itens de autores:', authors.slice(0, 5));
+        // Primeiros 5 itens de áreas
+        // Primeiros 5 itens de autores
 
         // Garantir que estamos lidando com arrays e que os itens são strings
         const areasArray = Array.isArray(areas)
@@ -294,16 +207,13 @@ function Books() {
           ? authors.filter(a => a && typeof a === 'string').map(a => a.trim())
           : [];
 
-        console.log('Áreas após limpeza:', JSON.stringify(areasArray, null, 2));
-        console.log(
-          'Autores após limpeza:',
-          JSON.stringify(authorsArray, null, 2),
-        );
+        // Áreas após limpeza
+        // Autores após limpeza
 
         setUniqueAreas(areasArray);
         setUniqueAuthors(authorsArray);
       } catch (err) {
-        console.error('Erro ao buscar opções de filtro:', err);
+        // Erro ao buscar opções de filtro
         // Em caso de erro, mantém arrays vazios
       }
     };
@@ -344,62 +254,6 @@ function Books() {
     );
   };
 
-  // Busca sugestões globais com base no termo digitado
-  // Função para buscar sugestões de busca (autocomplete) com fallback local (igual Sermons)
-  const fetchSearchSuggestions = async term => {
-    if (!term.trim()) {
-      setSearchSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-    try {
-      // Tenta buscar sugestões no backend primeiro
-      const response = await axios.get(
-        `${API_ENDPOINTS.BOOKS.BASE}/suggestions`,
-        {
-          params: { q: term, limit: 5 },
-          validateStatus: status => status >= 200 && status < 500,
-        },
-      );
-
-      // Verifica se a resposta tem o formato esperado
-      if (response.status === 200) {
-        if (Array.isArray(response.data)) {
-          setSearchSuggestions(
-            response.data.map(s => ({ text: s, type: 'Sugestão' })),
-          );
-          setShowSuggestions(response.data.length > 0);
-          return;
-        } else if (
-          response.data &&
-          response.data.success &&
-          Array.isArray(response.data.data)
-        ) {
-          setSearchSuggestions(
-            response.data.data.map(s => ({ text: s, type: 'Sugestão' })),
-          );
-          setShowSuggestions(response.data.data.length > 0);
-          return;
-        }
-      }
-
-      // Se chegou aqui, o endpoint de sugestões não está disponível ou retornou um formato inválido
-      // Usa busca global como fallback
-      console.warn(
-        'Usando busca global para sugestões. Considere implementar o endpoint /suggestions no backend para melhor desempenho.',
-      );
-      const globalSuggestions = await generateGlobalSearchSuggestions(term);
-      setSearchSuggestions(globalSuggestions);
-      setShowSuggestions(globalSuggestions.length > 0);
-    } catch (error) {
-      console.error('Erro ao buscar sugestões:', error);
-      // Em caso de erro, usa busca global como fallback
-      const globalSuggestions = await generateGlobalSearchSuggestions(term);
-      setSearchSuggestions(globalSuggestions);
-      setShowSuggestions(globalSuggestions.length > 0);
-    }
-  };
-
   // Busca sugestões globalmente na API (fallback global)
   const generateGlobalSearchSuggestions = async term => {
     if (!term.trim()) return [];
@@ -434,68 +288,69 @@ function Books() {
       }
       return Array.from(suggestions).map(s => JSON.parse(s));
     } catch (error) {
-      console.error('Erro ao buscar sugestões globais:', error);
+      // Erro ao buscar sugestões globais
       return [];
     }
   };
 
-  // Gera sugestões localmente (usado como fallback)
-  const generateLocalSearchSuggestions = term => {
-    if (!term.trim() || !books || books.length === 0) return [];
-
-    const lowerTerm = term.toLowerCase();
-    const suggestions = new Set();
-
-    // Limita a busca aos primeiros 100 itens para performance
-    const maxItems = Math.min(100, books.length);
-
-    for (let i = 0; i < maxItems; i++) {
-      const book = books[i];
-
-      // Adiciona sugestões de títulos
-      if (book.title && book.title.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(JSON.stringify({ text: book.title, type: 'título' }));
-      }
-
-      // Adiciona sugestões de autores
-      if (book.author && book.author.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(JSON.stringify({ text: book.author, type: 'autor' }));
-      }
-
-      // Adiciona sugestões de áreas
-      if (book.area && book.area.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(JSON.stringify({ text: book.area, type: 'área' }));
-      }
-
-      // Adiciona sugestões de editoras
-      if (book.publisher && book.publisher.toLowerCase().includes(lowerTerm)) {
-        suggestions.add(
-          JSON.stringify({ text: book.publisher, type: 'editora' }),
-        );
-      }
-
-      // Limita a 10 sugestões para melhor desempenho
-      if (suggestions.size >= 10) break;
-    }
-
-    // Converte de volta para objetos
-    return Array.from(suggestions).map(s => JSON.parse(s));
-  };
+  // ...existing code...
 
   // Debounce para evitar muitas chamadas à API
-  const debouncedFetchSuggestions = useMemo(
-    () => {
-      let timeoutId;
-      return term => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          fetchSearchSuggestions(term);
-        }, 300); // 300ms de atraso
-      };
-    },
-    [], // O array vazio garante que a função é criada apenas uma vez
-  );
-
+  const debouncedFetchSuggestions = useMemo(() => {
+    let timeoutId;
+    return function (term) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        // Definir fetchSearchSuggestions localmente para evitar dependência externa
+        if (!term.trim()) {
+          setSearchSuggestions([]);
+          setShowSuggestions(false);
+          return;
+        }
+        (async () => {
+          try {
+            const response = await axios.get(
+              `${API_ENDPOINTS.BOOKS.BASE}/suggestions`,
+              {
+                params: { q: term, limit: 5 },
+                validateStatus: status => status >= 200 && status < 500,
+              },
+            );
+            if (response.status === 200) {
+              if (Array.isArray(response.data)) {
+                setSearchSuggestions(
+                  response.data.map(s => ({ text: s, type: 'Sugestão' })),
+                );
+                setShowSuggestions(response.data.length > 0);
+                return;
+              } else if (
+                response.data &&
+                response.data.success &&
+                Array.isArray(response.data.data)
+              ) {
+                setSearchSuggestions(
+                  response.data.data.map(s => ({ text: s, type: 'Sugestão' })),
+                );
+                setShowSuggestions(response.data.data.length > 0);
+                return;
+              }
+            }
+            // Fallback global
+            const globalSuggestions =
+              await generateGlobalSearchSuggestions(term);
+            setSearchSuggestions(globalSuggestions);
+            setShowSuggestions(globalSuggestions.length > 0);
+          } catch (error) {
+            // Fallback global em caso de erro
+            const globalSuggestions =
+              await generateGlobalSearchSuggestions(term);
+            setSearchSuggestions(globalSuggestions);
+            setShowSuggestions(globalSuggestions.length > 0);
+          }
+        })();
+      }, 300);
+    };
+  }, []);
   // Atualiza o termo de busca local
   const handleSearchChange = e => {
     const value = e.target.value;
@@ -603,10 +458,8 @@ function Books() {
               value={localSearchTerm}
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
-              onFocus={() =>
-                localSearchTerm.length > 1 && setShowSuggestions(true)
-              }
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
               className={`search-input ${localSearchTerm ? 'search-active' : ''}`}
               autoComplete='off'
             />
@@ -622,30 +475,20 @@ function Books() {
                 <i className='fas fa-search'></i>
               )}
             </div>
-
             {/* Sugestões de busca */}
             {showSuggestions && (
               <div className='search-suggestions visible'>
-                {isLoadingSuggestions ? (
-                  <div className='search-loading'>
-                    <div
-                      className='spinner-border spinner-border-sm me-2'
-                      role='status'
-                    >
-                      <span className='visually-hidden'>Carregando...</span>
-                    </div>
-                    Buscando sugestões...
-                  </div>
-                ) : searchSuggestions.length > 0 ? (
+                {searchSuggestions.length > 0 ? (
                   <>
-                    {searchSuggestions.map((suggestion, index) => (
+                    {searchSuggestions.map(suggestion => (
                       <div
-                        key={index}
+                        key={suggestion.text + suggestion.type}
                         className='suggestion-item'
                         data-type={suggestion.type}
-                        onMouseDown={() =>
-                          handleSuggestionClick(suggestion.text)
-                        }
+                        onMouseDown={handleSuggestionMouseDown(suggestion.text)}
+                        role='button'
+                        tabIndex={0}
+                        onKeyPress={handleSuggestionKeyPress(suggestion.text)}
                       >
                         <span className='suggestion-text'>
                           {suggestion.text}
@@ -666,7 +509,7 @@ function Books() {
           </div>
         </div>
 
-        {/* Filtro por área (seleção única) */}
+        {/* Filtro por área */}
         <div className='filter-group'>
           <label htmlFor='area-filter'>Área:</label>
           <select
@@ -700,7 +543,7 @@ function Books() {
           </select>
         </div>
 
-        {/* Botão para limpar filtros - só aparece se houver filtros ativos */}
+        {/* Botão para limpar filtros */}
         {(selectedArea || selectedAuthor || searchTerm) && (
           <button onClick={clearFilters} className='clear-filter-button'>
             Limpar Filtros
@@ -738,10 +581,9 @@ function Books() {
         )}
       </div>
 
-      {/* Controles de paginação - só aparecem se houver mais de uma página */}
+      {/* Controles de paginação */}
       {totalPages > 1 && (
         <div className='pagination-controls'>
-          {/* Botão página anterior */}
           <button
             onClick={goToPreviousPage}
             disabled={pageFromUrl === 1}
@@ -749,8 +591,6 @@ function Books() {
           >
             <FontAwesomeIcon icon={faChevronLeft} /> Anterior
           </button>
-
-          {/* Números das páginas */}
           {getPageNumbers().map(number => (
             <button
               key={number}
@@ -761,8 +601,6 @@ function Books() {
               {number}
             </button>
           ))}
-
-          {/* Botão próxima página */}
           <button
             onClick={goToNextPage}
             disabled={pageFromUrl === totalPages}

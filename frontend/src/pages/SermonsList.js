@@ -11,7 +11,7 @@ function SermonsList({ sermons, ratings }) {
         <div key={sermon._id} style={{ marginBottom: 24 }}>
           <ContentCard
             title={sermon.title}
-            type='Serm3o'
+            type='Sermão'
             reference={sermon.reference || sermon.book}
             description={sermon.description}
             detailsUrl={`/sermoes/${sermon._id}`}
