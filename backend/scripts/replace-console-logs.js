@@ -28,8 +28,8 @@ async function processFile(filePath) {
     const originalContent = content;
 
     // Verifica se já temos a importação do logger
-    const hasLoggerImport = content.includes("const logger = require('../config/logger')") || 
-                           content.includes("const { logger } = require('../config/logger')");
+    const hasLoggerImport = content.includes("const logger = require('../config/logger')") ||
+      content.includes("const { logger } = require('../config/logger')");
 
     // Substitui console.log por logger.info, etc.
     let modifiedContent = content.replace(consoleRegex, (match, level, args) => {
@@ -57,7 +57,7 @@ async function processFile(filePath) {
       await writeFile(filePath, modifiedContent, 'utf8');
       return true;
     }
-    
+
     return false;
   } catch (error) {
     console.error(`Erro ao processar o arquivo ${filePath}:`, error);
@@ -74,7 +74,7 @@ async function findAndProcessFiles(dir) {
     for (const file of files) {
       const fullPath = path.join(dir, file);
       const stats = fs.statSync(fullPath);
-      
+
       if (stats.isDirectory()) {
         changedFiles += await findAndProcessFiles(fullPath);
       } else if (stats.isFile() && fullPath.endsWith('.js')) {
@@ -82,7 +82,7 @@ async function findAndProcessFiles(dir) {
         if (changed) changedFiles++;
       }
     }
-    
+
     return changedFiles;
   } catch (error) {
     console.error(`Erro ao buscar arquivos em ${dir}:`, error);
@@ -93,15 +93,15 @@ async function findAndProcessFiles(dir) {
 // Função principal
 async function main() {
   console.log('🔍 Procurando por console.log e substituindo por chamadas ao logger...');
-  
+
   let totalChanged = 0;
-  
+
   for (const dir of directories) {
     const changed = await findAndProcessFiles(dir);
     totalChanged += changed;
     console.log(`✅ Diretório ${path.basename(dir)}: ${changed} arquivos alterados`);
   }
-  
+
   console.log(`\n🎉 Total: ${totalChanged} arquivos alterados com sucesso!`);
 }
 
