@@ -1,5 +1,5 @@
 
-
+const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
 const User = require('../models/User');
