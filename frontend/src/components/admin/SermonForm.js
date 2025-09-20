@@ -1,5 +1,5 @@
 // src/components/admin/SermonForm.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
@@ -81,7 +81,8 @@ function SermonForm() {
     }
   }, [id, isEditing]); // Refaz o efeito se o ID mudar ou se isEditing mudar
 
-  async function handleSubmit(e) {
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -143,7 +144,24 @@ function SermonForm() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [
+    title,
+    bibleReference,
+    series,
+    tags,
+    speaker,
+    date,
+    local,
+    description,
+    content,
+    audioUrl,
+    videoUrl,
+    pdfUrl,
+    book,
+    isEditing,
+    id,
+    navigate,
+  ]);
 
   if (loading && isEditing) return <p>Carregando dados do sermão...</p>; // Apenas para edição inicial
 
