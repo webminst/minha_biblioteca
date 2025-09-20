@@ -56,7 +56,7 @@ function PaginationControls({
         disabled={pageFromUrl === totalPages}
         className='pagination-button'
       >
-                Próxima <FontAwesomeIcon icon={faChevronRight} />
+        Próxima <FontAwesomeIcon icon={faChevronRight} />
       </button>
     </div>
   );
