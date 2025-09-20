@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import './NotFound.css';
 
@@ -38,7 +37,7 @@ const NotFound = () => {
         <Link to='/' className='primary-button'>
           Página Inicial
         </Link>
-        <Link to='/sermoes' className='secondary-button'>
+        <Link to='/sermons' className='secondary-button'>
           Ver Sermões
         </Link>
         <Link to='/estudos' className='secondary-button'>

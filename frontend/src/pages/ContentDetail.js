@@ -1,5 +1,5 @@
 // src/pages/ContentDetail.js
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import StarRating from '../components/StarRating';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,11 +10,6 @@ import NotFound from './NotFound';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram } from '@fortawesome/free-brands-svg-icons';
-import {
-  extractSermons,
-  extractStudies,
-  extractBooks,
-} from '../utils/apiResponseHelpers';
 import './ContentDetail.css';
 import {
   FacebookShareButton,
@@ -50,7 +45,7 @@ const ContentDetail = () => {
         let response;
 
         // Determina qual API chamar baseado na URL
-        if (window.location.pathname.startsWith('/sermoes')) {
+        if (window.location.pathname.startsWith('/sermons')) {
           response = await axios.get(API_ENDPOINTS.SERMONS.BY_ID(contentId));
           // Para endpoints BY_ID, o dado vem diretamente em response.data.data
           const sermonData = response.data.success
@@ -96,10 +91,10 @@ const ContentDetail = () => {
     // Copia a URL para clipboard e orienta o usuário
     navigator.clipboard
       .writeText(
-        `${shareTitle}\n\n${shareUrl}\n\n#SermoesOnline #Biblia #EstudoBiblico`,
+        `${shareTitle}\n\n${shareUrl}\n\n#SermonsOnline #Biblia #EstudoBiblico`,
       )
       .then(() => {
-        alert(
+        setError(
           'Link copiado! Cole no Instagram Stories ou post para compartilhar.',
         );
         // Abre o Instagram (se estiver no mobile) ou Instagram Web
@@ -114,7 +109,7 @@ const ContentDetail = () => {
         }
       })
       .catch(() => {
-        alert('Erro ao copiar link. Copie manualmente e cole no Instagram.');
+        setError('Erro ao copiar link. Copie manualmente e cole no Instagram.');
       });
   };
 
@@ -225,7 +220,7 @@ const ContentDetail = () => {
           <FacebookShareButton
             url={shareUrl}
             quote={shareTitle}
-            hashtag='#SermoesOnline'
+            hashtag='#SermonsOnline'
           >
             <FacebookIcon size={32} round />
           </FacebookShareButton>

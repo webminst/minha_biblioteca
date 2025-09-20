@@ -62,7 +62,7 @@ function Dashboard({ user }) {
       <h3>Gerenciar Conteúdo:</h3>
       <div className='dashboard-links'>
         <div className='dashboard-item'>
-          <Link to='/admin/sermoes' className='dashboard-link'>
+          <Link to='/admin/sermons' className='dashboard-link'>
             Gerenciar Sermões
           </Link>
           <span className='item-count'>

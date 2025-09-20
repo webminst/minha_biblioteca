@@ -73,7 +73,7 @@ function Sermons() {
     setIsSearching,
     setSearchSuggestions,
     setShowSuggestions,
-    applySearch: () => {}, // Placeholder, ajuste se necessário
+    applySearch: () => { }, // Placeholder, ajuste se necessário
   });
 
 
@@ -82,9 +82,9 @@ function Sermons() {
     async function fetchFilterOptions() {
       try {
         const [seriesResponse, speakersResponse, booksResponse] = await Promise.all([
-          fetch('/api/sermoes/series'),
-          fetch('/api/sermoes/speakers'),
-          fetch('/api/sermoes/books'),
+          fetch('/api/sermons/series'),
+          fetch('/api/sermons/speakers'),
+          fetch('/api/sermons/books'),
         ]);
         const series = (await seriesResponse.json()).data || [];
         const speakers = (await speakersResponse.json()).data || [];

@@ -3,7 +3,7 @@ import ContentCard from '../components/ContentCard/ContentCard';
 
 function SermonsList({ sermons, ratings }) {
   if (!sermons || sermons.length === 0) {
-    return <p>Nenhum serm3o encontrado com os filtros selecionados.</p>;
+    return <p>Nenhum sermão encontrado com os filtros selecionados.</p>;
   }
   return (
     <div className='content-list'>
@@ -14,7 +14,7 @@ function SermonsList({ sermons, ratings }) {
             type='Sermão'
             reference={sermon.reference || sermon.book}
             description={sermon.description}
-            detailsUrl={`/sermoes/${sermon._id}`}
+            detailsUrl={`/sermons/${sermon._id}`}
             pdfUrl={sermon.pdfUrl}
             sermon={sermon}
             rating={

@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { extractSermons } from '../../utils/apiResponseHelpers';
 import './Form.css'; // CSS geral para formulários admin
+import SermonFormFields from './SermonFormFields';
 
 function SermonForm() {
   const [title, setTitle] = useState('');
@@ -32,6 +32,27 @@ function SermonForm() {
   useEffect(() => {
     // Se estiver no modo de edição, busca os dados do sermão para preencher o formulário
     if (isEditing) {
+      const handleSermonError = (err) => {
+        setError(
+          `Erro ao carregar dados do sermão: ${err.response?.data?.message || err.message}`,
+        );
+      };
+      const setFieldOrDefault = (setter, value, def = '') => setter(value || def);
+      const setSermonFields = (sermonData) => {
+        setFieldOrDefault(setTitle, sermonData.title);
+        setFieldOrDefault(setBibleReference, sermonData.bibleReference);
+        setFieldOrDefault(setDate, sermonData.date ? new Date(sermonData.date).toISOString().split('T')[0] : '');
+        setFieldOrDefault(setDescription, sermonData.description);
+        setFieldOrDefault(setContent, sermonData.content);
+        setFieldOrDefault(setAudioUrl, sermonData.audioUrl);
+        setFieldOrDefault(setVideoUrl, sermonData.videoUrl);
+        setFieldOrDefault(setPdfUrl, sermonData.pdfUrl);
+        setFieldOrDefault(setTags, (sermonData.tags || []).join(', '));
+        setFieldOrDefault(setSpeaker, sermonData.speaker);
+        setFieldOrDefault(setLocal, sermonData.local);
+        setFieldOrDefault(setBook, sermonData.book);
+        setFieldOrDefault(setSeries, sermonData.series);
+      };
       const fetchSermon = async () => {
         setLoading(true);
         setError(null);
@@ -46,35 +67,12 @@ function SermonForm() {
             API_ENDPOINTS.SERMONS.BY_ID(id),
             config,
           );
-          // Para endpoints BY_ID, o dado vem diretamente em response.data.data
           const sermonData = response.data.success
             ? response.data.data
             : response.data;
-
-          setTitle(sermonData.title || '');
-          setBibleReference(sermonData.bibleReference || '');
-          // Formata a data para YYYY-MM-DD para o input type="date"
-          setDate(
-            sermonData.date
-              ? new Date(sermonData.date).toISOString().split('T')[0]
-              : '',
-          );
-          setDescription(sermonData.description || '');
-          setContent(sermonData.content || '');
-          setAudioUrl(sermonData.audioUrl || '');
-          setVideoUrl(sermonData.videoUrl || '');
-          setPdfUrl(sermonData.pdfUrl || '');
-          setTags((sermonData.tags || []).join(', '));
-          setSpeaker(sermonData.speaker || '');
-          setLocal(sermonData.local || '');
-          setBook(sermonData.book || '');
-          setSeries(sermonData.series || '');
+          setSermonFields(sermonData);
         } catch (err) {
-          setError(
-            `Erro ao carregar dados do sermão: ${
-              err.response?.data?.message || err.message}`,
-          );
-          console.error('Erro ao buscar sermão para edição:', err);
+          handleSermonError(err);
         } finally {
           setLoading(false);
         }
@@ -83,7 +81,7 @@ function SermonForm() {
     }
   }, [id, isEditing]); // Refaz o efeito se o ID mudar ou se isEditing mudar
 
-  const handleSubmit = async e => {
+  async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -137,16 +135,15 @@ function SermonForm() {
         setLocal('');
       }
       // Opcional: redirecionar para a lista de sermões após sucesso
-      navigate('/admin/sermoes');
+      navigate('/admin/sermons');
     } catch (err) {
       setError(
         `Erro ao salvar sermão: ${err.response?.data?.message || err.message}`,
       );
-      console.error('Erro ao salvar sermão:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   if (loading && isEditing) return <p>Carregando dados do sermão...</p>; // Apenas para edição inicial
 
@@ -156,158 +153,22 @@ function SermonForm() {
       <form onSubmit={handleSubmit} className='admin-form'>
         {error && <p className='error-message'>{error}</p>}
         {success && <p className='success-message'>{success}</p>}
-
-        <div className='form-group'>
-          <label htmlFor='title'>Título:</label>
-          <input
-            type='text'
-            id='title'
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='bibleReference'>Referência Bíblica:</label>
-          <input
-            type='text'
-            id='bibleReference'
-            value={bibleReference}
-            onChange={e => setBibleReference(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='description'>Descrição (Resumo):</label>
-          <textarea
-            id='description'
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows='3'
-            disabled={loading}
-          ></textarea>
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='content'>Conteúdo (Markdown):</label>
-          <textarea
-            id='content'
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            rows='10'
-            disabled={loading}
-          ></textarea>
-          <small>
-            Use sintaxe Markdown para formatação (negrito, itálico, listas,
-            etc.).
-          </small>
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='pdfUrl'>URL do PDF:</label>
-          <input
-            type='url'
-            id='pdfUrl'
-            value={pdfUrl}
-            onChange={e => setPdfUrl(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='audioUrl'>URL do Áudio:</label>
-          <input
-            type='url'
-            id='audioUrl'
-            value={audioUrl}
-            onChange={e => setAudioUrl(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='videoUrl'>URL do Vídeo:</label>
-          <input
-            type='url'
-            id='videoUrl'
-            value={videoUrl}
-            onChange={e => setVideoUrl(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='tags'>Tags (separadas por vírgula):</label>
-          <input
-            type='text'
-            id='tags'
-            value={tags}
-            onChange={e => setTags(e.target.value)}
-            disabled={loading}
-            placeholder='Ex: Fé, Graça, Esperança'
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='speaker'>Pregador:</label>
-          <input
-            type='text'
-            id='speaker'
-            value={speaker}
-            onChange={e => setSpeaker(e.target.value)}
-            disabled={loading}
-            placeholder='Nome do pregador'
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='local'>Local:</label>
-          <input
-            type='text'
-            id='local'
-            value={local}
-            onChange={e => setLocal(e.target.value)}
-            disabled={loading}
-            placeholder='Local do sermão'
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='date'>Data:</label>
-          <input
-            type='date'
-            id='date'
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='book'>Livro:</label>
-          <input
-            type='text'
-            id='book'
-            value={book}
-            onChange={e => setBook(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-
-        <div className='form-group'>
-          <label htmlFor='series'>Série:</label>
-          <input
-            type='text'
-            id='series'
-            value={series}
-            onChange={e => setSeries(e.target.value)}
-            disabled={loading}
-          />
-        </div>
+        <SermonFormFields
+          title={title} setTitle={setTitle}
+          bibleReference={bibleReference} setBibleReference={setBibleReference}
+          book={book} setBook={setBook}
+          series={series} setSeries={setSeries}
+          date={date} setDate={setDate}
+          description={description} setDescription={setDescription}
+          content={content} setContent={setContent}
+          audioUrl={audioUrl} setAudioUrl={setAudioUrl}
+          videoUrl={videoUrl} setVideoUrl={setVideoUrl}
+          pdfUrl={pdfUrl} setPdfUrl={setPdfUrl}
+          tags={tags} setTags={setTags}
+          speaker={speaker} setSpeaker={setSpeaker}
+          local={local} setLocal={setLocal}
+          loading={loading}
+        />
 
         <button type='submit' disabled={loading}>
           {loading
@@ -318,7 +179,7 @@ function SermonForm() {
               ? 'Atualizar Sermão'
               : 'Criar Sermão'}
         </button>
-        <Link to='/admin/sermoes' className='btn-back'>
+        <Link to='/admin/sermons' className='btn-back'>
           Voltar para a Lista
         </Link>
       </form>

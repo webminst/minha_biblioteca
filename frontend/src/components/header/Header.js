@@ -1,5 +1,5 @@
 // src/components/Header/Header.js
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,9 +11,19 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleSearchChange = e => setSearchTerm(e.target.value);
-
-  const handleSearchSubmit = e => {
+  // Funções auxiliares para NavLink e eventos
+  function getNavClass(navProps) {
+    return navProps.isActive ? 'active' : '';
+  }
+  function handleNavClick(setIsMobileMenuOpen) {
+    return function () {
+      setIsMobileMenuOpen(false);
+    };
+  }
+  function handleSearchChangeEvent(e, setSearchTerm) {
+    setSearchTerm(e.target.value);
+  }
+  function handleSearchSubmitEvent({ e, searchTerm, setSearchTerm, setIsMobileMenuOpen, navigate }) {
     e.preventDefault();
     const trimmedSearchTerm = searchTerm.trim();
     if (trimmedSearchTerm) {
@@ -21,7 +31,7 @@ const Header = () => {
       setSearchTerm('');
       setIsMobileMenuOpen(false);
     }
-  };
+  }
 
   const toggleMobileMenu = e => {
     e?.stopPropagation();
@@ -155,17 +165,17 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Home
                 </NavLink>
               </li>
               <li>
                 <NavLink
-                  to='/sermoes'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  to='/sermons'
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Sermões
                 </NavLink>
@@ -173,8 +183,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/estudos'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Estudos
                 </NavLink>
@@ -182,8 +192,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/livros'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Livros
                 </NavLink>
@@ -191,8 +201,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/biblia'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Bíblia
                 </NavLink>
@@ -200,8 +210,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/agenda'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Agenda
                 </NavLink>
@@ -209,8 +219,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/sobre'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Sobre
                 </NavLink>
@@ -218,8 +228,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/contato'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Contato
                 </NavLink>
@@ -227,8 +237,8 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/apoie'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Apoie
                 </NavLink>
@@ -236,19 +246,19 @@ const Header = () => {
               <li>
                 <NavLink
                   to='/login'
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getNavClass}
+                  onClick={handleNavClick(setIsMobileMenuOpen)}
                 >
                   Login
                 </NavLink>
               </li>
             </ul>
-            <form onSubmit={handleSearchSubmit} className='search-form-mobile'>
+            <form onSubmit={event => handleSearchSubmitEvent({ e: event, searchTerm, setSearchTerm, setIsMobileMenuOpen, navigate })} className='search-form-mobile'>
               <input
                 type='search'
                 placeholder='Buscar...'
                 value={searchTerm}
-                onChange={handleSearchChange}
+                onChange={event => handleSearchChangeEvent(event, setSearchTerm)}
                 className='header-search-input'
                 aria-label='Buscar no site'
               />
@@ -263,14 +273,14 @@ const Header = () => {
           </nav>
 
           <form
-            onSubmit={handleSearchSubmit}
+            onSubmit={event => handleSearchSubmitEvent({ e: event, searchTerm, setSearchTerm, setIsMobileMenuOpen, navigate })}
             className='search-form desktop-search'
           >
             <input
               type='search'
               placeholder='Buscar...'
               value={searchTerm}
-              onChange={handleSearchChange}
+              onChange={event => handleSearchChangeEvent(event, setSearchTerm)}
               className='header-search-input'
               aria-label='Buscar no site'
             />

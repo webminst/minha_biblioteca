@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ContentCard from '../components/ContentCard/ContentCard';
 import axios from 'axios';
@@ -6,11 +6,6 @@ import { API_ENDPOINTS } from '../config/api';
 import './Home.css';
 import NewsletterSection from '../components/NewsletterSection/NewsletterSection';
 import SupportSection from '../components/SupportSection/SupportSection';
-import {
-  extractSermons,
-  extractStudies,
-  extractBooks,
-} from '../utils/apiResponseHelpers';
 
 /**
  * Componente Home - Página inicial do portfólio pastoral
@@ -19,9 +14,6 @@ import {
  */
 const Home = () => {
   // Estados para gerenciar os dados dos últimos conteúdos
-  const [latestSermon, setLatestSermon] = useState(null);
-  const [latestStudy, setLatestStudy] = useState(null);
-  const [latestBook, setLatestBook] = useState(null);
   const [featuredItems, setFeaturedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,10 +25,8 @@ const Home = () => {
   const fetchLatestSermon = async () => {
     try {
       const response = await axios.get(API_ENDPOINTS.SERMONS.LATEST);
-      // Para endpoints /latest, o dado vem diretamente em response.data.data
       return response.data.success ? response.data.data : response.data;
     } catch (err) {
-      console.error('Erro ao buscar último sermão:', err);
       return null;
     }
   };
@@ -45,10 +35,8 @@ const Home = () => {
   const fetchLatestStudy = async () => {
     try {
       const response = await axios.get(API_ENDPOINTS.STUDIES.LATEST);
-      // Para endpoints /latest, o dado vem diretamente em response.data.data
       return response.data.success ? response.data.data : response.data;
     } catch (err) {
-      console.error('Erro ao buscar último estudo:', err);
       return null;
     }
   };
@@ -57,10 +45,8 @@ const Home = () => {
   const fetchLatestBook = async () => {
     try {
       const response = await axios.get(API_ENDPOINTS.BOOKS.LATEST);
-      // Para endpoints /latest, o dado vem diretamente em response.data.data
       return response.data.success ? response.data.data : response.data;
     } catch (err) {
-      console.error('Erro ao buscar último livro:', err);
       return null;
     }
   };
@@ -87,11 +73,10 @@ const Home = () => {
             date: sermon.date,
             reference: sermon.bibleReference, // Manter como está para sermões
             description: sermon.description,
-            detailsUrl: `/sermoes/${sermon._id}`,
+            detailsUrl: `/sermons/${sermon._id}`,
             pdfUrl: sermon.pdfUrl,
             sermon,
           });
-          setLatestSermon(sermon);
         }
 
         // Adiciona último estudo se existir
@@ -108,7 +93,6 @@ const Home = () => {
             speaker: study.speaker,
             study,
           });
-          setLatestStudy(study);
         }
 
         // Adiciona último livro se existir
@@ -124,7 +108,6 @@ const Home = () => {
             pdfUrl: book.pdfUrl,
             book,
           });
-          setLatestBook(book);
         }
 
         // Fallback: adiciona itens estáticos se não houver conteúdo dinâmico
@@ -156,7 +139,6 @@ const Home = () => {
         setFeaturedItems(items);
       } catch (err) {
         setError('Erro ao carregar conteúdo em destaque');
-        console.error('Erro ao carregar dados:', err);
       } finally {
         setLoading(false);
       }
@@ -247,7 +229,7 @@ const Home = () => {
           interessa.
         </p>
         <div className='cta-buttons'>
-          <Link to='/sermoes' className='cta-button'>
+          <Link to='/sermons' className='cta-button'>
             Ver Sermões
           </Link>
           <Link to='/estudos' className='cta-button'>

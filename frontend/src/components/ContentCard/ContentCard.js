@@ -75,7 +75,7 @@ const getDetailsLink = ({ detailsUrl, content, type }) => {
   if (content && content._id) {
     if (type === 'Estudo Bíblico') return `/estudos/${content._id}`;
     if (type === 'Resumo de Livro') return `/livros/${content._id}`;
-    return `/sermoes/${content._id}`;
+    return `/sermons/${content._id}`;
   }
   return null;
 };

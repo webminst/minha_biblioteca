@@ -110,12 +110,12 @@ function App() {
             <Route index element={<Home />} />
 
             {/* Páginas de listagem de conteúdo */}
-            <Route path='sermoes' element={<Sermons />} />
+            <Route path='sermons' element={<Sermons />} />
             <Route path='estudos' element={<Studies />} />
             <Route path='livros' element={<Books />} />
 
             {/* Páginas de detalhes de conteúdo */}
-            <Route path='sermoes/:contentId' element={<ContentDetail />} />
+            <Route path='sermons/:contentId' element={<ContentDetail />} />
             <Route path='estudos/:contentId' element={<ContentDetail />} />
             <Route path='livros/:contentId' element={<ContentDetail />} />
 
@@ -163,9 +163,9 @@ function App() {
               />
 
               {/* CRUD de Sermões */}
-              <Route path='admin/sermoes' element={<AdminSermonsList />} />
-              <Route path='admin/sermoes/novo' element={<SermonForm />} />
-              <Route path='admin/sermoes/editar/:id' element={<SermonForm />} />
+              <Route path='admin/sermons' element={<AdminSermonsList />} />
+              <Route path='admin/sermons/novo' element={<SermonForm />} />
+              <Route path='admin/sermons/editar/:id' element={<SermonForm />} />
 
               {/* CRUD de Estudos */}
               <Route path='admin/estudos' element={<AdminStudiesList />} />

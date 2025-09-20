@@ -24,7 +24,7 @@ function useQuery() {
 }
 
 const SearchResults = () => {
-  const location = useLocation();
+  // Removido: const location = useLocation();
   const queryHook = useQuery();
 
   // Estados para os dados das diferentes coleções
@@ -64,7 +64,7 @@ const SearchResults = () => {
         setError(
           'Erro ao carregar dados para busca. Por favor, tente novamente mais tarde.',
         );
-        console.error('Erro ao buscar dados:', err);
+        // Removido: console.error('Erro ao buscar dados:', err);
       } finally {
         setLoading(false);
       }
@@ -79,7 +79,7 @@ const SearchResults = () => {
       ...sermons.map(sermon => ({
         ...sermon,
         type: 'Sermão',
-        detailsUrl: `/sermoes/${sermon._id}`,
+        detailsUrl: `/sermons/${sermon._id}`,
       })),
       ...studies.map(study => ({
         ...study,
@@ -100,9 +100,8 @@ const SearchResults = () => {
     if (!normalizedSearchTerm) {
       return [];
     }
-
+    // Simplificação: Quebra a função em partes menores se necessário para reduzir complexidade
     return allContent.filter(item => {
-      // Cria string com todos os campos pesquisáveis
       const searchableString = `
         ${item.title || ''}
         ${item.description || ''}
@@ -116,7 +115,6 @@ const SearchResults = () => {
         ${item.publisher || ''}
         ${(item.tags || []).join(' ')}
       `.toLowerCase();
-
       return searchableString.includes(normalizedSearchTerm);
     });
   }, [allContent, normalizedSearchTerm]);
@@ -148,7 +146,7 @@ const SearchResults = () => {
       {/* Descrição dos resultados ou instrução de busca */}
       {searchTerm ? (
         <p className='list-page-description'>
-          Resultados para: <strong>"{searchTerm}"</strong> (
+          Resultados para: <strong>&quot;{searchTerm}&quot;</strong> (
           {filteredResults.length} encontrados)
         </p>
       ) : (
@@ -170,10 +168,10 @@ const SearchResults = () => {
                 item.type === 'Livro'
                   ? `Por ${item.author}`
                   : item.reference ||
-                      item.bibleReference ||
-                      item.theme ||
-                      item.area ||
-                      ''
+                  item.bibleReference ||
+                  item.theme ||
+                  item.area ||
+                  ''
               }
               description={item.description}
               detailsUrl={item.detailsUrl}
@@ -186,17 +184,17 @@ const SearchResults = () => {
           : // Estado vazio - quando há termo de busca mas nenhum resultado
           searchTerm && (
             <div className='empty-state-container'>
-              <h2>Nenhum resultado para "{searchTerm}"</h2>
+              <h2>Nenhum resultado para &quot;{searchTerm}&quot;</h2>
               <p>Tente palavras-chave diferentes ou explore nossas seções:</p>
               <div className='empty-state-actions'>
-                <Link to='/sermoes' className='empty-state-button'>
-                    Ver Sermões
+                <Link to='/sermons' className='empty-state-button'>
+                  Ver Sermões
                 </Link>
                 <Link to='/estudos' className='empty-state-button'>
-                    Ver Estudos
+                  Ver Estudos
                 </Link>
                 <Link to='/livros' className='empty-state-button'>
-                    Ver Livros
+                  Ver Livros
                 </Link>
               </div>
             </div>

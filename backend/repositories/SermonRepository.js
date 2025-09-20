@@ -25,31 +25,31 @@ class SermonRepository extends BaseRepository {
       book,
       series,
       speaker,
-      search
+      search,
     } = options;
 
     // Construir filtros
     const queryFilters = { ...filters };
-    
+
     if (book) {
       queryFilters.book = { $regex: book, $options: 'i' };
     }
-    
+
     if (series) {
       queryFilters.series = { $regex: series, $options: 'i' };
     }
-    
+
     if (speaker) {
       queryFilters.speaker = { $regex: speaker, $options: 'i' };
     }
-    
+
     if (search) {
       queryFilters.$or = [
         { title: { $regex: search, $options: 'i' } },
         { content: { $regex: search, $options: 'i' } },
         { book: { $regex: search, $options: 'i' } },
         { series: { $regex: search, $options: 'i' } },
-        { speaker: { $regex: search, $options: 'i' } }
+        { speaker: { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -61,7 +61,7 @@ class SermonRepository extends BaseRepository {
       page,
       limit,
       sort,
-      select: '-__v'
+      select: '-__v',
     });
   }
 
@@ -132,9 +132,9 @@ class SermonRepository extends BaseRepository {
               { title: { $regex: term, $options: 'i' } },
               { book: { $regex: term, $options: 'i' } },
               { series: { $regex: term, $options: 'i' } },
-              { speaker: { $regex: term, $options: 'i' } }
-            ]
-          }
+              { speaker: { $regex: term, $options: 'i' } },
+            ],
+          },
         },
         {
           $project: {
@@ -147,13 +147,13 @@ class SermonRepository extends BaseRepository {
                 { $cond: [{ $regexMatch: { input: '$title', regex: term, options: 'i' } }, 3, 0] },
                 { $cond: [{ $regexMatch: { input: '$book', regex: term, options: 'i' } }, 2, 0] },
                 { $cond: [{ $regexMatch: { input: '$series', regex: term, options: 'i' } }, 2, 0] },
-                { $cond: [{ $regexMatch: { input: '$speaker', regex: term, options: 'i' } }, 1, 0] }
-              ]
-            }
-          }
+                { $cond: [{ $regexMatch: { input: '$speaker', regex: term, options: 'i' } }, 1, 0] },
+              ],
+            },
+          },
         },
         { $sort: { score: -1 } },
-        { $limit: limit }
+        { $limit: limit },
       ]);
 
       return suggestions;
@@ -177,8 +177,8 @@ class SermonRepository extends BaseRepository {
             totalSeries: { $addToSet: '$series' },
             totalSpeakers: { $addToSet: '$speaker' },
             averageDuration: { $avg: '$duration' },
-            totalViews: { $sum: '$views' }
-          }
+            totalViews: { $sum: '$views' },
+          },
         },
         {
           $project: {
@@ -188,9 +188,9 @@ class SermonRepository extends BaseRepository {
             totalSeries: { $size: '$totalSeries' },
             totalSpeakers: { $size: '$totalSpeakers' },
             averageDuration: { $round: ['$averageDuration', 2] },
-            totalViews: 1
-          }
-        }
+            totalViews: 1,
+          },
+        },
       ]);
 
       return stats[0] || {
@@ -199,7 +199,7 @@ class SermonRepository extends BaseRepository {
         totalSeries: 0,
         totalSpeakers: 0,
         averageDuration: 0,
-        totalViews: 0
+        totalViews: 0,
       };
     } catch (error) {
       throw this.handleError(error, 'Erro ao buscar estatísticas');
@@ -252,10 +252,10 @@ class SermonRepository extends BaseRepository {
   async findUniqueBooks() {
     try {
       const books = await this.model.aggregate([
-        { $match: { book: { $exists: true, $ne: null, $ne: '' } } },
+        { $match: { book: { $exists: true, $nin: [null, ''] } } },
         { $group: { _id: '$book', count: { $sum: 1 } } },
         { $sort: { _id: 1 } },
-        { $project: { book: '$_id', count: 1, _id: 0 } }
+        { $project: { book: '$_id', count: 1, _id: 0 } },
       ]);
 
       return books;
@@ -274,7 +274,7 @@ class SermonRepository extends BaseRepository {
       return await this.model.findByIdAndUpdate(
         id,
         { $inc: { views: 1 } },
-        { new: true }
+        { new: true },
       );
     } catch (error) {
       throw this.handleError(error, 'Erro ao incrementar visualizações');
@@ -326,11 +326,11 @@ class SermonRepository extends BaseRepository {
       { fields: { speaker: 1 }, options: { name: 'sermon_speaker_index' } },
       { fields: { createdAt: -1 }, options: { name: 'sermon_created_at_index' } },
       { fields: { views: -1 }, options: { name: 'sermon_views_index' } },
-      { fields: { book: 1, series: 1 }, options: { name: 'sermon_book_series_index' } }
+      { fields: { book: 1, series: 1 }, options: { name: 'sermon_book_series_index' } },
     ];
 
     await this.createIndexes(indexes);
   }
 }
 
-module.exports = new SermonRepository(); 
+module.exports = new SermonRepository();

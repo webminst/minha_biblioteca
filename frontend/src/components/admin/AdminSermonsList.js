@@ -39,8 +39,7 @@ function AdminSermonsList() {
       setSermons(Array.isArray(sermonsData) ? sermonsData : []);
     } catch (err) {
       setError(
-        `Erro ao carregar sermões: ${
-          err.response?.data?.message || err.message}`,
+        `Erro ao carregar sermões: ${err.response?.data?.message || err.message}`,
       );
       console.error('Erro ao buscar sermões:', err);
     } finally {
@@ -101,24 +100,24 @@ function AdminSermonsList() {
     const sorted = [...sermonsArray];
 
     switch (order) {
-    case 'alphabetical-asc':
-      return sorted.sort((a, b) => a.title.localeCompare(b.title));
-    case 'alphabetical-desc':
-      return sorted.sort((a, b) => b.title.localeCompare(a.title));
-    case 'reference-asc':
-      return sorted.sort((a, b) =>
-        (a.bibleReference || '').localeCompare(b.bibleReference || ''),
-      );
-    case 'reference-desc':
-      return sorted.sort((a, b) =>
-        (b.bibleReference || '').localeCompare(a.bibleReference || ''),
-      );
-    case 'date-asc':
-      return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
-    case 'date-desc':
-      return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
-    default:
-      return sorted;
+      case 'alphabetical-asc':
+        return sorted.sort((a, b) => a.title.localeCompare(b.title));
+      case 'alphabetical-desc':
+        return sorted.sort((a, b) => b.title.localeCompare(a.title));
+      case 'reference-asc':
+        return sorted.sort((a, b) =>
+          (a.bibleReference || '').localeCompare(b.bibleReference || ''),
+        );
+      case 'reference-desc':
+        return sorted.sort((a, b) =>
+          (b.bibleReference || '').localeCompare(a.bibleReference || ''),
+        );
+      case 'date-asc':
+        return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+      case 'date-desc':
+        return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+      default:
+        return sorted;
     }
   };
 
@@ -239,7 +238,7 @@ function AdminSermonsList() {
           >
             ← Voltar
           </button>
-          <Link to='/admin/sermoes/novo' className='btn-add-new'>
+          <Link to='/admin/sermons/novo' className='btn-add-new'>
             Adicionar Novo Sermão
           </Link>
         </div>
@@ -303,7 +302,7 @@ function AdminSermonsList() {
                   <td>{new Date(sermon.date).toLocaleDateString()}</td>
                   <td className='actions'>
                     <Link
-                      to={`/admin/sermoes/editar/${sermon._id}`}
+                      to={`/admin/sermons/editar/${sermon._id}`}
                       className='btn-edit'
                     >
                       Editar
